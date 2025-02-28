@@ -1,0 +1,34 @@
+classDiagram
+    class Users {
+        +String userId
+        +String name
+        +String email
+        +String phone
+        +String braceletId
+    }
+
+    class EmergencyContacts {
+        +String contactId
+        +String name
+        +String phone
+        +String relation
+    }
+
+    class Alerts {
+        +String alertId
+        +DateTime timestamp
+        +Number heartRate
+        +String voiceDetected
+        +Object location
+        +String status
+        +Array emergencyContactsNotified
+    }
+
+    class Location {
+        +Number lat
+        +Number lon
+    }
+
+    Users "1" --> "*" EmergencyContacts : has
+    Users "1" --> "*" Alerts : generates
+    Alerts "1" --> "1" Location : contains
