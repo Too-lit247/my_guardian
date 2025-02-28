@@ -1,16 +1,36 @@
-# bracelet
+# 🛡️ Smart Bracelet App
 
-A new Flutter project.
+A mobile app designed to interact with an Arduino-based bracelet via WiFi or Bluetooth. The bracelet monitors the user's heart rate and voice, sending emergency messages to designated contacts in case of distress.
 
-## Getting Started
+## 🚀 Features
 
-This project is a starting point for a Flutter application.
+- 📡 **Wireless Connectivity** (WiFi/Bluetooth)
+- ❤️ **Heart Rate Monitoring**
+- 🗣️ **Voice Detection & Analysis**
+- ⚠️ **Emergency Alert System**
+- 🔋 **Low Power Consumption Mode**
+- 📊 **Real-time Data Logging & Visualization**
+- 🛑 **Manual & Automatic Emergency Triggers**
+- 📱 **User-Friendly Mobile Interface**
 
-A few resources to get you started if this is your first Flutter project:
+## 🛠️ Tech Stack
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- **Frontend:** Flutter
+- **Backend:** Firebase / fastapi
+- **Hardware:** Arduino + Heart Rate Sensor + Microphone Module + Bluetooth/WiFi Module
+- **Database:** Firebase Firestore (for storing emergency contacts & logs, as well as user information)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+
+## 🔔 Emergency Alert System
+
+- **Automatic Triggers:**
+  - Abnormal heart rate detection.
+  - Voice recognition for distress words.
+  - No movement detected for an extended period.
+- **Manual Trigger:**
+  - Pressing the emergency button on the bracelet.
+  - Triggering an alert via the app.
+- **Emergency Actions:**
+  - Sends an SMS/Email to emergency contacts.
+  - Initiates a call to predefined numbers.
+  - Sends GPS location for immediate assistance.
