@@ -1,16 +1,36 @@
-import 'package:bracelet/auth/login.dart';
-import 'package:bracelet/dashboard.dart';
-import 'package:bracelet/onboarding/devicesetupscreen.dart';
-import 'package:bracelet/home.dart';
-import 'package:bracelet/layouts/layout.dart';
+import 'package:my_guardian/auth/auth.dart';
+import 'package:my_guardian/auth/login.dart';
+import 'package:my_guardian/auth/register.dart';
+import 'package:my_guardian/layouts/layout.dart';
+import 'package:my_guardian/onboarding/devicesetupscreen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'firebase_options.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
   runApp(const MyApp());
 }
 
+// class MyApp extends StatelessWidget {
+//   const MyApp({super.key});
 
-/*
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       debugShowCheckedModeBanner: false,
+//       home: LoginPage(),
+//     );
+//   }
+// }
+
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -18,27 +38,14 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Home(),
-    );
-  }
-}*/
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Onboarding',
+      title: 'my_guardian',
       theme: ThemeData(primarySwatch: Colors.blue),
-      initialRoute: '/login',
       routes: {
-        '/' : (context) => MainScreen(),
+        '/' : (context) => AuthChecker(),
         '/welcome' : (context) => OnboardingScreen(),
-        '/home' : (context) => Home(),
+        '/home' : (context) => MainScreen(),
         '/login': (context) => LoginPage(),
-        '/dashboard' : (context) => Dashboard(),
+        '/register': (context) => RegisterPage(),
       },
     );
   }
@@ -105,12 +112,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 class WelcomeScreen extends StatelessWidget {
   final PageController pageController;
 
-  const WelcomeScreen({super.key, required this.pageController});
+  final user = FirebaseAuth.instance.currentUser;
+
+  WelcomeScreen({super.key, required this.pageController});
 
   @override
   Widget build(BuildContext context) {
     return _buildScreen(
-      description: "Your safety is our priority. Let's set up your bracelet.",
+      description: "Welcome, ${user!.email!} Your safety is our priority. Let's set up your my_guardian.",
       buttonText: "Next",
       image: "assets/images/welcome.jpg",
       onPressed: () => pageController.nextPage(
@@ -131,7 +140,7 @@ class AppDescriptionScreen extends StatelessWidget {
     return _buildScreen(
       title: "How It Works",
       description:
-          "This app connects to your bracelet to monitor your heart rate and voice. "
+          "This app connects to your my_guardian to monitor your heart rate and voice. "
           "If danger is detected, emergency contacts will be called automatically.",
       buttonText: "Next",
       image: "assets/images/working.jpg",

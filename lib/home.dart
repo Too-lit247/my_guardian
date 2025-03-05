@@ -8,7 +8,7 @@ const Home({ super.key });
     return Scaffold(
       backgroundColor: Colors.grey[300],
       appBar: AppBar(
-        title: Text('Bracelet App'),
+        title: Text('My Guardian'),
         centerTitle: true,
         backgroundColor: Colors.green[400],
       ),

@@ -82,7 +82,7 @@ class _DeviceSetupScreenState extends State<DeviceSetupScreen> {
             const SizedBox(height: 10),
             ElevatedButton(
               onPressed: _showDeviceScanningDialog,
-              child: const Text("Connect to Bracelet"),
+              child: const Text("Connect to My Guardian"),
             ),
             const SizedBox(height: 20),
             const Text(
@@ -136,7 +136,7 @@ class _DeviceSetupScreenState extends State<DeviceSetupScreen> {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                Navigator.pushNamed(context, '/');
+                Navigator.pushReplacementNamed(context, '/home');
               },
               child: const Text("Finish"),
             ),

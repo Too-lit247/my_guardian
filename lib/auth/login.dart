@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatefulWidget {
@@ -7,18 +8,45 @@ class LoginPage extends StatefulWidget {
   State<LoginPage> createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage>{
-
+class _LoginPageState extends State<LoginPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  bool isLoading = false;
+  String? errorMessage;
 
   Future login() async {
-    print("logging in...");
-    Navigator.pushReplacementNamed(context, '/welcome');
+    setState(() {
+      isLoading = true;
+      errorMessage = null;
+    });
+
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+      );
+      // Navigate to the welcome screen
+      Navigator.pushReplacementNamed(context, '/welcome');
+    } on FirebaseAuthException catch (e) {
+      setState(() {
+        errorMessage = e.message;
+      });
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
-  
+
   @override
-  Widget build(BuildContext context){
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -29,23 +57,28 @@ class _LoginPageState extends State<LoginPage>{
               children: [
                 Center(
                   child: Image(
-                      image: AssetImage('assets/images/login.jpg'),
-                      height: 300,
-                      width: 300,
-                    ),
+                    image: AssetImage('assets/images/login.jpg'),
+                    height: 300,
+                    width: 300,
+                  ),
                 ),
-            
-                SizedBox(height: 10,),
-            
-                SizedBox(height: 10,),
-                Text(
-                  'Welcome back to MyGuardian App',
+                const SizedBox(height: 10),
+                const Text(
+                  'Welcome back to MyGuardian!',
                   style: TextStyle(
                     fontSize: 18,
                   ),
                 ),
-                SizedBox(height: 30,),
-            
+                const SizedBox(height: 30),
+                if (errorMessage != null)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                    child: Text(
+                      errorMessage!,
+                      style: const TextStyle(color: Colors.red),
+                    ),
+                  ),
+                const SizedBox(height: 10),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 25.0),
                   child: Container(
@@ -58,52 +91,52 @@ class _LoginPageState extends State<LoginPage>{
                       padding: const EdgeInsets.only(left: 8.0),
                       child: TextField(
                         controller: _emailController,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           border: InputBorder.none,
                           hintText: 'Email',
                         ),
+                        enabled: !isLoading,
                       ),
                     ),
                   ),
                 ),
-            
-                SizedBox(height: 10,),
-            
+                const SizedBox(height: 10),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 25.0),
                   child: Container(
                     decoration: BoxDecoration(
                       color: Colors.grey[200],
-                      border: Border.all(color:  Colors.white),
+                      border: Border.all(color: Colors.white),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Padding(
                       padding: const EdgeInsets.only(left: 8.0),
                       child: TextField(
                         controller: _passwordController,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           border: InputBorder.none,
                           hintText: 'Password',
                         ),
                         obscureText: true,
+                        enabled: !isLoading,
                       ),
                     ),
                   ),
                 ),
-            
-                SizedBox(height: 10,),
-            
+                const SizedBox(height: 10),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                  child: GestureDetector(
-                    onTap: login,
+                  child: MaterialButton(
+                    onPressed: isLoading ? null : login,
                     child: Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(12),
-                        color: const Color.fromARGB(255, 21, 209, 30),
+                        color: isLoading
+                            ? Colors.green[300]
+                            : const Color.fromARGB(255, 21, 209, 30),
                       ),
-                      padding: EdgeInsets.all(15),
-                      child: Center(
+                      padding: const EdgeInsets.all(15),
+                      child: const Center(
                         child: Text(
                           'Login',
                           style: TextStyle(
@@ -116,38 +149,34 @@ class _LoginPageState extends State<LoginPage>{
                     ),
                   ),
                 ),
-            
-                SizedBox(height: 25,),
-            
+                if (isLoading)
+                  const Padding(
+                    padding: EdgeInsets.all(10.0),
+                    child: CircularProgressIndicator(),
+                  ),
+                const SizedBox(height: 25),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
+                    const Text(
                       'Not a member?',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    Text(
-                      'Register Now',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.blue
+                    TextButton(
+                      onPressed: () => Navigator.pushNamed(context, '/register'),
+                      child: const Text(
+                        ' Register Now',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blue,
+                        ),
                       ),
                     ),
                   ],
-                )
-            
-            
+                ),
               ],
-            
-              //email textfield
-            
-              //password textfield
-            
-              //signin button
-            
-              //not a member yet? register
             ),
           ),
         ),

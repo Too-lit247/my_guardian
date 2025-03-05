@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class Dashboard extends StatefulWidget {
@@ -25,12 +26,19 @@ class _DashboardState extends State<Dashboard> {
     return Scaffold(
       backgroundColor: Colors.grey[200],
       appBar: AppBar(
-        title: const Text(
-          "Home",
-          style: TextStyle(color: Colors.white),
-          ),
+        title: const Text("Home"),
         backgroundColor: Colors.green,
+        foregroundColor: Colors.white,
         centerTitle: true,
+        actions: [
+          IconButton(
+        icon: const Icon(Icons.logout),
+        onPressed: () async {
+          await FirebaseAuth.instance.signOut();
+          Navigator.of(context).pushReplacementNamed('/login');
+        },
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -53,7 +61,7 @@ class _DashboardState extends State<Dashboard> {
                   child: ListTile(
                     leading: const Icon(Icons.warning, color: Colors.orange, size: 30),
                     title: const Text("Emergency Alert Sent"),
-                    subtitle: const Text("An emergency SMS has been sent by the bracelet."),
+                    subtitle: const Text("An emergency SMS has been sent by the my_guardian."),
                   ),
                 )
               : const SizedBox.shrink(),

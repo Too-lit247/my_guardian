@@ -4,7 +4,7 @@ classDiagram
         +String name
         +String email
         +String phone
-        +String braceletId
+        +String my_guardianId
     }
 
     class EmergencyContacts {

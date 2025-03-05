@@ -1,6 +1,6 @@
-import 'package:bracelet/dashboard.dart';
-import 'package:bracelet/profile.dart';
-import 'package:bracelet/settings.dart';
+import 'package:my_guardian/dashboard.dart';
+import 'package:my_guardian/profile.dart';
+import 'package:my_guardian/settings.dart';
 import 'package:flutter/material.dart';
 
 class MainScreen extends StatefulWidget {
