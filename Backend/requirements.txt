@@ -1,0 +1,7 @@
+torch
+torchaudio
+transformers
+scikit-learn
+librosa
+pandas
+tqdm
