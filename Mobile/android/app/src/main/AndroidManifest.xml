@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="my_guardian"
+        android:label="Guardian"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
         <activity
@@ -29,14 +29,15 @@
     </application>
 
     <!-- Bluetooth Permissions -->
-    <uses-permission android:name="android.permission.BLUETOOTH"/>
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    
-    <!-- Required for Android 12+ -->
-    <uses-permission android:name="android.permission.BLUETOOTH_SCAN"/>
-    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT"/>
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+
+    <!-- Contacts Permissions -->
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
 
     <!-- Allow Bluetooth feature usage -->
     <uses-feature android:name="android.hardware.bluetooth_le" android:required="true"/>
