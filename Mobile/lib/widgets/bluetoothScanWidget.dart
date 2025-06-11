@@ -1,6 +1,7 @@
 import 'package:bluetooth_classic/bluetooth_classic.dart';
 import 'package:bluetooth_classic/models/device.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:my_guardian/widgets/settingsHeader.dart';
 import 'package:my_guardian/widgets/settingsTile.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -18,7 +19,7 @@ class _BluetoothscanwidgetState extends State<Bluetoothscanwidget> {
   bool _isScanning = false;
 
   Device? _connectedDevice;
-  BluetoothConnection? _connection;
+  BluetoothConnectionEvent? _connection;
   String _receivedData = "";
 
   @override
