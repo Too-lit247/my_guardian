@@ -1,8 +1,9 @@
-import 'package:bluetooth_classic/bluetooth_classic.dart';
-import 'package:bluetooth_classic/models/device.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
+import 'package:my_guardian/widgets/bluetoothScanWidget.dart';
+import 'package:my_guardian/widgets/settingsHeader.dart';
+import 'package:my_guardian/widgets/settingsTile.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -23,40 +24,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   PermissionStatus? _contactPermissionStatus;
 
-  final BluetoothClassic _bluetooth = BluetoothClassic();
-  final List<Device> _foundDevices = [];
-  bool _isScanning = false;
-  Device? _connectedDevice;
-
   @override
   void initState() {
     super.initState();
     _checkContactPermission();
-    _initBluetooth();
-  }
-
-  Future<void> _initBluetooth() async {
-    // Set up bluetooth event listeners
-    _bluetooth.onDeviceDiscovered().listen((device) {
-      setState(() {
-        if (!_foundDevices.any((d) => d.address == device.address)) {
-          _foundDevices.add(device);
-        }
-      });
-    });
-
-    // _bluetooth.onDeviceDisconnected().listen((device) {
-    //   setState(() {
-    //     if (_connectedDevice?.address == device.address) {
-    //       _connectedDevice = null;
-    //     }
-    //   });
-    //   ScaffoldMessenger.of(context).showSnackBar(
-    //     SnackBar(
-    //       content: Text("Disconnected from ${device.name ?? 'Unknown Device'}"),
-    //     ),
-    //   );
-    // });
   }
 
   Future<void> _checkContactPermission() async {
@@ -64,89 +35,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     setState(() {
       _contactPermissionStatus = status;
     });
-  }
-
-  Future<void> _scanForBluetoothDevices() async {
-    //Request Bluetooth permissions
-    var bluetoothStatus = await Permission.bluetooth.request();
-    var bluetoothConnectStatus = await Permission.bluetoothConnect.request();
-    var bluetoothScanStatus = await Permission.bluetoothScan.request();
-
-    if (!bluetoothStatus.isGranted ||
-        !bluetoothConnectStatus.isGranted ||
-        !bluetoothScanStatus.isGranted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Bluetooth permissions are required")),
-      );
-      return;
-    }
-
-    setState(() {
-      _foundDevices.clear();
-      _isScanning = true;
-    });
-
-    try {
-      // First, get bonded (paired) devices
-      final bondedDevices = await _bluetooth.getPairedDevices();
-      setState(() {
-        _foundDevices.addAll(bondedDevices);
-      });
-
-      // Start discovery to find new devices
-      await _bluetooth.startScan();
-
-      // Stop discovery after 30 seconds
-      Future.delayed(const Duration(seconds: 30), () {
-        if (_isScanning) {
-          _bluetooth.stopScan();
-          setState(() {
-            _isScanning = false;
-          });
-        }
-      });
-    } catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text("Error scanning devices: $e")));
-      setState(() {
-        _isScanning = false;
-      });
-    }
-  }
-
-  Future<void> _stopScan() async {
-    if (_isScanning) {
-      await _bluetooth.stopScan();
-      setState(() {
-        _isScanning = false;
-      });
-    }
-  }
-
-  Future<void> _connectToDevice(Device device) async {
-    try {
-      await _stopScan(); // Stop scanning before connecting
-      await _bluetooth.connect(device.address, "10");
-      // The connection status will be handled by the onDeviceConnected listener
-    } catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text("Connection failed: $e")));
-    }
-  }
-
-  Future<void> _disconnectDevice() async {
-    if (_connectedDevice != null) {
-      try {
-        await _bluetooth.disconnect();
-        // The disconnection status will be handled by the onDeviceDisconnected listener
-      } catch (e) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text("Disconnection failed: $e")));
-      }
-    }
   }
 
   void _showEmergencyContactOptions() async {
@@ -302,16 +190,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   @override
-  void dispose() {
-    _stopScan();
-    // Clean up any listeners or connections
-    if (_connectedDevice != null) {
-      _disconnectDevice();
-    }
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[300],
@@ -419,6 +297,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 },
               ),
             ),
+
+            Bluetoothscanwidget(),
+
             const SizedBox(height: 20),
             const SettingsHeader(title: "Emergency Contact"),
             SettingsTile(
@@ -492,147 +373,84 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 }
               },
             ),
-            const SettingsHeader(title: "Bluetooth"),
-            SettingsTile(
-              icon: Icons.bluetooth_searching,
-              title: "Scan for Devices",
-              trailing: ElevatedButton(
-                onPressed: _isScanning ? null : _scanForBluetoothDevices,
-                child: Text(_isScanning ? "Scanning..." : "Scan"),
-              ),
-            ),
+            // const SettingsHeader(title: "Bluetooth"),
+            // SettingsTile(
+            //   icon: Icons.bluetooth_searching,
+            //   title: "Scan for Devices",
+            //   trailing: ElevatedButton(
+            //     onPressed: _isScanning ? null : _scanForBluetoothDevices,
+            //     child: Text(_isScanning ? "Scanning..." : "Scan"),
+            //   ),
+            // ),
 
-            if (_foundDevices.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children:
-                      _foundDevices.map((device) {
-                        return ListTile(
-                          leading: const Icon(Icons.bluetooth),
-                          title: Text(device.name ?? 'Unknown'),
-                          subtitle: Text(device.address),
-                        );
-                      }).toList(),
-                ),
-              ),
+            // if (_foundDevices.isNotEmpty)
+            //   Padding(
+            //     padding: const EdgeInsets.all(16.0),
+            //     child: Column(
+            //       crossAxisAlignment: CrossAxisAlignment.start,
+            //       children:
+            //           _foundDevices.map((device) {
+            //             return ListTile(
+            //               leading: const Icon(Icons.bluetooth),
+            //               title: Text(device.name ?? 'Unknown'),
+            //               subtitle: Text(device.address),
+            //             );
+            //           }).toList(),
+            //     ),
+            //   ),
 
-            if (_connectedDevice != null)
-              Container(
-                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.green[100],
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Colors.green),
-                ),
-                child: Row(
-                  children: [
-                    const Icon(Icons.bluetooth_connected, color: Colors.green),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            _connectedDevice!.name ?? "Unknown Device",
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          Text(_connectedDevice!.address),
-                        ],
-                      ),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.close),
-                      onPressed: _disconnectDevice,
-                    ),
-                  ],
-                ),
-              ),
-            ..._foundDevices.map(
-              (device) => ListTile(
-                leading: const Icon(Icons.bluetooth),
-                title: Text(device.name ?? "Unknown Device"),
-                subtitle: Text(device.address),
-                trailing:
-                    (_connectedDevice?.address == device.address)
-                        ? const Icon(Icons.check_circle, color: Colors.green)
-                        : const Icon(Icons.circle_outlined),
-                onTap: () async {
-                  if (_connectedDevice?.address != device.address) {
-                    await _connectToDevice(device);
-                  } else {
-                    await _disconnectDevice();
-                  }
-                },
-              ),
-            ),
+            // if (_connectedDevice != null)
+            //   Container(
+            //     margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+            //     padding: const EdgeInsets.all(12),
+            //     decoration: BoxDecoration(
+            //       color: Colors.green[100],
+            //       borderRadius: BorderRadius.circular(10),
+            //       border: Border.all(color: Colors.green),
+            //     ),
+            //     child: Row(
+            //       children: [
+            //         const Icon(Icons.bluetooth_connected, color: Colors.green),
+            //         const SizedBox(width: 10),
+            //         Expanded(
+            //           child: Column(
+            //             crossAxisAlignment: CrossAxisAlignment.start,
+            //             children: [
+            //               Text(
+            //                 _connectedDevice!.name ?? "Unknown Device",
+            //                 style: const TextStyle(fontWeight: FontWeight.bold),
+            //               ),
+            //               Text(_connectedDevice!.address),
+            //             ],
+            //           ),
+            //         ),
+            //         IconButton(
+            //           icon: const Icon(Icons.close),
+            //           onPressed: _disconnectDevice,
+            //         ),
+            //       ],
+            //     ),
+            //   ),
+            // ..._foundDevices.map(
+            //   (device) => ListTile(
+            //     leading: const Icon(Icons.bluetooth),
+            //     title: Text(device.name ?? "Unknown Device"),
+            //     subtitle: Text(device.address),
+            //     trailing:
+            //         (_connectedDevice?.address == device.address)
+            //             ? const Icon(Icons.check_circle, color: Colors.green)
+            //             : const Icon(Icons.circle_outlined),
+            //     onTap: () async {
+            //       if (_connectedDevice?.address != device.address) {
+            //         await _connectToDevice(device);
+            //       } else {
+            //         await _disconnectDevice();
+            //       }
+            //     },
+            //  ),
+            //),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class SettingsHeader extends StatelessWidget {
-  final String title;
-  const SettingsHeader({required this.title, super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Align(
-        alignment: Alignment.centerLeft,
-        child: Text(
-          title,
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Colors.blueGrey,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-// General Settings Tile
-class SettingsTile extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final Widget trailing;
-
-  const SettingsTile({
-    required this.icon,
-    required this.title,
-    required this.trailing,
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.grey[100],
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: Colors.white),
-      ),
-      child: Row(
-        children: [
-          Icon(icon, color: Colors.green),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Text(
-              title,
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-          ),
-          trailing,
-        ],
       ),
     );
   }
