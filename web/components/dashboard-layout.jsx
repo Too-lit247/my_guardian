@@ -125,7 +125,6 @@ export default function DashboardLayout({ children, user }) {
     ...(user.role === "Regional Manager" || user.role === "District Manager"
       ? [{ name: "Users", href: "/dashboard/users", icon: Users }]
       : []),
-    { name: "Settings", href: "/dashboard/settings", icon: Settings },
   ]
 
   const Sidebar = () => (
@@ -173,6 +172,9 @@ export default function DashboardLayout({ children, user }) {
       </div>
     </div>
   )
+
+  console.log(localStorage.getItem("user"));
+  
 
   return (
     <div className="flex h-screen bg-background">

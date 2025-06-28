@@ -73,8 +73,6 @@ export default function LoginPage() {
     setError("")
 
     try {
-      console.log("Attempting registration with:", registerData);
-      
       const response = await fetch("http://localhost:8000/api/auth/register/", {
         method: "POST",
         headers: {
@@ -90,11 +88,10 @@ export default function LoginPage() {
         setError("")
         alert("Registration successful! Your account is pending admin approval. You will be notified when activated.")
       } else {
-        setError(data.detail || data.password[0] || data.non_field_errors?.[0] || "Registration failed")
-        console.log("Registration error:", data)
+        setError(data.detail || data.non_field_errors?.[0] || "Registration failed")
       }
     } catch (err) {
-      setError("Network error!")
+      setError("Network error. Please check if the backend server is running.")
     } finally {
       setLoading(false)
     }
@@ -114,7 +111,7 @@ export default function LoginPage() {
         return null
     }
   }
-
+/*
   const loadSampleCredentials = (type) => {
     const credentials = {
       admin: {
@@ -144,7 +141,7 @@ export default function LoginPage() {
     }
     setLoginData(credentials[type])
   }
-
+*/
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100">
       <Card className="w-full max-w-md">
@@ -255,7 +252,7 @@ export default function LoginPage() {
                 {loading ? "Signing In..." : "Sign In"}
               </Button>
 
-              <div className="text-center text-sm text-muted-foreground space-y-2">
+              {/* <div className="text-center text-sm text-muted-foreground space-y-2">
                 <p className="font-medium">Quick Login Options:</p>
                 <div className="grid grid-cols-2 gap-2">
                   <Button variant="outline" size="sm" onClick={() => loadSampleCredentials("admin")}>
@@ -274,7 +271,7 @@ export default function LoginPage() {
                 <p className="text-xs mt-2">
                   Default password for all accounts: <code>admin123</code>
                 </p>
-              </div>
+              </div> */}
             </TabsContent>
 
             <TabsContent value="register" className="space-y-4">

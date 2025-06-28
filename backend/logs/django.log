@@ -139,3 +139,283 @@ Bad Request: /api/auth/register/
 "POST /api/auth/register/ HTTP/1.1" 201 116
 /home/tj/Documents/GitHub/Work/my_guardian/backend/emergency_system/settings.py changed, reloading.
 Watching for file changes with StatReloader
+"OPTIONS /api/auth/login/ HTTP/1.1" 200 0
+Bad Request: /api/auth/login/
+"POST /api/auth/login/ HTTP/1.1" 400 54
+"POST /api/auth/login/ HTTP/1.1" 200 1239
+"OPTIONS /api/alerts/statistics/ HTTP/1.1" 200 0
+"GET /api/alerts/statistics/ HTTP/1.1" 200 93
+"OPTIONS /api/auth/me/ HTTP/1.1" 200 0
+"OPTIONS /api/auth/me/ HTTP/1.1" 200 0
+"GET /api/auth/me/ HTTP/1.1" 200 649
+"GET /api/alerts/statistics/ HTTP/1.1" 200 93
+"GET /api/auth/me/ HTTP/1.1" 200 649
+"GET /api/auth/me/ HTTP/1.1" 200 649
+"GET /api/auth/me/ HTTP/1.1" 200 649
+"OPTIONS /api/alerts/ HTTP/1.1" 200 0
+"GET /api/alerts/ HTTP/1.1" 200 52
+"GET /api/auth/me/ HTTP/1.1" 200 649
+"GET /api/alerts/ HTTP/1.1" 200 52
+"GET /api/auth/me/ HTTP/1.1" 200 649
+"GET /api/alerts/ HTTP/1.1" 200 52
+"GET /api/alerts/statistics/ HTTP/1.1" 200 93
+"GET /api/auth/me/ HTTP/1.1" 200 649
+"GET /api/alerts/statistics/ HTTP/1.1" 200 93
+"GET /api/auth/me/ HTTP/1.1" 200 649
+"GET /api/alerts/statistics/ HTTP/1.1" 200 93
+"GET /api/auth/me/ HTTP/1.1" 200 649
+"GET /api/alerts/statistics/ HTTP/1.1" 200 93
+"GET /api/auth/me/ HTTP/1.1" 200 649
+"GET /api/alerts/ HTTP/1.1" 200 52
+"GET /api/auth/me/ HTTP/1.1" 200 649
+"GET /api/alerts/ HTTP/1.1" 200 52
+"GET /api/auth/me/ HTTP/1.1" 200 649
+"GET /api/alerts/ HTTP/1.1" 200 52
+"OPTIONS /api/auth/logout/ HTTP/1.1" 200 0
+Bad Request: /api/auth/logout/
+"POST /api/auth/logout/ HTTP/1.1" 400 62
+"POST /api/auth/login/ HTTP/1.1" 200 1170
+"GET /api/alerts/statistics/ HTTP/1.1" 200 93
+"GET /api/auth/me/ HTTP/1.1" 200 580
+"GET /api/alerts/statistics/ HTTP/1.1" 200 93
+"GET /api/auth/me/ HTTP/1.1" 200 580
+Bad Request: /api/auth/logout/
+"POST /api/auth/logout/ HTTP/1.1" 400 62
+"POST /api/auth/login/ HTTP/1.1" 200 1170
+"GET /api/alerts/statistics/ HTTP/1.1" 200 93
+"GET /api/auth/me/ HTTP/1.1" 200 580
+"GET /api/alerts/statistics/ HTTP/1.1" 200 93
+"GET /api/auth/me/ HTTP/1.1" 200 580
+Watching for file changes with StatReloader
+"OPTIONS /api/auth/register/ HTTP/1.1" 200 0
+"POST /api/auth/register/ HTTP/1.1" 201 120
+"OPTIONS /api/auth/login/ HTTP/1.1" 200 0
+"POST /api/auth/login/ HTTP/1.1" 200 1175
+"OPTIONS /api/alerts/statistics/ HTTP/1.1" 200 0
+"OPTIONS /api/alerts/statistics/ HTTP/1.1" 200 0
+"GET /api/alerts/statistics/ HTTP/1.1" 200 93
+"OPTIONS /api/auth/me/ HTTP/1.1" 200 0
+"OPTIONS /api/auth/me/ HTTP/1.1" 200 0
+"GET /api/auth/me/ HTTP/1.1" 200 585
+"GET /api/alerts/statistics/ HTTP/1.1" 200 93
+"GET /api/auth/me/ HTTP/1.1" 200 585
+"OPTIONS /api/alerts/ HTTP/1.1" 200 0
+"OPTIONS /api/alerts/ HTTP/1.1" 200 0
+"OPTIONS /api/alerts/ HTTP/1.1" 200 0
+"GET /api/alerts/ HTTP/1.1" 200 52
+"GET /api/alerts/ HTTP/1.1" 200 52
+"GET /api/auth/me/ HTTP/1.1" 200 585
+Internal Server Error: /api/alerts/
+Traceback (most recent call last):
+  File "/home/tj/.local/lib/python3.10/site-packages/django/db/backends/utils.py", line 89, in _execute
+    return self.cursor.execute(sql, params)
+psycopg2.OperationalError: could not receive data from server: Network is unreachable
+SSL SYSCALL error: Network is unreachable
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/tj/.local/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/tj/.local/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/tj/.local/lib/python3.10/site-packages/django/views/decorators/csrf.py", line 56, in wrapper_view
+    return view_func(*args, **kwargs)
+  File "/home/tj/.local/lib/python3.10/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/tj/.local/lib/python3.10/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/tj/.local/lib/python3.10/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/tj/.local/lib/python3.10/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/tj/.local/lib/python3.10/site-packages/rest_framework/views.py", line 497, in dispatch
+    self.initial(request, *args, **kwargs)
+  File "/home/tj/.local/lib/python3.10/site-packages/rest_framework/views.py", line 414, in initial
+    self.perform_authentication(request)
+  File "/home/tj/.local/lib/python3.10/site-packages/rest_framework/views.py", line 324, in perform_authentication
+    request.user
+  File "/home/tj/.local/lib/python3.10/site-packages/rest_framework/request.py", line 227, in user
+    self._authenticate()
+  File "/home/tj/.local/lib/python3.10/site-packages/rest_framework/request.py", line 380, in _authenticate
+    user_auth_tuple = authenticator.authenticate(self)
+  File "/home/tj/.local/lib/python3.10/site-packages/rest_framework_simplejwt/authentication.py", line 51, in authenticate
+    return self.get_user(validated_token), validated_token
+  File "/home/tj/.local/lib/python3.10/site-packages/rest_framework_simplejwt/authentication.py", line 130, in get_user
+    user = self.user_model.objects.get(**{api_settings.USER_ID_FIELD: user_id})
+  File "/home/tj/.local/lib/python3.10/site-packages/django/db/models/manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/home/tj/.local/lib/python3.10/site-packages/django/db/models/query.py", line 633, in get
+    num = len(clone)
+  File "/home/tj/.local/lib/python3.10/site-packages/django/db/models/query.py", line 380, in __len__
+    self._fetch_all()
+  File "/home/tj/.local/lib/python3.10/site-packages/django/db/models/query.py", line 1881, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+  File "/home/tj/.local/lib/python3.10/site-packages/django/db/models/query.py", line 91, in __iter__
+    results = compiler.execute_sql(
+  File "/home/tj/.local/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 1562, in execute_sql
+    cursor.execute(sql, params)
+  File "/home/tj/.local/lib/python3.10/site-packages/django/db/backends/utils.py", line 102, in execute
+    return super().execute(sql, params)
+  File "/home/tj/.local/lib/python3.10/site-packages/django/db/backends/utils.py", line 67, in execute
+    return self._execute_with_wrappers(
+  File "/home/tj/.local/lib/python3.10/site-packages/django/db/backends/utils.py", line 80, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "/home/tj/.local/lib/python3.10/site-packages/django/db/backends/utils.py", line 84, in _execute
+    with self.db.wrap_database_errors:
+  File "/home/tj/.local/lib/python3.10/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/home/tj/.local/lib/python3.10/site-packages/django/db/backends/utils.py", line 89, in _execute
+    return self.cursor.execute(sql, params)
+django.db.utils.OperationalError: could not receive data from server: Network is unreachable
+SSL SYSCALL error: Network is unreachable
+
+Internal Server Error: /api/auth/me/
+Traceback (most recent call last):
+  File "/home/tj/.local/lib/python3.10/site-packages/django/db/backends/utils.py", line 89, in _execute
+    return self.cursor.execute(sql, params)
+psycopg2.OperationalError: could not receive data from server: Network is unreachable
+SSL SYSCALL error: Network is unreachable
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/tj/.local/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/tj/.local/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/tj/.local/lib/python3.10/site-packages/django/views/decorators/csrf.py", line 56, in wrapper_view
+    return view_func(*args, **kwargs)
+  File "/home/tj/.local/lib/python3.10/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/tj/.local/lib/python3.10/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/tj/.local/lib/python3.10/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/tj/.local/lib/python3.10/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/tj/.local/lib/python3.10/site-packages/rest_framework/views.py", line 497, in dispatch
+    self.initial(request, *args, **kwargs)
+  File "/home/tj/.local/lib/python3.10/site-packages/rest_framework/views.py", line 414, in initial
+    self.perform_authentication(request)
+  File "/home/tj/.local/lib/python3.10/site-packages/rest_framework/views.py", line 324, in perform_authentication
+    request.user
+  File "/home/tj/.local/lib/python3.10/site-packages/rest_framework/request.py", line 227, in user
+    self._authenticate()
+  File "/home/tj/.local/lib/python3.10/site-packages/rest_framework/request.py", line 380, in _authenticate
+    user_auth_tuple = authenticator.authenticate(self)
+  File "/home/tj/.local/lib/python3.10/site-packages/rest_framework_simplejwt/authentication.py", line 51, in authenticate
+    return self.get_user(validated_token), validated_token
+  File "/home/tj/.local/lib/python3.10/site-packages/rest_framework_simplejwt/authentication.py", line 130, in get_user
+    user = self.user_model.objects.get(**{api_settings.USER_ID_FIELD: user_id})
+  File "/home/tj/.local/lib/python3.10/site-packages/django/db/models/manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/home/tj/.local/lib/python3.10/site-packages/django/db/models/query.py", line 633, in get
+    num = len(clone)
+  File "/home/tj/.local/lib/python3.10/site-packages/django/db/models/query.py", line 380, in __len__
+    self._fetch_all()
+  File "/home/tj/.local/lib/python3.10/site-packages/django/db/models/query.py", line 1881, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+  File "/home/tj/.local/lib/python3.10/site-packages/django/db/models/query.py", line 91, in __iter__
+    results = compiler.execute_sql(
+  File "/home/tj/.local/lib/python3.10/site-packages/django/db/models/sql/compiler.py", line 1562, in execute_sql
+    cursor.execute(sql, params)
+  File "/home/tj/.local/lib/python3.10/site-packages/django/db/backends/utils.py", line 102, in execute
+    return super().execute(sql, params)
+  File "/home/tj/.local/lib/python3.10/site-packages/django/db/backends/utils.py", line 67, in execute
+    return self._execute_with_wrappers(
+  File "/home/tj/.local/lib/python3.10/site-packages/django/db/backends/utils.py", line 80, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "/home/tj/.local/lib/python3.10/site-packages/django/db/backends/utils.py", line 84, in _execute
+    with self.db.wrap_database_errors:
+  File "/home/tj/.local/lib/python3.10/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/home/tj/.local/lib/python3.10/site-packages/django/db/backends/utils.py", line 89, in _execute
+    return self.cursor.execute(sql, params)
+django.db.utils.OperationalError: could not receive data from server: Network is unreachable
+SSL SYSCALL error: Network is unreachable
+
+"GET /api/alerts/ HTTP/1.1" 500 187549
+"GET /api/auth/me/ HTTP/1.1" 500 187531
+"POST /api/auth/login/ HTTP/1.1" 200 1170
+"GET /api/alerts/statistics/ HTTP/1.1" 200 93
+"GET /api/auth/me/ HTTP/1.1" 200 580
+"GET /api/alerts/statistics/ HTTP/1.1" 200 93
+"GET /api/auth/me/ HTTP/1.1" 200 580
+"OPTIONS /api/auth/logout/ HTTP/1.1" 200 0
+Bad Request: /api/auth/logout/
+"POST /api/auth/logout/ HTTP/1.1" 400 62
+"POST /api/auth/register/ HTTP/1.1" 201 120
+"POST /api/auth/login/ HTTP/1.1" 200 1165
+"GET /api/alerts/statistics/ HTTP/1.1" 200 93
+"GET /api/auth/me/ HTTP/1.1" 200 575
+"GET /api/alerts/statistics/ HTTP/1.1" 200 93
+"GET /api/auth/me/ HTTP/1.1" 200 575
+"GET /api/alerts/ HTTP/1.1" 200 52
+"GET /api/auth/me/ HTTP/1.1" 200 575
+"GET /api/alerts/ HTTP/1.1" 200 52
+"GET /api/auth/me/ HTTP/1.1" 200 575
+"GET /api/alerts/ HTTP/1.1" 200 52
+"GET /api/auth/me/ HTTP/1.1" 200 575
+"GET /api/auth/me/ HTTP/1.1" 200 575
+"GET /api/alerts/ HTTP/1.1" 200 52
+"GET /api/auth/me/ HTTP/1.1" 200 575
+"GET /api/alerts/ HTTP/1.1" 200 52
+"GET /api/auth/me/ HTTP/1.1" 200 575
+"GET /api/alerts/ HTTP/1.1" 200 52
+Bad Request: /api/auth/logout/
+"POST /api/auth/logout/ HTTP/1.1" 400 62
+"POST /api/auth/login/ HTTP/1.1" 200 1170
+"GET /api/alerts/statistics/ HTTP/1.1" 200 93
+"GET /api/auth/me/ HTTP/1.1" 200 580
+"GET /api/alerts/statistics/ HTTP/1.1" 200 93
+"GET /api/auth/me/ HTTP/1.1" 200 580
+"GET /api/alerts/ HTTP/1.1" 200 52
+"GET /api/auth/me/ HTTP/1.1" 200 580
+"GET /api/alerts/ HTTP/1.1" 200 52
+"GET /api/auth/me/ HTTP/1.1" 200 580
+"GET /api/alerts/ HTTP/1.1" 200 52
+"OPTIONS /api/devices/ HTTP/1.1" 200 0
+"OPTIONS /api/devices/triggers/ HTTP/1.1" 200 0
+"OPTIONS /api/devices/triggers/ HTTP/1.1" 200 0
+"GET /api/devices/ HTTP/1.1" 200 52
+"GET /api/devices/triggers/ HTTP/1.1" 200 52
+"GET /api/auth/me/ HTTP/1.1" 200 580
+"GET /api/devices/ HTTP/1.1" 200 52
+"GET /api/devices/triggers/ HTTP/1.1" 200 52
+"GET /api/auth/me/ HTTP/1.1" 200 580
+"OPTIONS /api/auth/users/ HTTP/1.1" 200 0
+"OPTIONS /api/devices/departments/registrations/ HTTP/1.1" 200 0
+"OPTIONS /api/auth/users/ HTTP/1.1" 200 0
+"OPTIONS /api/devices/departments/registrations/ HTTP/1.1" 200 0
+"GET /api/devices/departments/registrations/ HTTP/1.1" 200 52
+"GET /api/auth/users/ HTTP/1.1" 200 3675
+"GET /api/auth/me/ HTTP/1.1" 200 580
+"GET /api/devices/departments/registrations/ HTTP/1.1" 200 52
+"GET /api/auth/users/ HTTP/1.1" 200 3675
+"GET /api/auth/me/ HTTP/1.1" 200 580
+"GET /api/devices/departments/registrations/ HTTP/1.1" 200 52
+"GET /api/auth/users/ HTTP/1.1" 200 3675
+"GET /api/auth/me/ HTTP/1.1" 200 580
+"GET /api/auth/me/ HTTP/1.1" 200 580
+Bad Request: /api/auth/logout/
+"POST /api/auth/logout/ HTTP/1.1" 400 62
+Bad Request: /api/auth/login/
+"POST /api/auth/login/ HTTP/1.1" 400 54
+"POST /api/auth/login/ HTTP/1.1" 200 1237
+"GET /api/alerts/statistics/ HTTP/1.1" 200 93
+"GET /api/auth/me/ HTTP/1.1" 200 647
+"GET /api/alerts/statistics/ HTTP/1.1" 200 93
+"GET /api/auth/me/ HTTP/1.1" 200 647
+"GET /api/alerts/statistics/ HTTP/1.1" 200 93
+"GET /api/auth/me/ HTTP/1.1" 200 647
+"GET /api/alerts/statistics/ HTTP/1.1" 200 93
+"GET /api/auth/me/ HTTP/1.1" 200 647
+"GET /api/alerts/statistics/ HTTP/1.1" 200 93
+"GET /api/auth/me/ HTTP/1.1" 200 647
+"GET /api/alerts/statistics/ HTTP/1.1" 200 93
+"GET /api/auth/me/ HTTP/1.1" 200 647
+Bad Request: /api/auth/logout/
+"POST /api/auth/logout/ HTTP/1.1" 400 62
