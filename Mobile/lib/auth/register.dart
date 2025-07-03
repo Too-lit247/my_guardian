@@ -1,5 +1,5 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:my_guardian/auth/auth_service.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -30,17 +30,27 @@ class _RegisterPageState extends State<RegisterPage> {
     });
 
     try {
-      UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      // Split name into first and last name
+      final nameParts = _nameController.text.trim().split(' ');
+      final firstName = nameParts.isNotEmpty ? nameParts[0] : '';
+      final lastName =
+          nameParts.length > 1 ? nameParts.sublist(1).join(' ') : '';
+
+      final user = await DjangoAuthService().createUserWithEmailAndPassword(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
+        firstName: firstName,
+        lastName: lastName,
       );
 
-      await userCredential.user?.updateDisplayName(_nameController.text.trim());
-
       Navigator.pushReplacementNamed(context, '/welcome');
-    } on FirebaseAuthException catch (e) {
+    } on AuthException catch (e) {
       setState(() {
         errorMessage = e.message;
+      });
+    } catch (e) {
+      setState(() {
+        errorMessage = 'An unexpected error occurred';
       });
     } finally {
       setState(() {
@@ -84,7 +94,11 @@ class _RegisterPageState extends State<RegisterPage> {
                 const Text(
                   'MyGuardian',
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.green),
+                  style: TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.green,
+                  ),
                 ),
                 const SizedBox(height: 20),
                 if (errorMessage != null)
@@ -193,9 +207,10 @@ class _RegisterPageState extends State<RegisterPage> {
                     child: Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(12),
-                        color: isLoading
-                            ? Colors.green[300]
-                            : const Color.fromARGB(255, 21, 209, 30),
+                        color:
+                            isLoading
+                                ? Colors.green[300]
+                                : const Color.fromARGB(255, 21, 209, 30),
                       ),
                       padding: const EdgeInsets.all(15),
                       child: const Center(
@@ -222,9 +237,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   children: [
                     const Text(
                       'Already have an account?',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     TextButton(
                       onPressed: () => Navigator.pop(context),

@@ -1,8 +1,9 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:my_guardian/auth/auth_service.dart';
 
 class ProfileScreen extends StatelessWidget {
-  final user = FirebaseAuth.instance.currentUser;
+  final AuthUser? user = DjangoAuthService().currentUser;
+
   ProfileScreen({super.key});
 
   @override
@@ -28,7 +29,7 @@ class ProfileScreen extends StatelessWidget {
 }
 
 class ProfileHeader extends StatelessWidget {
-  final User? user;
+  final AuthUser? user;
   const ProfileHeader({required this.user, super.key});
 
   @override
@@ -53,7 +54,11 @@ class ProfileHeader extends StatelessWidget {
             const SizedBox(height: 10),
             Text(
               user?.displayName ?? "John Doe",
-              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
+              style: const TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
             ),
             Text(
               user?.email ?? "john.doe@example.com",
@@ -68,7 +73,7 @@ class ProfileHeader extends StatelessWidget {
 
 // User Information Section
 class UserInfoSection extends StatelessWidget {
-  final User? user;
+  final AuthUser? user;
   const UserInfoSection({required this.user, super.key});
 
   @override
@@ -84,8 +89,16 @@ class UserInfoSection extends StatelessWidget {
       child: Column(
         children: [
           UserInfoRow(icon: Icons.cake, label: "Age", value: "28"),
-          UserInfoRow(icon: Icons.email, label: "Email", value: user?.email ?? "johndoe@email.com"),
-          UserInfoRow(icon: Icons.phone, label: "Phone", value: "+123 456 7890"),
+          UserInfoRow(
+            icon: Icons.email,
+            label: "Email",
+            value: user?.email ?? "johndoe@email.com",
+          ),
+          UserInfoRow(
+            icon: Icons.phone,
+            label: "Phone",
+            value: "+123 456 7890",
+          ),
         ],
       ),
     );
@@ -98,7 +111,12 @@ class UserInfoRow extends StatelessWidget {
   final String label;
   final String value;
 
-  const UserInfoRow({required this.icon, required this.label, required this.value, super.key});
+  const UserInfoRow({
+    required this.icon,
+    required this.label,
+    required this.value,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -108,7 +126,10 @@ class UserInfoRow extends StatelessWidget {
         children: [
           Icon(icon, color: Colors.green),
           const SizedBox(width: 10),
-          Text(label, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          Text(
+            label,
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
           const Spacer(),
           Text(value, style: const TextStyle(fontSize: 16, color: Colors.grey)),
         ],
@@ -138,12 +159,21 @@ class EmergencyContactsSection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text("Emergency Contacts", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          const Text(
+            "Emergency Contacts",
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
           const SizedBox(height: 10),
           Column(
-            children: contacts
-                .map((contact) => ContactRow(name: contact["name"]!, phone: contact["phone"]!))
-                .toList(),
+            children:
+                contacts
+                    .map(
+                      (contact) => ContactRow(
+                        name: contact["name"]!,
+                        phone: contact["phone"]!,
+                      ),
+                    )
+                    .toList(),
           ),
           const SizedBox(height: 10),
           ElevatedButton.icon(
@@ -176,7 +206,10 @@ class ContactRow extends StatelessWidget {
         children: [
           const Icon(Icons.person, color: Colors.green),
           const SizedBox(width: 10),
-          Text(name, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          Text(
+            name,
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
           const Spacer(),
           Text(phone, style: const TextStyle(fontSize: 16, color: Colors.grey)),
         ],

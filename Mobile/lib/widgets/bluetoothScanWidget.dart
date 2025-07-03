@@ -1,247 +1,408 @@
-import 'package:bluetooth_classic/bluetooth_classic.dart';
-import 'package:bluetooth_classic/models/device.dart';
+import 'dart:async';
+import 'dart:convert';
+import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:flutter_blue_plus/flutter_blue_plus.dart';
-import 'package:my_guardian/widgets/settingsHeader.dart';
-import 'package:my_guardian/widgets/settingsTile.dart';
+import 'package:flutter_blue_classic/flutter_blue_classic.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:http/http.dart' as http;
 
-class Bluetoothscanwidget extends StatefulWidget {
-  const Bluetoothscanwidget({super.key});
+class BluetoothScanWidget extends StatefulWidget {
+  const BluetoothScanWidget({super.key});
 
   @override
-  State<Bluetoothscanwidget> createState() => _BluetoothscanwidgetState();
+  State<BluetoothScanWidget> createState() => _BluetoothScanWidgetState();
 }
 
-class _BluetoothscanwidgetState extends State<Bluetoothscanwidget> {
-  final BluetoothClassic _bluetooth = BluetoothClassic();
-  final List<Device> _foundDevices = [];
-  bool _isScanning = false;
+class _BluetoothScanWidgetState extends State<BluetoothScanWidget> {
+  final FlutterBlueClassic _bt = FlutterBlueClassic();
+  final List<BluetoothDevice> _devices = [];
+  bool _scanning = false;
+  BluetoothConnection? _connection;
+  BluetoothDevice? _connected;
+  String _received = "";
 
-  Device? _connectedDevice;
-  BluetoothConnectionEvent? _connection;
-  String _receivedData = "";
+  // Stream subscriptions to prevent memory leaks
+  StreamSubscription<BluetoothDevice>? _scanSubscription;
+  StreamSubscription<BluetoothAdapterState>? _adapterSubscription;
+  StreamSubscription<List<int>>? _dataSubscription;
+  Timer? _scanTimer;
 
   @override
   void initState() {
     super.initState();
-    _initBluetooth();
+    _initBluetoothAdapter();
   }
 
-  // Bluetooth Functions
-
-  Future<void> _initBluetooth() async {
-    // Set up bluetooth event listeners for device discovery
-    _bluetooth.onDeviceDiscovered().listen((device) {
-      setState(() {
-        if (!_foundDevices.any((d) => d.address == device.address)) {
-          _foundDevices.add(device);
-        }
-      });
+  void _initBluetoothAdapter() {
+    _adapterSubscription = _bt.adapterState.listen((state) {
+      if (state == BluetoothAdapterState.off && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Bluetooth adapter is off')),
+        );
+      }
     });
   }
 
-  Future<void> _scanForBluetoothDevices() async {
-    //Request Bluetooth permissions
-    var bluetoothStatus = await Permission.bluetooth.request();
-    var bluetoothConnectStatus = await Permission.bluetoothConnect.request();
-    var bluetoothScanStatus = await Permission.bluetoothScan.request();
-
-    if (!bluetoothStatus.isGranted ||
-        !bluetoothConnectStatus.isGranted ||
-        !bluetoothScanStatus.isGranted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Bluetooth permissions are required")),
-      );
-      return;
-    }
+  Future<void> _scan() async {
+    if (!await _requestPermissions()) return;
 
     setState(() {
-      _foundDevices.clear();
-      _isScanning = true;
+      _devices.clear();
+      _scanning = true;
     });
 
-    try {
-      // Start discovery to find new devices
-      await _bluetooth.startScan();
+    // Cancel any existing scan subscription
+    await _scanSubscription?.cancel();
 
-      // Stop discovery after 30 seconds
-      Future.delayed(const Duration(seconds: 20), () {
-        if (_isScanning) {
-          _bluetooth.stopScan();
-          setState(() {
-            _isScanning = false;
-          });
+    // scanResults typically emits List<BluetoothDevice> or List<ScanResult>
+    // Based on flutter_blue_classic pattern, it should emit List<BluetoothDevice>
+    _scanSubscription = _bt.scanResults.listen(
+      (device) {
+        // device is a single BluetoothDevice
+        if (!_devices.any(
+          (existingDevice) => existingDevice.address == device.address,
+        )) {
+          if (mounted) {
+            setState(() => _devices.add(device));
+          }
+        }
+      },
+      onError: (error) {
+        if (mounted) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('Scan error: $error')));
+        }
+      },
+    );
+
+    try {
+      _bt.startScan();
+      // Set a timer to stop scanning after 20 seconds
+      _scanTimer = Timer(const Duration(seconds: 20), () {
+        if (mounted) {
+          _stopScan();
         }
       });
     } catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text("Error scanning devices: $e")));
-      setState(() {
-        _isScanning = false;
-      });
+      if (mounted) {
+        setState(() => _scanning = false);
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Failed to start scan: $e')));
+      }
     }
   }
 
   Future<void> _stopScan() async {
-    if (_isScanning) {
-      await _bluetooth.stopScan();
-      setState(() {
-        _isScanning = false;
-      });
+    _scanTimer?.cancel();
+    _scanTimer = null;
+
+    try {
+      _bt.stopScan();
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Failed to stop scan: $e')));
+      }
+    }
+
+    if (mounted) {
+      setState(() => _scanning = false);
     }
   }
 
-  Future<void> _connectToDevice(Device device) async {
+  Future<bool> _requestPermissions() async {
     try {
-      final connection = await _bluetooth.connect(device);
-      setState(() {
-        _connectedDevice = device;
-        _connection = connection;
-      });
+      final statuses =
+          await [
+            Permission.bluetooth,
+            Permission.bluetoothScan,
+            Permission.bluetoothConnect,
+            Permission.locationWhenInUse,
+          ].request();
 
-      // Listen to incoming data
-      connection.input.listen((data) {
-        final incoming = String.fromCharCodes(data);
-        setState(() {
-          _receivedData += incoming;
-        });
-        print('Received: $incoming');
-      });
-
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Connected to ${device.name}')));
+      return statuses.values.every((status) => status.isGranted);
     } catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Connection failed: $e')));
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Permission error: $e')));
+      }
+      return false;
+    }
+  }
+
+  Future<void> _connect(BluetoothDevice device) async {
+    try {
+      // Close existing connection if any
+      await _connection?.close();
+      await _dataSubscription?.cancel();
+
+      _connection = await _bt.connect(device.address);
+
+      if (mounted) {
+        setState(() => _connected = device);
+      }
+
+      // Listen for incoming data
+      _dataSubscription = _connection!.input?.listen(
+        (data) {
+          if (mounted) {
+            setState(() => _received += String.fromCharCodes(data));
+          }
+        },
+        onError: (error) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Data reception error: $error')),
+            );
+          }
+        },
+      );
+
+      // Register the device
+      await _registerDevice(device);
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Connected & registered: ${_getDeviceDisplayName(device)}',
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Connection failed: $e')));
+      }
+    }
+  }
+
+  Future<void> _registerDevice(BluetoothDevice device) async {
+    try {
+      final mac = device.address;
+      final name = _getDeviceDisplayName(device);
+      final owner = Random().nextInt(5) + 1;
+
+      final payload = {
+        "mac_address": mac,
+        "name": name,
+        "owner": owner,
+        "is_active": true,
+      };
+
+      final uri = Uri.parse('http://localhost:8000/api/devices/');
+      final response = await http.post(
+        uri,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(payload),
+      );
+
+      if (response.statusCode == 201) {
+        // Success - device registered
+        return;
+      } else if (response.statusCode == 400 &&
+          response.body.contains('unique')) {
+        // Device already registered
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Device already registered')),
+          );
+        }
+        return;
+      } else {
+        throw Exception(
+          'Failed to register device: ${response.statusCode} - ${response.body}',
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Registration failed: $e')));
+      }
+      // Re-throw to let the caller handle it
+      rethrow;
+    }
+  }
+
+  String _getDeviceDisplayName(BluetoothDevice device) {
+    final name = device.name;
+    if (name != null && name.isNotEmpty) {
+      return name;
+    }
+    return device.address;
+  }
+
+  Future<void> _disconnect() async {
+    try {
+      await _dataSubscription?.cancel();
+      await _connection?.close();
+
+      if (mounted) {
+        setState(() {
+          _connected = null;
+          _connection = null;
+          _received = "";
+        });
+
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Disconnected')));
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Disconnect error: $e')));
+      }
     }
   }
 
   @override
   void dispose() {
-    _stopScan();
+    // Cancel all subscriptions and timers
+    _scanTimer?.cancel();
+    _adapterSubscription?.cancel();
+    _scanSubscription?.cancel();
+    _dataSubscription?.cancel();
+
+    // Stop scanning if in progress
+    if (_scanning) {
+      _bt.stopScan();
+    }
+
+    // Close connection
+    _connection?.close();
+
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const SizedBox(height: 20),
-        const SettingsHeader(title: "Bluetooth Devices"),
-
-        SettingsTile(
-          icon: Icons.bluetooth_searching,
-          title: "Scan for Bluetooth Devices",
-          trailing: ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-            onPressed: _isScanning ? _stopScan : _scanForBluetoothDevices,
-            child: Text(
-              _isScanning ? "Stop Scan" : "Start Scan",
-              style: const TextStyle(color: Colors.white),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Bluetooth Scanner'),
+        actions: [
+          if (_connected != null)
+            IconButton(
+              icon: const Icon(Icons.bluetooth_disabled),
+              onPressed: _disconnect,
+              tooltip: 'Disconnect',
             ),
-          ),
-        ),
-        if (_foundDevices.isNotEmpty)
-          Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Row(
-                  children: const [
-                    Icon(Icons.bluetooth, color: Colors.blue),
-                    SizedBox(width: 8),
-                    Text(
-                      "Available Devices",
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              ListView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: _foundDevices.length,
-                itemBuilder: (context, index) {
-                  final device = _foundDevices[index];
-                  return InkWell(
-                    onTap: () => _connectToDevice(device),
-                    child: Container(
-                      margin: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 5,
-                      ),
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: Colors.grey[100],
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: Colors.white),
-                      ),
-                      child: Row(
-                        children: [
-                          const Icon(Icons.bluetooth, color: Colors.blue),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  device.name ?? "Unknown Device",
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Text(device.address),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
-              ),
-              if (_connectedDevice != null)
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        "Connected to:",
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      Text(_connectedDevice!.name ?? _connectedDevice!.address),
-                      const SizedBox(height: 10),
-                      const Text("Incoming Data:"),
-                      Text(
-                        _receivedData.isEmpty ? "No data yet." : _receivedData,
-                      ),
-                    ],
+        ],
+      ),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: _scanning ? _stopScan : _scan,
+                    icon: Icon(_scanning ? Icons.stop : Icons.search),
+                    label: Text(_scanning ? "Stop Scanning" : "Start Scan"),
                   ),
                 ),
-            ],
+                const SizedBox(width: 16),
+                if (_scanning) const CircularProgressIndicator(),
+              ],
+            ),
           ),
-        if (_isScanning)
-          const Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Center(
+
+          if (_connected != null)
+            Container(
+              margin: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(16.0),
+              decoration: BoxDecoration(
+                color: Colors.green.shade50,
+                border: Border.all(color: Colors.green),
+                borderRadius: BorderRadius.circular(8),
+              ),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  CircularProgressIndicator(color: Colors.green),
-                  SizedBox(height: 8),
-                  Text("Scanning for devices..."),
+                  Text(
+                    'Connected: ${_getDeviceDisplayName(_connected!)}',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.green.shade700,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Received: ${_received.isEmpty ? "No data" : _received}',
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
                 ],
               ),
             ),
+
+          Expanded(
+            child:
+                _devices.isEmpty
+                    ? Center(
+                      child: Text(
+                        _scanning
+                            ? 'Scanning for devices...'
+                            : 'No devices found. Tap "Start Scan" to search.',
+                        style: Theme.of(context).textTheme.bodyLarge,
+                        textAlign: TextAlign.center,
+                      ),
+                    )
+                    : ListView.builder(
+                      itemCount: _devices.length,
+                      itemBuilder: (context, index) {
+                        final device = _devices[index];
+                        final isConnected =
+                            _connected?.address == device.address;
+
+                        return Card(
+                          margin: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 4,
+                          ),
+                          child: ListTile(
+                            leading: Icon(
+                              isConnected
+                                  ? Icons.bluetooth_connected
+                                  : Icons.bluetooth,
+                              color: isConnected ? Colors.green : Colors.blue,
+                            ),
+                            title: Text(
+                              _getDeviceDisplayName(device),
+                              style: TextStyle(
+                                fontWeight:
+                                    isConnected
+                                        ? FontWeight.bold
+                                        : FontWeight.normal,
+                              ),
+                            ),
+                            subtitle: Text(
+                              'Address: ${device.address}',
+                              style: TextStyle(color: Colors.grey.shade600),
+                            ),
+                            trailing:
+                                isConnected
+                                    ? const Icon(
+                                      Icons.check_circle,
+                                      color: Colors.green,
+                                    )
+                                    : const Icon(Icons.arrow_forward_ios),
+                            onTap: isConnected ? null : () => _connect(device),
+                          ),
+                        );
+                      },
+                    ),
           ),
-      ],
+        ],
+      ),
     );
   }
 }

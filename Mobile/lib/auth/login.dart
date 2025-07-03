@@ -1,5 +1,5 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'auth_service.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -21,20 +21,36 @@ class _LoginPageState extends State<LoginPage> {
     });
 
     try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
+      // Use Django Auth Service instead of Firebase
+      await DjangoAuthService().signInWithEmailAndPassword(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
-      Navigator.pushReplacementNamed(context, '/home');
-    } on FirebaseAuthException catch (e) {
+
+      // Navigate to home on success
+      if (mounted) {
+        Navigator.pushReplacementNamed(context, '/home');
+      }
+    } on AuthException catch (e) {
       setState(() {
-        if(e.code == 'user-not-found') {
-          errorMessage = 'No user found for that email.';
-        } else if(e.code == 'wrong-password') {
-          errorMessage = 'Wrong password provided for that user.';
-        } else {
-        errorMessage = e.message;
+        // Handle specific Django auth errors
+        switch (e.code) {
+          case 'invalid-credentials':
+            errorMessage = 'Invalid email or password.';
+            break;
+          case 'user-not-found':
+            errorMessage = 'No user found for that email.';
+            break;
+          case 'network-error':
+            errorMessage = 'Network error. Please check your connection.';
+            break;
+          default:
+            errorMessage = e.message;
         }
+      });
+    } catch (e) {
+      setState(() {
+        errorMessage = 'An unexpected error occurred. Please try again.';
       });
     } finally {
       setState(() {
@@ -70,9 +86,7 @@ class _LoginPageState extends State<LoginPage> {
                 const SizedBox(height: 10),
                 const Text(
                   'Welcome back to MyGuardian!',
-                  style: TextStyle(
-                    fontSize: 18,
-                  ),
+                  style: TextStyle(fontSize: 18),
                 ),
                 const SizedBox(height: 30),
                 if (errorMessage != null)
@@ -101,6 +115,7 @@ class _LoginPageState extends State<LoginPage> {
                           hintText: 'Email',
                         ),
                         enabled: !isLoading,
+                        keyboardType: TextInputType.emailAddress,
                       ),
                     ),
                   ),
@@ -136,9 +151,10 @@ class _LoginPageState extends State<LoginPage> {
                     child: Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(12),
-                        color: isLoading
-                            ? Colors.green[300]
-                            : const Color.fromARGB(255, 21, 209, 30),
+                        color:
+                            isLoading
+                                ? Colors.green[300]
+                                : const Color.fromARGB(255, 21, 209, 30),
                       ),
                       padding: const EdgeInsets.all(15),
                       child: const Center(
@@ -165,12 +181,11 @@ class _LoginPageState extends State<LoginPage> {
                   children: [
                     const Text(
                       'Not a member?',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     TextButton(
-                      onPressed: () => Navigator.pushNamed(context, '/register'),
+                      onPressed:
+                          () => Navigator.pushNamed(context, '/register'),
                       child: const Text(
                         ' Register Now',
                         style: TextStyle(

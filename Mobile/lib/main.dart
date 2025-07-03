@@ -1,19 +1,20 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:my_guardian/auth/auth.dart';
+import 'package:my_guardian/auth/auth_service.dart';
 import 'package:my_guardian/auth/login.dart';
 import 'package:my_guardian/auth/register.dart';
 import 'package:my_guardian/layouts/layout.dart';
 import 'package:my_guardian/onboarding/devicesetupscreen.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  // Initialize your auth service (load stored user/token)
+  await DjangoAuthService().initialize();
 
   runApp(const MyApp());
 }
@@ -28,11 +29,11 @@ class MyApp extends StatelessWidget {
       title: 'my_guardian',
       theme: ThemeData(primarySwatch: Colors.blue),
       routes: {
-        '/' : (context) => AuthChecker(),
-        '/welcome' : (context) => OnboardingScreen(),
-        '/home' : (context) => MainScreen(),
-        '/login': (context) => LoginPage(),
-        '/register': (context) => RegisterPage(),
+        '/': (context) => AuthChecker(),
+        '/welcome': (context) => const OnboardingScreen(),
+        '/home': (context) => const MainScreen(),
+        '/login': (context) => const LoginPage(),
+        '/register': (context) => const RegisterPage(),
       },
     );
   }
@@ -99,20 +100,24 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 class WelcomeScreen extends StatelessWidget {
   final PageController pageController;
 
-  final user = FirebaseAuth.instance.currentUser;
-
-  WelcomeScreen({super.key, required this.pageController});
+  const WelcomeScreen({super.key, required this.pageController});
 
   @override
   Widget build(BuildContext context) {
+    final user = DjangoAuthService().currentUser;
+    final displayName = user?.displayName ?? 'User';
+    final email = user?.email ?? '';
+
     return _buildScreen(
-      description: "Welcome, ${user!.email!} Your safety is our priority. Let's set up your my_guardian.",
+      description:
+          "Welcome, $displayName ($email). Your safety is our priority. Let's set up your my_guardian.",
       buttonText: "Next",
       image: "assets/images/welcome.jpg",
-      onPressed: () => pageController.nextPage(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.ease,
-      ),
+      onPressed:
+          () => pageController.nextPage(
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.ease,
+          ),
     );
   }
 }
@@ -131,10 +136,11 @@ class AppDescriptionScreen extends StatelessWidget {
           "If danger is detected, emergency contacts will be called automatically.",
       buttonText: "Next",
       image: "assets/images/working.jpg",
-      onPressed: () => pageController.nextPage(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.ease,
-      ),
+      onPressed:
+          () => pageController.nextPage(
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.ease,
+          ),
     );
   }
 }
@@ -154,16 +160,15 @@ Widget _buildScreen({
         SizedBox(
           width: double.infinity,
           height: 300,
-          child: Image.asset(
-            image,
-            fit: BoxFit.contain,
-          ),
+          child: Image.asset(image, fit: BoxFit.contain),
         ),
-        title != '' ?
-        Text(
-          title,
-          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-        ): const SizedBox(height: 10),
+        if (title.isNotEmpty)
+          Text(
+            title,
+            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          )
+        else
+          const SizedBox(height: 10),
         const SizedBox(height: 20),
         Text(
           description,
@@ -171,10 +176,7 @@ Widget _buildScreen({
           style: const TextStyle(fontSize: 16),
         ),
         const SizedBox(height: 40),
-        ElevatedButton(
-          onPressed: onPressed,
-          child: Text(buttonText),
-        ),
+        ElevatedButton(onPressed: onPressed, child: Text(buttonText)),
       ],
     ),
   );

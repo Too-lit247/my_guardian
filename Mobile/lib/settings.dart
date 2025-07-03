@@ -298,7 +298,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ),
 
-            Bluetoothscanwidget(),
+            BluetoothScanWidget(),
 
             const SizedBox(height: 20),
             const SettingsHeader(title: "Emergency Contact"),

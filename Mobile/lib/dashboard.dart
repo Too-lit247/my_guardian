@@ -1,5 +1,6 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:my_guardian/auth/auth_service.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
@@ -13,7 +14,14 @@ class _DashboardState extends State<Dashboard> {
   String voiceStatus = "Normal";
   bool alertSent = false;
 
-  void _updateData(int newHeartRate, String newVoiceStatus, bool emergencyAlert) {
+  final List<String> _voiceStates = ["Normal", "Distressed", "Silent"];
+  final Random _random = Random();
+
+  void _updateData(
+    int newHeartRate,
+    String newVoiceStatus,
+    bool emergencyAlert,
+  ) {
     setState(() {
       heartRate = newHeartRate;
       voiceStatus = newVoiceStatus;
@@ -21,28 +29,38 @@ class _DashboardState extends State<Dashboard> {
     });
   }
 
+  void _triggerDataManually() {
+    final newRate = 60 + _random.nextInt(100);
+    final newVoice = _voiceStates[_random.nextInt(_voiceStates.length)];
+    final emergency = newRate > 120 || newVoice == "Distressed";
+
+    _updateData(newRate, newVoice, emergency);
+  }
+
   @override
   Widget build(BuildContext context) {
+    final user = DjangoAuthService().currentUser;
+
     return Scaffold(
       backgroundColor: Colors.grey[200],
       appBar: AppBar(
-        title: const Text("Home"),
+        title: const Text("Dashboard"),
         backgroundColor: Colors.green,
         foregroundColor: Colors.white,
         centerTitle: true,
         actions: [
           IconButton(
-        icon: const Icon(Icons.logout),
-        onPressed: () async {
-          await FirebaseAuth.instance.signOut();
-          Navigator.of(context).pushReplacementNamed('/login');
-        },
+            icon: const Icon(Icons.logout),
+            onPressed: () async {
+              await DjangoAuthService().signOut();
+              if (!mounted) return;
+              Navigator.of(context).pushReplacementNamed('/login');
+            },
           ),
         ],
       ),
       body: SingleChildScrollView(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SizedBox(
               width: double.infinity,
@@ -52,19 +70,50 @@ class _DashboardState extends State<Dashboard> {
                 fit: BoxFit.cover,
               ),
             ),
-            const Text("Connected to Bracelet", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            const Icon(Icons.bluetooth_connected_rounded, size: 50, color: Colors.green),
-            alertSent
-              ? Card(
-                  elevation: 3,
-                  margin: const EdgeInsets.all(10),
-                  child: ListTile(
-                    leading: const Icon(Icons.warning, color: Colors.orange, size: 30),
-                    title: const Text("Emergency Alert Sent"),
-                    subtitle: const Text("An emergency SMS has been sent by the my_guardian."),
+            Padding(
+              padding: const EdgeInsets.only(top: 12.0),
+              child: Column(
+                children: [
+                  Text(
+                    "Welcome, ${user?.displayName ?? 'User'}",
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                )
-              : const SizedBox.shrink(),
+                  Text(
+                    user?.email ?? '',
+                    style: const TextStyle(fontSize: 14, color: Colors.black54),
+                  ),
+                  const SizedBox(height: 10),
+                  const Icon(
+                    Icons.bluetooth_connected_rounded,
+                    size: 50,
+                    color: Colors.green,
+                  ),
+                  const Text(
+                    "Connected to Bracelet",
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                  ),
+                ],
+              ),
+            ),
+            if (alertSent)
+              Card(
+                elevation: 3,
+                margin: const EdgeInsets.all(10),
+                child: ListTile(
+                  leading: const Icon(
+                    Icons.warning,
+                    color: Colors.orange,
+                    size: 30,
+                  ),
+                  title: const Text("Emergency Alert Sent"),
+                  subtitle: const Text(
+                    "An emergency SMS has been sent by my_guardian.",
+                  ),
+                ),
+              ),
             const SizedBox(height: 10),
             Card(
               elevation: 2,
@@ -72,9 +121,19 @@ class _DashboardState extends State<Dashboard> {
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 15.0),
                 child: ListTile(
-                  leading: const Icon(Icons.favorite, color: Colors.red, size: 30),
+                  leading: const Icon(
+                    Icons.favorite,
+                    color: Colors.red,
+                    size: 30,
+                  ),
                   title: const Text("Heart Rate"),
-                  subtitle: Text("~$heartRate BPM", style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                  subtitle: Text(
+                    "~$heartRate BPM",
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -86,10 +145,24 @@ class _DashboardState extends State<Dashboard> {
                 child: ListTile(
                   leading: const Icon(Icons.mic, color: Colors.green, size: 30),
                   title: const Text("Voice Monitoring"),
-                  subtitle: Text(voiceStatus, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                  subtitle: Text(
+                    voiceStatus,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
               ),
             ),
+            const SizedBox(height: 20),
+            ElevatedButton.icon(
+              onPressed: _triggerDataManually,
+              icon: const Icon(Icons.sync),
+              label: const Text("Simulate Update"),
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+            ),
+            const SizedBox(height: 30),
           ],
         ),
       ),
