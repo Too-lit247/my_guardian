@@ -425,3 +425,5 @@ Unauthorized: /api/devices/
 "POST /api/devices/ HTTP/1.1" 401 58
 /home/tj/Documents/GitHub/Work/my_guardian/backend/emergency_system/settings.py changed, reloading.
 Watching for file changes with StatReloader
+Not Found: /
+Not Found: /favicon.ico

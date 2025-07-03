@@ -1,11 +1,10 @@
 // auth_service.dart
 import 'dart:async';
 import 'dart:convert';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 // User model
 class AuthUser {
@@ -102,7 +101,8 @@ class DjangoAuthService extends ChangeNotifier {
   DjangoAuthService._internal();
 
   // Configuration
-  static const String _baseUrl = 'http://localhost:8000/api/auth';
+  final _baseUrl =
+      '${dotenv.env['BASE_URL']!}/api/auth'; //  'http://localhost:8000/api/auth';
   static const String _tokenKey = 'auth_token';
   static const String _refreshTokenKey = 'refresh_token';
   static const String _userKey = 'user_data';
