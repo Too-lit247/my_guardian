@@ -21,4 +21,8 @@ urlpatterns = [
     
     # Login History
     path('login-history/', views.login_history, name='login_history'),
+
+    # Emergency Contacts
+    path('emergency-contacts/', views.EmergencyContactListCreateView.as_view(), name='emergency_contact_list_create'),
+    path('emergency-contacts/<uuid:pk>/', views.EmergencyContactDetailView.as_view(), name='emergency_contact_detail'),
 ]

@@ -2,7 +2,7 @@ from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.contrib.auth import authenticate
 from django.contrib.auth.password_validation import validate_password
-from .models import User, UserLoginHistory
+from .models import User, UserLoginHistory, EmergencyContact
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     department = serializers.ChoiceField(choices=User.DEPARTMENT_CHOICES)
@@ -198,3 +198,14 @@ class UserLoginHistorySerializer(serializers.ModelSerializer):
     class Meta:
         model = UserLoginHistory
         fields = ['ip_address', 'user_agent', 'login_time', 'logout_time', 'success', 'failure_reason']
+
+class EmergencyContactSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EmergencyContact
+        fields = [
+            'contact_id', 'name', 'phone_number', 'relation',
+            'preferred_method', 'created_at', 'updated_at'
+        ]
+        read_only_fields = ['contact_id', 'created_at', 'updated_at']
+
+        

@@ -6,12 +6,14 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import logout
 from django.utils import timezone
-from .models import User, UserLoginHistory, UserSession
+from .models import User, UserLoginHistory, UserSession, EmergencyContact
 from .serializers import (
     CustomTokenObtainPairSerializer, UserSerializer, CreateUserSerializer,
     UpdateUserSerializer, ChangePasswordSerializer, UserLoginHistorySerializer,
-    RegisterUserSerializer
+    RegisterUserSerializer, EmergencyContactSerializer
 )
+
+
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
@@ -194,3 +196,20 @@ def login_history(request):
         'page_size': page_size,
         'has_next': len(serializer.data) == page_size
     })
+
+class EmergencyContactListCreateView(generics.ListCreateAPIView):
+    serializer_class = EmergencyContactSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return EmergencyContact.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+class EmergencyContactDetailView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = EmergencyContactSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return EmergencyContact.objects.filter(user=self.request.user)
