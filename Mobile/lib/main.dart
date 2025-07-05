@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:my_guardian/SplashScreen.dart';
 import 'package:my_guardian/auth/auth.dart';
 import 'package:my_guardian/auth/auth_service.dart';
 import 'package:my_guardian/auth/login.dart';
@@ -12,11 +13,13 @@ import 'firebase_options.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  await dotenv.load(fileName: ".env");
+
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   // Initialize your auth service (load stored user/token)
   await DjangoAuthService().initialize();
-  await dotenv.load(fileName: ".env");
+  //await dotenv.load(fileName: ".env");
   runApp(const MyApp());
 }
 
@@ -27,10 +30,20 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'my_guardian',
+      title: 'my_guardian_plus',
       theme: ThemeData(primarySwatch: Colors.blue),
+      // home: AuthStateWrapper(
+      //   builder: (context, user) {
+      //     if (user != null) {
+      //       return MainScreen(); // Authenticated
+      //     } else {
+      //       return LoginPage(); // Not authenticated
+      //     }
+      //   },
+      //   loadingWidget: SplashScreen(), // splash screen while waiting
+      // ),
       routes: {
-        '/': (context) => AuthChecker(),
+        '/': (context) => LoginPage(),
         '/welcome': (context) => const OnboardingScreen(),
         '/home': (context) => const MainScreen(),
         '/login': (context) => const LoginPage(),

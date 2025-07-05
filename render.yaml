@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: my-guardian-plus-django
+    env: python
+    rootDir: Backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn emergency_system.wsgi:application
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: emergency_system.settings
+      - key: SECRET_KEY
+        generateValue: true
