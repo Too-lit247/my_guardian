@@ -430,3 +430,8 @@ Not Found: /favicon.ico
 Watching for file changes with StatReloader
 C:\Users\TJ\Desktop\dev\Work\My Guardian\Mobile\Backend\emergency_system\settings.py changed, reloading.
 Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+Not Found: /
+"GET / HTTP/1.1" 404 2641
+Not Found: /favicon.ico
+"GET /favicon.ico HTTP/1.1" 404 2692
