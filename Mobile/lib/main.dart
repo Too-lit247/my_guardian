@@ -7,6 +7,7 @@ import 'package:my_guardian/auth/register.dart';
 import 'package:my_guardian/layouts/layout.dart';
 import 'package:my_guardian/onboarding/devicesetupscreen.dart';
 import 'package:flutter/material.dart';
+import 'package:my_guardian/scanPage.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -47,6 +48,7 @@ class MyApp extends StatelessWidget {
         '/home': (context) => const MainScreen(),
         '/login': (context) => const LoginPage(),
         '/register': (context) => const RegisterPage(),
+        '/scan_device': (context) => const DeviceScanPage(),
       },
     );
   }

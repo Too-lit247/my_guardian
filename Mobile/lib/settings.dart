@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:my_guardian/widgets/bluetoothScanWidget.dart';
+import 'package:my_guardian/widgets/logoutTile.dart';
 import 'package:my_guardian/widgets/settingsHeader.dart';
 import 'package:my_guardian/widgets/settingsTile.dart';
+import 'package:my_guardian/widgets/registeredDeviceWidget.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 // Import your PostgreSQL services
 import 'package:my_guardian/services/emergency_contact_service.dart';
@@ -20,7 +23,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool _notificationsEnabled = true;
   bool _darkMode = false;
   String _selectedLanguage = "English";
-  final bool _bridgeConnected = true;
   final String _firmwareVersion = "v1.2.3";
   bool _autoSyncEnabled = true;
 
@@ -395,20 +397,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     }).toList(),
               ),
             ),
+            LogoutTile(),
             const SizedBox(height: 20),
 
-            const SettingsHeader(title: "Bridge State Settings"),
-            SettingsTile(
-              icon: Icons.wifi,
-              title: "Connection Status",
-              trailing: Text(
-                _bridgeConnected ? "Connected" : "Disconnected",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: _bridgeConnected ? Colors.green : Colors.red,
-                ),
-              ),
-            ),
+            RegisteredDeviceTile(),
+
+            const SettingsHeader(title: "Device Settings"),
             SettingsTile(
               icon: Icons.system_update,
               title: "Firmware Version",
@@ -432,7 +426,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ),
 
-            //const BluetoothScanWidget(),
             const SizedBox(height: 20),
             const SettingsHeader(title: "Emergency Contact"),
             SettingsTile(
