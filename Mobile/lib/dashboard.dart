@@ -43,7 +43,7 @@ class _DashboardState extends State<Dashboard> {
     final user = DjangoAuthService().currentUser;
 
     return Scaffold(
-      backgroundColor: Colors.grey[200],
+      backgroundColor: Colors.white,
       // appBar: AppBar(
       //   title: const Text("Dashboard"),
       //   backgroundColor: Colors.green,
@@ -53,6 +53,7 @@ class _DashboardState extends State<Dashboard> {
       body: SingleChildScrollView(
         child: Column(
           children: [
+            const SizedBox(height: 50),
             SizedBox(
               width: double.infinity,
               height: 350,
@@ -107,7 +108,6 @@ class _DashboardState extends State<Dashboard> {
               ),
             const SizedBox(height: 10),
             Card(
-              elevation: 2,
               margin: const EdgeInsets.all(10),
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 15.0),
