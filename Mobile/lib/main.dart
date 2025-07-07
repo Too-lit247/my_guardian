@@ -5,10 +5,9 @@ import 'package:my_guardian/auth/auth_service.dart';
 import 'package:my_guardian/auth/login.dart';
 import 'package:my_guardian/auth/register.dart';
 import 'package:my_guardian/layouts/layout.dart';
-import 'package:my_guardian/onboarding/devicesetupscreen.dart';
 import 'package:flutter/material.dart';
 import 'package:my_guardian/scanPage.dart';
-import 'firebase_options.dart';
+import 'services/firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -80,7 +79,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               children: [
                 WelcomeScreen(pageController: _pageController),
                 AppDescriptionScreen(pageController: _pageController),
-                const DeviceSetupScreen(),
+                DashboardInfoScreen(pageController: _pageController),
+                const SettingsInfoScreen(),
               ],
             ),
           ),
@@ -96,7 +96,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: List.generate(
-          3,
+          4, // Updated to 5 screens
           (index) => Container(
             margin: const EdgeInsets.symmetric(horizontal: 5),
             width: _currentPage == index ? 12 : 8,
@@ -125,7 +125,7 @@ class WelcomeScreen extends StatelessWidget {
 
     return _buildScreen(
       description:
-          "Welcome, $displayName ($email). Your safety is our priority. Let's set up your my_guardian.",
+          "Welcome, $displayName ($email). Your safety is our priority. Let's set up your Guardian+ device.",
       buttonText: "Next",
       image: "assets/images/welcome.jpg",
       onPressed:
@@ -147,7 +147,7 @@ class AppDescriptionScreen extends StatelessWidget {
     return _buildScreen(
       title: "How It Works",
       description:
-          "This app connects to your my_guardian to monitor your heart rate and voice. "
+          "This app connects to your Guardian+ device to monitor your heart rate voice, as well as if there is a fire in your surrounding"
           "If danger is detected, emergency contacts will be called automatically.",
       buttonText: "Next",
       image: "assets/images/working.jpg",
@@ -156,6 +156,51 @@ class AppDescriptionScreen extends StatelessWidget {
             duration: const Duration(milliseconds: 300),
             curve: Curves.ease,
           ),
+    );
+  }
+}
+
+class DashboardInfoScreen extends StatelessWidget {
+  final PageController pageController;
+
+  const DashboardInfoScreen({super.key, required this.pageController});
+
+  @override
+  Widget build(BuildContext context) {
+    return _buildScreen(
+      title: "Live Dashboard",
+      description:
+          "View real-time updates from your Guardian+ device on the dashboard. "
+          "Monitor your heart rate, voice patterns, and environmental conditions "
+          "all in one place with live data visualization.",
+      buttonText: "Next",
+      image: "assets/images/dashboard.jpg", // Add your dashboard image
+      onPressed:
+          () => pageController.nextPage(
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.ease,
+          ),
+    );
+  }
+}
+
+class SettingsInfoScreen extends StatelessWidget {
+  const SettingsInfoScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return _buildScreen(
+      title: "Device & Contacts Setup",
+      description:
+          "Visit the Settings page to connect your Guardian+ device and manage "
+          "your emergency contacts. You can add multiple contacts and customize "
+          "notification preferences to ensure help reaches you when needed.",
+      buttonText: "Get Started",
+      image: "assets/images/settings.png", // Add your settings image
+      onPressed: () {
+        // Navigate to home screen (dashboard) to complete onboarding
+        Navigator.pushReplacementNamed(context, '/home');
+      },
     );
   }
 }
@@ -191,7 +236,13 @@ Widget _buildScreen({
           style: const TextStyle(fontSize: 16),
         ),
         const SizedBox(height: 40),
-        ElevatedButton(onPressed: onPressed, child: Text(buttonText)),
+        ElevatedButton(
+          onPressed: onPressed,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.green, // Makes the button green
+          ),
+          child: Text(buttonText, style: TextStyle(color: Colors.white)),
+        ),
       ],
     ),
   );

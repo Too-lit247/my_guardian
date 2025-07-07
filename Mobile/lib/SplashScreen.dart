@@ -89,7 +89,7 @@ class _SplashScreenState extends State<SplashScreen>
         return;
       }
 
-      await DBService().connect(); // Ensure DB connection is ready
+      await DBService().connect();
       await PostgreAuth().initialize();
       final isAuthenticated = PostgreAuth().isAuthenticated;
       await Future.delayed(const Duration(seconds: 2));

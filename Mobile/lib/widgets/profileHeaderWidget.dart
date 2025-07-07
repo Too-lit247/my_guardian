@@ -3,17 +3,10 @@ import 'package:my_guardian/auth/auth_service.dart';
 
 class ProfileHeaderWidget extends StatelessWidget {
   final AuthUser? user;
-  final bool showUserInfo;
   final double? height;
   final EdgeInsets? margin;
 
-  const ProfileHeaderWidget({
-    this.user,
-    this.showUserInfo = false,
-    this.height,
-    this.margin,
-    super.key,
-  });
+  const ProfileHeaderWidget({this.user, this.height, this.margin, super.key});
 
   @override
   Widget build(BuildContext context) {
