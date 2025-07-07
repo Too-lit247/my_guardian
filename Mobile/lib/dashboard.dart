@@ -44,22 +44,12 @@ class _DashboardState extends State<Dashboard> {
 
     return Scaffold(
       backgroundColor: Colors.grey[200],
-      appBar: AppBar(
-        title: const Text("Dashboard"),
-        backgroundColor: Colors.green,
-        foregroundColor: Colors.white,
-        centerTitle: true,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () async {
-              await PostgreAuth().logout();
-              if (!mounted) return;
-              Navigator.of(context).pushReplacementNamed('/login');
-            },
-          ),
-        ],
-      ),
+      // appBar: AppBar(
+      //   title: const Text("Dashboard"),
+      //   backgroundColor: Colors.green,
+      //   foregroundColor: Colors.white,
+      //   centerTitle: true,
+      // ),
       body: SingleChildScrollView(
         child: Column(
           children: [
