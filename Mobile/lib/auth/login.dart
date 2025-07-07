@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'auth_service.dart';
+import 'package:my_guardian/services/postgre_auth.dart';
+//import 'auth_service.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -21,36 +22,24 @@ class _LoginPageState extends State<LoginPage> {
     });
 
     try {
-      // Use Django Auth Service instead of Firebase
-      await DjangoAuthService().signInWithEmailAndPassword(
+      await PostgreAuth().login(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
 
-      // Navigate to home on success
       if (mounted) {
         Navigator.pushReplacementNamed(context, '/home');
       }
-    } on AuthException catch (e) {
-      setState(() {
-        // Handle specific Django auth errors
-        switch (e.code) {
-          case 'invalid-credentials':
-            errorMessage = 'Invalid email or password.';
-            break;
-          case 'user-not-found':
-            errorMessage = 'No user found for that email.';
-            break;
-          case 'network-error':
-            errorMessage = 'Network error. Please check your connection.';
-            break;
-          default:
-            errorMessage = e.message;
-        }
-      });
     } catch (e) {
       setState(() {
-        errorMessage = 'An unexpected error occurred. Please try again.';
+        final error = e.toString().toLowerCase();
+        if (error.contains('not found')) {
+          errorMessage = 'No user found for that email.';
+        } else if (error.contains('invalid password')) {
+          errorMessage = 'Invalid email or password.';
+        } else {
+          errorMessage = 'An unexpected error occurred. Please try again.';
+        }
       });
     } finally {
       setState(() {

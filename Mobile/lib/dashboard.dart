@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:my_guardian/auth/auth_service.dart';
+import 'package:my_guardian/services/postgre_auth.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
@@ -52,7 +53,7 @@ class _DashboardState extends State<Dashboard> {
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () async {
-              await DjangoAuthService().signOut();
+              await PostgreAuth().logout();
               if (!mounted) return;
               Navigator.of(context).pushReplacementNamed('/login');
             },

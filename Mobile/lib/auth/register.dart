@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_guardian/auth/auth_service.dart';
+import 'package:my_guardian/services/postgre_auth.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -11,6 +12,7 @@ class RegisterPage extends StatefulWidget {
 class _RegisterPageState extends State<RegisterPage> {
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
+  final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
   bool isLoading = false;
@@ -30,27 +32,30 @@ class _RegisterPageState extends State<RegisterPage> {
     });
 
     try {
-      // Split name into first and last name
+      // Split name into first and last
       final nameParts = _nameController.text.trim().split(' ');
       final firstName = nameParts.isNotEmpty ? nameParts[0] : '';
       final lastName =
           nameParts.length > 1 ? nameParts.sublist(1).join(' ') : '';
 
-      final user = await DjangoAuthService().createUserWithEmailAndPassword(
+      await PostgreAuth().register(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
         firstName: firstName,
         lastName: lastName,
+        phoneNumber: _phoneController.text.trim(),
       );
 
-      Navigator.pushReplacementNamed(context, '/welcome');
-    } on AuthException catch (e) {
-      setState(() {
-        errorMessage = e.message;
-      });
+      if (mounted) {
+        Navigator.pushReplacementNamed(context, '/welcome');
+      }
     } catch (e) {
       setState(() {
-        errorMessage = 'An unexpected error occurred';
+        if (e.toString().toLowerCase().contains('duplicate')) {
+          errorMessage = 'Email already in use.';
+        } else {
+          errorMessage = 'An unexpected error occurred';
+        }
       });
     } finally {
       setState(() {
@@ -64,6 +69,7 @@ class _RegisterPageState extends State<RegisterPage> {
     _nameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
+    _phoneController.dispose();
     _confirmPasswordController.dispose();
     super.dispose();
   }
@@ -71,7 +77,7 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[300],
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -82,7 +88,16 @@ class _RegisterPageState extends State<RegisterPage> {
                   alignment: Alignment.center,
                   child: CircleAvatar(
                     radius: 50,
-                    backgroundImage: AssetImage('assets/icon/logo_2.png'),
+                    backgroundColor:
+                        Colors.white, // Match the scaffold background
+                    child: ClipOval(
+                      child: Image.asset(
+                        'assets/icon/logo_2.png',
+                        fit: BoxFit.cover,
+                        width: 90,
+                        height: 90,
+                      ),
+                    ),
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -92,7 +107,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
                 const Text(
-                  'MyGuardian',
+                  'MyGuardian+',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 32,
@@ -148,6 +163,29 @@ class _RegisterPageState extends State<RegisterPage> {
                           border: InputBorder.none,
                           hintText: 'Email Address',
                         ),
+                        enabled: !isLoading,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.grey[200],
+                      border: Border.all(color: Colors.white),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 8.0),
+                      child: TextField(
+                        controller: _phoneController,
+                        decoration: const InputDecoration(
+                          border: InputBorder.none,
+                          hintText: 'Phone Number',
+                        ),
+                        keyboardType: TextInputType.phone,
                         enabled: !isLoading,
                       ),
                     ),

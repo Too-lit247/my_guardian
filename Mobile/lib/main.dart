@@ -1,7 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:my_guardian/SplashScreen.dart';
-import 'package:my_guardian/auth/auth.dart';
 import 'package:my_guardian/auth/auth_service.dart';
 import 'package:my_guardian/auth/login.dart';
 import 'package:my_guardian/auth/register.dart';
@@ -30,7 +29,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'my_guardian_plus',
+      title: 'My Guardian Plus',
       theme: ThemeData(primarySwatch: Colors.blue),
       // home: AuthStateWrapper(
       //   builder: (context, user) {
@@ -43,7 +42,7 @@ class MyApp extends StatelessWidget {
       //   loadingWidget: SplashScreen(), // splash screen while waiting
       // ),
       routes: {
-        '/': (context) => LoginPage(),
+        '/': (context) => SplashScreen(),
         '/welcome': (context) => const OnboardingScreen(),
         '/home': (context) => const MainScreen(),
         '/login': (context) => const LoginPage(),

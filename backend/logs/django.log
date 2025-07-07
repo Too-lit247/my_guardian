@@ -435,3 +435,12 @@ Not Found: /
 "GET / HTTP/1.1" 404 2641
 Not Found: /favicon.ico
 "GET /favicon.ico HTTP/1.1" 404 2692
+Watching for file changes with StatReloader
+Not Found: /
+"GET / HTTP/1.1" 404 2644
+Not Found: /favicon.ico
+"GET /favicon.ico HTTP/1.1" 404 2695
+Not Found: /
+"GET / HTTP/1.1" 404 2644
+Not Found: /favicon.ico
+"GET /favicon.ico HTTP/1.1" 404 2695
