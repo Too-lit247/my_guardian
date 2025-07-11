@@ -70,7 +70,7 @@ class DeviceRegistrationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Device
         fields = [
-            'mac_address', 'owner_name', 'owner_phone', 'owner_address',
+            'mac_address', 'owner_id', 'owner_name', 'owner_phone', 'owner_address',
             'emergency_contact', 'emergency_contact_phone', 'medical_conditions',
             'medications', 'allergies', 'blood_type', 'device_type'
         ]
