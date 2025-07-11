@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:my_guardian/controllers/db_controller.dart';
+import 'package:my_guardian/services/db_controller.dart';
 import 'package:my_guardian/services/postgre_auth.dart';
 import 'package:my_guardian/widgets/settingsHeader.dart';
 import 'package:postgres/postgres.dart';

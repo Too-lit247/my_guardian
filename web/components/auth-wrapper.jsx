@@ -1,83 +1,89 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function AuthWrapper({ children }) {
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [loading, setLoading] = useState(true)
-  const router = useRouter()
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
-    checkAuth()
-  }, [])
+    checkAuth();
+  }, []);
 
   const checkAuth = async () => {
-    const token = localStorage.getItem("access_token")
+    const token = localStorage.getItem("access_token");
 
     if (!token) {
-      router.push("/")
-      return
+      router.push("/");
+      return;
     }
 
     try {
-      const response = await fetch("http://localhost:8000/api/auth/me/", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
+      const response = await fetch(
+        "https://my-guardian-plus.onrender.com/api/auth/me/",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       if (response.ok) {
-        setIsAuthenticated(true)
+        setIsAuthenticated(true);
       } else if (response.status === 401) {
         // Try to refresh token
-        await refreshToken()
+        await refreshToken();
       } else {
-        throw new Error("Authentication failed")
+        throw new Error("Authentication failed");
       }
     } catch (error) {
-      console.error("Auth check failed:", error)
-      localStorage.removeItem("access_token")
-      localStorage.removeItem("refresh_token")
-      localStorage.removeItem("user")
-      router.push("/")
+      console.error("Auth check failed:", error);
+      localStorage.removeItem("access_token");
+      localStorage.removeItem("refresh_token");
+      localStorage.removeItem("user");
+      router.push("/");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const refreshToken = async () => {
-    const refreshToken = localStorage.getItem("refresh_token")
+    const refreshToken = localStorage.getItem("refresh_token");
 
     if (!refreshToken) {
-      router.push("/")
-      return
+      router.push("/");
+      return;
     }
 
     try {
-      const response = await fetch("http://localhost:8000/api/auth/token/refresh/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ refresh: refreshToken }),
-      })
+      const response = await fetch(
+        "https://my-guardian-plus.onrender.com/api/auth/token/refresh/",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ refresh: refreshToken }),
+        }
+      );
 
       if (response.ok) {
-        const data = await response.json()
-        localStorage.setItem("access_token", data.access)
-        setIsAuthenticated(true)
+        const data = await response.json();
+        localStorage.setItem("access_token", data.access);
+        setIsAuthenticated(true);
       } else {
-        throw new Error("Token refresh failed")
+        throw new Error("Token refresh failed");
       }
     } catch (error) {
-      console.error("Token refresh failed:", error)
-      localStorage.removeItem("access_token")
-      localStorage.removeItem("refresh_token")
-      localStorage.removeItem("user")
-      router.push("/")
+      console.error("Token refresh failed:", error);
+      localStorage.removeItem("access_token");
+      localStorage.removeItem("refresh_token");
+      localStorage.removeItem("user");
+      router.push("/");
     }
-  }
+  };
 
   if (loading) {
     return (
@@ -87,12 +93,12 @@ export default function AuthWrapper({ children }) {
           <p className="mt-2 text-muted-foreground">Loading...</p>
         </div>
       </div>
-    )
+    );
   }
 
   if (!isAuthenticated) {
-    return null
+    return null;
   }
 
-  return children
+  return children;
 }

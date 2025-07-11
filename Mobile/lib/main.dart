@@ -14,6 +14,8 @@ void main() async {
 
   await dotenv.load(fileName: ".env");
 
+  //await DeviceReadingService().init();
+
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   // Initialize your auth service (load stored user/token)

@@ -11,12 +11,17 @@ class PostgreAuth {
   factory PostgreAuth() => _instance;
   PostgreAuth._internal();
 
-  late Connection _conn;
+  Connection? _conn;
   Map<String, dynamic>? _currentUser;
 
   // Add this public getter for the connection
   Connection get connection {
-    return _conn;
+    if (_conn == null) {
+      throw Exception(
+        'Database connection not initialized. Call initialize() first.',
+      );
+    }
+    return _conn!;
   }
 
   Future<void> initialize() async {
@@ -62,6 +67,21 @@ class PostgreAuth {
     }
   }
 
+  Future<void> _ensureConnection() async {
+    if (_conn == null) {
+      print('Connection is null, reconnecting...');
+      await _connect();
+    } else {
+      // Check if connection is still alive
+      try {
+        await _conn!.execute(Sql.named('SELECT 1'));
+      } catch (e) {
+        print('Connection is dead, reconnecting...');
+        await _connect();
+      }
+    }
+  }
+
   Future<void> _loadStoredUser() async {
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -83,12 +103,14 @@ class PostgreAuth {
   Map<String, dynamic>? get currentUser => _currentUser;
   bool get isAuthenticated => _currentUser != null;
 
-  // FIX: Added 'String' type to the password parameter
   Future<void> login({required String email, required String password}) async {
     try {
       print('Attempting login for email: $email');
 
-      final result = await _conn.execute(
+      // Ensure connection is available before attempting login
+      await _ensureConnection();
+
+      final result = await _conn!.execute(
         Sql.named('SELECT * FROM users WHERE email = @email LIMIT 1'),
         parameters: {'email': email},
       );
@@ -135,6 +157,9 @@ class PostgreAuth {
     try {
       print('Attempting registration for email: $email');
 
+      // Ensure connection is available before attempting registration
+      await _ensureConnection();
+
       final dpt = "System Administrator";
       final uuid = const Uuid().v4();
       final now = DateTime.now();
@@ -146,7 +171,7 @@ class PostgreAuth {
       print('Generated employee ID: $employeeId');
       print('Generated badge number: $badgeNumber');
 
-      final row = await _conn.execute(
+      final row = await _conn!.execute(
         Sql.named('''
           INSERT INTO users (
             id, email, password, phone_number, department, role,
@@ -208,6 +233,13 @@ class PostgreAuth {
       await prefs.remove('user_data');
       _currentUser = null;
       print('Logout successful: User data cleared from SharedPreferences');
+
+      // Note: We don't close the connection here to allow for subsequent logins
+      // If you want to close the connection, uncomment the following lines:
+      // if (_conn != null) {
+      //   await _conn!.close();
+      //   _conn = null;
+      // }
     } catch (e) {
       print('Logout error: $e');
       rethrow;

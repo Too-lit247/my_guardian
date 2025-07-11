@@ -1,23 +1,35 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Shield, Flame, Heart, AlertCircle, UserPlus } from "lucide-react"
-import { useRouter } from "next/navigation"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Shield, Flame, Heart, AlertCircle, UserPlus } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
-  const [activeTab, setActiveTab] = useState("login")
+  const [activeTab, setActiveTab] = useState("login");
   const [loginData, setLoginData] = useState({
     username: "admin",
     password: "admin123",
     department: "admin",
     role: "System Administrator",
-  })
+  });
   const [registerData, setRegisterData] = useState({
     full_name: "",
     email: "",
@@ -25,93 +37,100 @@ export default function LoginPage() {
     password: "",
     phone_number: "",
     department: "",
-  })
+  });
 
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState("")
-  const router = useRouter()
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const router = useRouter();
 
   const handleLogin = async () => {
-    setLoading(true)
-    setError("")
+    setLoading(true);
+    setError("");
 
-    console.log("Attempting login with:", loginData)
+    console.log("Attempting login with:", loginData);
 
     try {
-      const response = await fetch("http://localhost:8000/api/auth/login/", {
+      const response = await fetch(`${process.env.BACKEND_URL}/auth/login/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(loginData),
-      })
+      });
 
-      console.log("Response status:", response.status)
-      console.log("Response headers:", response.headers)
+      console.log("Response status:", response.status);
+      console.log("Response headers:", response.headers);
 
-      const data = await response.json()
-      console.log("Response data:", data)
+      const data = await response.json();
+      console.log("Response data:", data);
 
       if (response.ok) {
-        localStorage.setItem("access_token", data.access)
-        localStorage.setItem("refresh_token", data.refresh)
-        localStorage.setItem("user", JSON.stringify(data.user))
-        router.push("/dashboard")
+        localStorage.setItem("access_token", data.access);
+        localStorage.setItem("refresh_token", data.refresh);
+        localStorage.setItem("user", JSON.stringify(data.user));
+        router.push("/dashboard");
       } else {
-        setError(data.detail || data.non_field_errors?.[0] || "Login failed")
+        setError(data.detail || data.non_field_errors?.[0] || "Login failed");
       }
     } catch (err) {
-      console.error("Login error:", err)
-      setError("Network error. Please check if the backend server is running.")
+      console.error("Login error:", err);
+      setError("Network error. Please check if the backend server is running.");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleRegister = async () => {
-    setLoading(true)
-    setError("")
+    setLoading(true);
+    setError("");
 
     try {
-      const response = await fetch("http://localhost:8000/api/auth/register/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(registerData),
-      })
+      const response = await fetch(
+        "https://my-guardian-plus.onrender.com/api/auth/register/",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(registerData),
+        }
+      );
 
-      const data = await response.json()
+      const data = await response.json();
 
       if (response.ok) {
-        setActiveTab("login")
-        setError("")
-        alert("Registration successful! Your account is pending admin approval. You will be notified when activated.")
+        setActiveTab("login");
+        setError("");
+        alert(
+          "Registration successful! Your account is pending admin approval. You will be notified when activated."
+        );
       } else {
-        setError(data.detail || data.non_field_errors?.[0] || "Registration failed")
+        setError(
+          data.detail || data.non_field_errors?.[0] || "Registration failed"
+        );
       }
     } catch (err) {
-      setError("Network error. Please check if the backend server is running.")
+      setError("Network error. Please check if the backend server is running.");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const getDepartmentIcon = (dept) => {
     switch (dept) {
       case "fire":
-        return <Flame className="h-5 w-5 text-red-500" />
+        return <Flame className="h-5 w-5 text-red-500" />;
       case "police":
-        return <Shield className="h-5 w-5 text-blue-500" />
+        return <Shield className="h-5 w-5 text-blue-500" />;
       case "medical":
-        return <Heart className="h-5 w-5 text-green-500" />
+        return <Heart className="h-5 w-5 text-green-500" />;
       case "admin":
-        return <Shield className="h-5 w-5 text-gray-800" />
+        return <Shield className="h-5 w-5 text-gray-800" />;
       default:
-        return null
+        return null;
     }
-  }
-/*
+  };
+  /*
   const loadSampleCredentials = (type) => {
     const credentials = {
       admin: {
@@ -147,7 +166,9 @@ export default function LoginPage() {
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-bold">My Guardian Plus</CardTitle>
-          <CardDescription>Emergency Response Management System</CardDescription>
+          <CardDescription>
+            Emergency Response Management System
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <Tabs value={activeTab} onValueChange={setActiveTab}>
@@ -171,7 +192,12 @@ export default function LoginPage() {
                   type="text"
                   placeholder="Enter your username"
                   value={loginData.username}
-                  onChange={(e) => setLoginData((prev) => ({ ...prev, username: e.target.value }))}
+                  onChange={(e) =>
+                    setLoginData((prev) => ({
+                      ...prev,
+                      username: e.target.value,
+                    }))
+                  }
                 />
               </div>
 
@@ -182,7 +208,12 @@ export default function LoginPage() {
                   type="password"
                   placeholder="Enter your password"
                   value={loginData.password}
-                  onChange={(e) => setLoginData((prev) => ({ ...prev, password: e.target.value }))}
+                  onChange={(e) =>
+                    setLoginData((prev) => ({
+                      ...prev,
+                      password: e.target.value,
+                    }))
+                  }
                 />
               </div>
 
@@ -190,7 +221,9 @@ export default function LoginPage() {
                 <Label htmlFor="department">Department</Label>
                 <Select
                   value={loginData.department}
-                  onValueChange={(value) => setLoginData((prev) => ({ ...prev, department: value }))}
+                  onValueChange={(value) =>
+                    setLoginData((prev) => ({ ...prev, department: value }))
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select your department" />
@@ -228,15 +261,23 @@ export default function LoginPage() {
                 <Label htmlFor="role">Role</Label>
                 <Select
                   value={loginData.role}
-                  onValueChange={(value) => setLoginData((prev) => ({ ...prev, role: value }))}
+                  onValueChange={(value) =>
+                    setLoginData((prev) => ({ ...prev, role: value }))
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select your role" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="System Administrator">System Administrator</SelectItem>
-                    <SelectItem value="Regional Manager">Regional Manager</SelectItem>
-                    <SelectItem value="District Manager">District Manager</SelectItem>
+                    <SelectItem value="System Administrator">
+                      System Administrator
+                    </SelectItem>
+                    <SelectItem value="Regional Manager">
+                      Regional Manager
+                    </SelectItem>
+                    <SelectItem value="District Manager">
+                      District Manager
+                    </SelectItem>
                     <SelectItem value="Field User">Field User</SelectItem>
                   </SelectContent>
                 </Select>
@@ -246,7 +287,11 @@ export default function LoginPage() {
                 className="w-full"
                 onClick={handleLogin}
                 disabled={
-                  !loginData.username || !loginData.password || !loginData.department || !loginData.role || loading
+                  !loginData.username ||
+                  !loginData.password ||
+                  !loginData.department ||
+                  !loginData.role ||
+                  loading
                 }
               >
                 {loading ? "Signing In..." : "Sign In"}
@@ -288,7 +333,12 @@ export default function LoginPage() {
                   id="full_name"
                   placeholder="Enter your full name"
                   value={registerData.full_name}
-                  onChange={(e) => setRegisterData((prev) => ({ ...prev, full_name: e.target.value }))}
+                  onChange={(e) =>
+                    setRegisterData((prev) => ({
+                      ...prev,
+                      full_name: e.target.value,
+                    }))
+                  }
                 />
               </div>
 
@@ -299,7 +349,12 @@ export default function LoginPage() {
                   type="email"
                   placeholder="Enter your email"
                   value={registerData.email}
-                  onChange={(e) => setRegisterData((prev) => ({ ...prev, email: e.target.value }))}
+                  onChange={(e) =>
+                    setRegisterData((prev) => ({
+                      ...prev,
+                      email: e.target.value,
+                    }))
+                  }
                 />
               </div>
 
@@ -309,7 +364,12 @@ export default function LoginPage() {
                   id="reg_username"
                   placeholder="Choose a username"
                   value={registerData.username}
-                  onChange={(e) => setRegisterData((prev) => ({ ...prev, username: e.target.value }))}
+                  onChange={(e) =>
+                    setRegisterData((prev) => ({
+                      ...prev,
+                      username: e.target.value,
+                    }))
+                  }
                 />
               </div>
 
@@ -320,7 +380,12 @@ export default function LoginPage() {
                   type="password"
                   placeholder="Choose a password"
                   value={registerData.password}
-                  onChange={(e) => setRegisterData((prev) => ({ ...prev, password: e.target.value }))}
+                  onChange={(e) =>
+                    setRegisterData((prev) => ({
+                      ...prev,
+                      password: e.target.value,
+                    }))
+                  }
                 />
               </div>
 
@@ -330,7 +395,12 @@ export default function LoginPage() {
                   id="phone"
                   placeholder="Enter your phone number"
                   value={registerData.phone_number}
-                  onChange={(e) => setRegisterData((prev) => ({ ...prev, phone_number: e.target.value }))}
+                  onChange={(e) =>
+                    setRegisterData((prev) => ({
+                      ...prev,
+                      phone_number: e.target.value,
+                    }))
+                  }
                 />
               </div>
 
@@ -338,7 +408,9 @@ export default function LoginPage() {
                 <Label htmlFor="reg_department">Department</Label>
                 <Select
                   value={registerData.department}
-                  onValueChange={(value) => setRegisterData((prev) => ({ ...prev, department: value }))}
+                  onValueChange={(value) =>
+                    setRegisterData((prev) => ({ ...prev, department: value }))
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select department" />
@@ -371,6 +443,5 @@ export default function LoginPage() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
-
