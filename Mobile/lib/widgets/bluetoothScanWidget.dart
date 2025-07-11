@@ -6,9 +6,6 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:http/http.dart' as http;
 import 'package:my_guardian/services/postgre_auth.dart';
 
-// Import your PostgreAuth service - adjust the path as needed
-// import 'path/to/your/auth_service.dart'; // Replace with actual path
-
 class BluetoothScanWidget extends StatefulWidget {
   final String? baseUrl; // Add baseUrl parameter
   final double? height; // Optional height constraint

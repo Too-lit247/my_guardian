@@ -1,3 +1,4 @@
+import 'package:my_guardian/alertHistoryPage.dart';
 import 'package:my_guardian/dashboard.dart';
 import 'package:my_guardian/profile.dart';
 import 'package:my_guardian/settings.dart';
@@ -15,17 +16,14 @@ class _MainScreenState extends State<MainScreen> {
 
   final List<Widget> _screens = [
     Dashboard(),
-    ProfileScreen(),
+    AlertHistoryPage(),
     SettingsScreen(),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: IndexedStack(
-        index: _currentIndex,
-        children: _screens,
-      ),
+      body: IndexedStack(index: _currentIndex, children: _screens),
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.green,
         selectedItemColor: Colors.white,
@@ -38,8 +36,11 @@ class _MainScreenState extends State<MainScreen> {
         },
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home_filled), label: "Home"),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
-          BottomNavigationBarItem(icon: Icon(Icons.settings), label: "Settings"),
+          BottomNavigationBarItem(icon: Icon(Icons.history), label: "History"),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: "Settings",
+          ),
         ],
       ),
     );

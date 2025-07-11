@@ -7,7 +7,9 @@ import 'package:my_guardian/auth/register.dart';
 import 'package:my_guardian/layouts/layout.dart';
 import 'package:flutter/material.dart';
 import 'package:my_guardian/scanPage.dart';
+import 'package:my_guardian/tipsPage.dart';
 import 'services/firebase_options.dart';
+import 'package:my_guardian/services/postgre_auth.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -50,6 +52,7 @@ class MyApp extends StatelessWidget {
         '/login': (context) => const LoginPage(),
         '/register': (context) => const RegisterPage(),
         '/scan_device': (context) => const DeviceScanPage(),
+        '/tips': (context) => const TipsPage(),
       },
     );
   }
@@ -121,9 +124,9 @@ class WelcomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final user = DjangoAuthService().currentUser;
-    final displayName = user?.displayName ?? 'User';
-    final email = user?.email ?? '';
+    final user = PostgreAuth().currentUser;
+    final displayName = user?['full_name'] ?? 'User';
+    final email = user?['email'] ?? '';
 
     return _buildScreen(
       description:

@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:my_guardian/services/postgre_auth.dart';
 import 'package:postgres/postgres.dart';
-import 'db_controller.dart'; // this should point to your DBService
+import 'db_controller.dart';
 import 'package:flutter/foundation.dart';
 
 class DeviceReadingService {
@@ -29,7 +29,6 @@ class DeviceReadingService {
 
       await _fetchDeviceId(userId);
 
-      // Fallback if no device was found
       if (_deviceId == null) {
         debugPrint(
           "No device found for user. Falling back to default device ID.",

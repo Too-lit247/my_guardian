@@ -165,7 +165,7 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold">My Guardian Plus</CardTitle>
+          <CardTitle className="text-2xl font-bold">MyGuardian+</CardTitle>
           <CardDescription>
             Emergency Response Management System
           </CardDescription>

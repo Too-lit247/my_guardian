@@ -50,6 +50,7 @@ dependencies:
   uuid: ^4.0.0
   fluttertoast: ^8.2.4
   get:
+  intl: ^0.20.2
   # get:
   # permission_handler:
 

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:my_guardian/auth/auth_service.dart';
 import 'package:my_guardian/services/device_reading_service.dart';
+import 'package:my_guardian/services/postgre_auth.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
@@ -155,7 +155,7 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   Widget build(BuildContext context) {
-    final user = DjangoAuthService().currentUser;
+    final user = PostgreAuth().currentUser;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -185,14 +185,14 @@ class _DashboardState extends State<Dashboard> {
               child: Column(
                 children: [
                   Text(
-                    "Welcome, ${user?.displayName ?? 'User'}",
+                    "Welcome, ${user?['full_name'] ?? 'User'}",
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   Text(
-                    user?.email ?? '',
+                    "${user?['email'] ?? ''}",
                     style: const TextStyle(fontSize: 14, color: Colors.black54),
                   ),
                 ],

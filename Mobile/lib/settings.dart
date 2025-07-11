@@ -5,6 +5,7 @@ import 'package:my_guardian/widgets/settingsHeader.dart';
 import 'package:my_guardian/widgets/settingsTile.dart';
 import 'package:my_guardian/widgets/registeredDeviceWidget.dart';
 import 'package:my_guardian/widgets/emergencyContactsWidget.dart';
+import 'package:my_guardian/widgets/tipsTile.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -24,23 +25,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      // appBar: AppBar(
-      //   backgroundColor: Colors.green,
-      //   title: const Text("Settings", style: TextStyle(color: Colors.white)),
-      //   centerTitle: true,
-      // ),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // Header image
-            // SizedBox(
-            //   width: double.infinity,
-            //   height: 270,
-            //   child: Image.asset(
-            //     "assets/images/settings.png",
-            //     fit: BoxFit.contain,
-            //   ),
-            // ),
             const ProfileHeaderWidget(margin: EdgeInsets.all(0)),
             const SizedBox(height: 20),
 
@@ -101,6 +88,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
             // Logout tile
             LogoutTile(),
+            TipsTile(),
             const SizedBox(height: 20),
 
             // Registered device widget
