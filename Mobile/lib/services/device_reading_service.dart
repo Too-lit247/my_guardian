@@ -12,6 +12,9 @@ class DeviceReadingService {
 
   ValueNotifier<Map<String, dynamic>?> latestReading = ValueNotifier(null);
 
+  // Store the last known values for each field
+  Map<String, dynamic> _lastKnownValues = {};
+
   final DBService _dbService = DBService();
   Timer? _pollingTimer;
   String? _deviceId;
@@ -76,23 +79,64 @@ class DeviceReadingService {
     final conn = _dbService.conn;
 
     try {
+      // Fetch the latest 50 readings to get the most recent value for each field
       final result = await conn.execute(
         Sql.named('''
-      SELECT * FROM device_readings 
-      WHERE device_id = @deviceId 
-      ORDER BY timestamp DESC 
-      LIMIT 1;
+      SELECT * FROM device_readings
+      WHERE device_id = @deviceId
+      ORDER BY timestamp DESC
+      LIMIT 50;
       '''),
         parameters: {'deviceId': _deviceId},
       );
 
       if (result.isNotEmpty) {
-        final row = result.first.toColumnMap();
-        latestReading.value = row;
-        debugPrint("Latest Reading fetched!");
+        // Build composite reading with latest values for each field
+        Map<String, dynamic> compositeReading = {};
+
+        // Get the most recent reading for basic info
+        final latestRow = result.first.toColumnMap();
+        compositeReading = Map<String, dynamic>.from(latestRow);
+
+        // Update with the most recent non-null value for each sensor field
+        for (final row in result) {
+          final reading = row.toColumnMap();
+
+          // Update each field with the most recent non-null value
+          _updateFieldIfNotNull(compositeReading, reading, 'heart_rate');
+          _updateFieldIfNotNull(compositeReading, reading, 'temperature');
+          _updateFieldIfNotNull(compositeReading, reading, 'smoke_level');
+          _updateFieldIfNotNull(compositeReading, reading, 'battery_level');
+          _updateFieldIfNotNull(compositeReading, reading, 'latitude');
+          _updateFieldIfNotNull(compositeReading, reading, 'longitude');
+          _updateFieldIfNotNull(compositeReading, reading, 'fear_probability');
+          _updateFieldIfNotNull(compositeReading, reading, 'stress_level');
+          _updateFieldIfNotNull(
+            compositeReading,
+            reading,
+            'audio_analysis_complete',
+          );
+        }
+
+        // Store the last known values
+        _lastKnownValues = Map<String, dynamic>.from(compositeReading);
+        latestReading.value = compositeReading;
+        debugPrint(
+          "Composite Reading fetched with latest values for each field!",
+        );
       }
     } catch (e) {
       debugPrint("Error fetching readings: $e");
+    }
+  }
+
+  void _updateFieldIfNotNull(
+    Map<String, dynamic> composite,
+    Map<String, dynamic> reading,
+    String field,
+  ) {
+    if (reading[field] != null && composite[field] == null) {
+      composite[field] = reading[field];
     }
   }
 

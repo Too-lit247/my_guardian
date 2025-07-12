@@ -69,7 +69,20 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
   }
 
   // Battery level widget with color-coded icons
-  Widget _buildBatteryLevel(int? batteryLevel) {
+  Widget _buildBatteryLevel(dynamic batteryLevelValue) {
+    int? batteryLevel;
+
+    // Safely convert to int
+    if (batteryLevelValue == null) {
+      batteryLevel = null;
+    } else if (batteryLevelValue is int) {
+      batteryLevel = batteryLevelValue;
+    } else if (batteryLevelValue is String) {
+      batteryLevel = int.tryParse(batteryLevelValue);
+    } else if (batteryLevelValue is num) {
+      batteryLevel = batteryLevelValue.toInt();
+    }
+
     if (batteryLevel == null) {
       return const Row(
         children: [
@@ -120,7 +133,36 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
   }
 
   // GPS location button
-  Widget _buildLocationButton(double? latitude, double? longitude) {
+  Widget _buildLocationButton(dynamic latitudeValue, dynamic longitudeValue) {
+    // Safely convert to double
+    double? latitude;
+    double? longitude;
+
+    try {
+      if (latitudeValue != null) {
+        if (latitudeValue is double) {
+          latitude = latitudeValue;
+        } else if (latitudeValue is String) {
+          latitude = double.tryParse(latitudeValue);
+        } else if (latitudeValue is num) {
+          latitude = latitudeValue.toDouble();
+        }
+      }
+
+      if (longitudeValue != null) {
+        if (longitudeValue is double) {
+          longitude = longitudeValue;
+        } else if (longitudeValue is String) {
+          longitude = double.tryParse(longitudeValue);
+        } else if (longitudeValue is num) {
+          longitude = longitudeValue.toDouble();
+        }
+      }
+    } catch (e) {
+      latitude = null;
+      longitude = null;
+    }
+
     if (latitude == null || longitude == null) {
       return const Text(
         "Location not available",
@@ -129,7 +171,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
     }
 
     return ElevatedButton.icon(
-      onPressed: () => _openLocationInMaps(latitude, longitude),
+      onPressed: () => _openLocationInMaps(latitude!, longitude!),
       icon: const Icon(Icons.map, size: 20),
       label: const Text("View in Maps"),
       style: ElevatedButton.styleFrom(
@@ -207,9 +249,25 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
 
   Widget _buildCombinedStressFearCard() {
     final data = latestData!;
-    final stressLevel = data['stress_level']?.toStringAsFixed(2) ?? 'N/A';
-    final fearProbability =
-        data['fear_probability']?.toStringAsFixed(2) ?? 'N/A';
+
+    // Helper function to safely format values
+    String formatValue(dynamic value) {
+      if (value == null) return 'N/A';
+      try {
+        if (value is String) {
+          final parsed = double.tryParse(value);
+          return parsed?.toStringAsFixed(2) ?? 'N/A';
+        } else if (value is num) {
+          return value.toStringAsFixed(2);
+        }
+        return 'N/A';
+      } catch (e) {
+        return 'N/A';
+      }
+    }
+
+    final stressLevel = formatValue(data['stress_level']);
+    final fearProbability = formatValue(data['fear_probability']);
 
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
@@ -289,43 +347,124 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
     }
 
     final data = latestData!;
-    return [
-      _buildSensorCard(
-        icon: Icons.favorite,
-        label: "Heart Rate",
-        valueWidget: Text(
-          "${data['heart_rate'] ?? 'N/A'} BPM",
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+    List<Widget> cards = [];
+
+    // Helper function to safely convert to double and format
+    String formatDoubleValue(dynamic value, int decimals) {
+      if (value == null) return 'N/A';
+      try {
+        if (value is String) {
+          final parsed = double.tryParse(value);
+          return parsed?.toStringAsFixed(decimals) ?? 'N/A';
+        } else if (value is num) {
+          return value.toStringAsFixed(decimals);
+        }
+        return 'N/A';
+      } catch (e) {
+        return 'N/A';
+      }
+    }
+
+    // Helper function to safely get integer value
+    String formatIntValue(dynamic value, String unit) {
+      if (value == null) return 'N/A';
+      try {
+        if (value is String) {
+          final parsed = int.tryParse(value);
+          return parsed != null ? '$parsed $unit' : 'N/A';
+        } else if (value is num) {
+          return '${value.toInt()} $unit';
+        }
+        return 'N/A';
+      } catch (e) {
+        return 'N/A';
+      }
+    }
+
+    // Only show cards for fields that have actual values
+    if (data['heart_rate'] != null) {
+      cards.add(
+        _buildSensorCard(
+          icon: Icons.favorite,
+          label: "Heart Rate",
+          valueWidget: Text(
+            formatIntValue(data['heart_rate'], 'BPM'),
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
         ),
-      ),
-      _buildSensorCard(
-        icon: Icons.battery_charging_full,
-        label: "Battery Level",
-        valueWidget: _buildBatteryLevel(data['battery_level']),
-      ),
-      _buildSensorCard(
-        icon: Icons.local_fire_department,
-        label: "Smoke Level",
-        valueWidget: Text(
-          "${data['smoke_level']?.toStringAsFixed(2) ?? 'N/A'}",
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+      );
+    }
+
+    if (data['temperature'] != null) {
+      cards.add(
+        _buildSensorCard(
+          icon: Icons.thermostat,
+          label: "Temperature",
+          valueWidget: Text(
+            "${formatDoubleValue(data['temperature'], 1)}°C",
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
         ),
-      ),
-      _buildSensorCard(
-        icon: Icons.location_on,
-        label: "Location",
-        valueWidget: _buildLocationButton(data['latitude'], data['longitude']),
-      ),
-      _buildCombinedStressFearCard(),
-      _buildSensorCard(
-        icon: Icons.surround_sound,
-        label: "Audio Analysis",
-        valueWidget: Text(
-          data['audio_analysis_complete'] == true ? "Complete" : "In Progress",
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+      );
+    }
+
+    if (data['battery_level'] != null) {
+      cards.add(
+        _buildSensorCard(
+          icon: Icons.battery_charging_full,
+          label: "Battery Level",
+          valueWidget: _buildBatteryLevel(data['battery_level']),
         ),
-      ),
-    ];
+      );
+    }
+
+    if (data['smoke_level'] != null) {
+      cards.add(
+        _buildSensorCard(
+          icon: Icons.local_fire_department,
+          label: "Smoke Level",
+          valueWidget: Text(
+            formatDoubleValue(data['smoke_level'], 2),
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+        ),
+      );
+    }
+
+    if (data['latitude'] != null && data['longitude'] != null) {
+      cards.add(
+        _buildSensorCard(
+          icon: Icons.location_on,
+          label: "Location",
+          valueWidget: _buildLocationButton(
+            data['latitude'],
+            data['longitude'],
+          ),
+        ),
+      );
+    }
+
+    // Always show stress/fear card if either value exists
+    if (data['stress_level'] != null || data['fear_probability'] != null) {
+      cards.add(_buildCombinedStressFearCard());
+    }
+
+    if (data['audio_analysis_complete'] != null) {
+      cards.add(
+        _buildSensorCard(
+          icon: Icons.surround_sound,
+          label: "Audio Analysis",
+          valueWidget: Text(
+            data['audio_analysis_complete'] == true
+                ? "Complete"
+                : "In Progress",
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+        ),
+      );
+    }
+
+    return cards;
   }
 
   Widget _buildEmergencyAlert() {

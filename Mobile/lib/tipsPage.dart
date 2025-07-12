@@ -22,29 +22,39 @@ class TipsPage extends StatelessWidget {
         child: ListView(
           children: const [
             TipCard(
-              tip: 'Tip 1: Use the search bar to find specific features',
+              tip: 'Tip 1: View Device Readings',
               description:
-                  'You can use the search bar at the top of the app to quickly find specific features or settings.',
+                  'You can view the latest readings for your device on the main dashboard',
             ),
             TipCard(
-              tip: 'Tip 2: Swipe left to delete items',
+              tip: 'Tip 2: Open Location in maps',
               description:
-                  'You can swipe left on any item in the list to delete it.',
+                  'On the dashboard, in the "Location" section, you can select "View in Maps" to view the current location of your device in Google Maps.',
             ),
             TipCard(
-              tip: 'Tip 3: Use the filters to narrow down results',
+              tip: 'Tip 3: View Alert History',
               description:
-                  'You can use the filters at the top of the list to narrow down the results based on specific criteria.',
+                  'In the "Alert History" tab, you can view a list of all past alerts and their outcomes.',
             ),
             TipCard(
-              tip: 'Tip 4: Long press to copy text',
+              tip: 'Tip 4: Device Connection',
               description:
-                  'You can long press on any text in the app to copy it to your clipboard.',
+                  'You can connect your device in the "Settings" tab if you don\'t have a registered device',
             ),
             TipCard(
-              tip: 'Tip 5: Use the settings menu to customize the app',
+              tip: 'Tip 5: Device Change',
               description:
-                  'You can use the settings menu to customize the app\'s appearance and behavior.',
+                  'Register a different device by clicking the "Change" button next to the registered device in the "Settings" tab.',
+            ),
+            TipCard(
+              tip: 'Tip 6: Emergency Contacts',
+              description:
+                  'In the "Settings" tab, you can add, edit, or remove emergency contacts. You also have the option to select a contact from your phone',
+            ),
+            TipCard(
+              tip: 'Tip 6: Preferences',
+              description:
+                  'You can use the settings menu to customize the app\'s appearance, language and notifications behavior.',
             ),
           ],
         ),
