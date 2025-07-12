@@ -30,10 +30,8 @@ class DeviceReadingService {
       await _fetchDeviceId(userId);
 
       if (_deviceId == null) {
-        debugPrint(
-          "No device found for user. Falling back to default device ID.",
-        );
-        _deviceId = 'a44bc384-2220-426b-a2e7-c0b4b57a8b3b';
+        debugPrint("No device found for user.");
+        //_deviceId = 'a44bc384-2220-426b-a2e7-c0b4b57a8b3b';
       }
 
       // Still null? Abort polling.

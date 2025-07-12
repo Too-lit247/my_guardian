@@ -86,9 +86,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ),
 
+            TipsTile(),
             // Logout tile
             LogoutTile(),
-            TipsTile(),
+
             const SizedBox(height: 20),
 
             // Registered device widget

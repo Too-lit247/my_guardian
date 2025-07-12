@@ -66,27 +66,43 @@ class _RegisteredDeviceTileState extends State<RegisteredDeviceTile> {
         : Column(
           children: [
             const SettingsHeader(title: "Registered Device"),
-            ListTile(
-              leading: const Icon(Icons.bluetooth),
-              title: Text(
-                _deviceName ?? "No registered device",
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-              subtitle: Text(
-                _macAddress ?? "Please scan and register a device",
-                style: TextStyle(
-                  color:
-                      _macAddress != null ? Colors.black : Colors.red.shade600,
+            _macAddress == null
+                ? Column(
+                  children: [
+                    const SettingsHeader(title: "Registered Device"),
+                    const Icon(
+                      Icons.info_outline,
+                      size: 40,
+                      color: Colors.grey,
+                    ),
+                    const SizedBox(height: 10),
+                    const Text("No device registered."),
+                    const SizedBox(height: 10),
+                    ElevatedButton.icon(
+                      icon: const Icon(Icons.refresh),
+                      label: const Text("Try Again"),
+                      onPressed: _fetchDevice,
+                    ),
+                  ],
+                )
+                : ListTile(
+                  leading: const Icon(Icons.bluetooth),
+                  title: Text(
+                    _deviceName ?? "Unknown device",
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  subtitle: Text(
+                    _macAddress!,
+                    style: const TextStyle(color: Colors.black),
+                  ),
+                  trailing: ElevatedButton.icon(
+                    icon: const Icon(Icons.arrow_forward),
+                    label: const Text("Change"),
+                    onPressed: () {
+                      Navigator.of(context).pushNamed('/scan_device');
+                    },
+                  ),
                 ),
-              ),
-              trailing: ElevatedButton.icon(
-                icon: const Icon(Icons.arrow_forward),
-                label: Text(_macAddress == null ? "Scan" : "Change"),
-                onPressed: () {
-                  Navigator.of(context).pushNamed('/scan_device');
-                },
-              ),
-            ),
           ],
         );
   }
