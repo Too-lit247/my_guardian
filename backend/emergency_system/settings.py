@@ -37,8 +37,8 @@ INSTALLED_APPS = [
     # Local apps
     'accounts',
     'alerts',
-    'districts',
     'devices',  # Consolidated devices app (includes bracelets)
+    'geography',  # Geographic hierarchy management
 ]
 
 MIDDLEWARE = [

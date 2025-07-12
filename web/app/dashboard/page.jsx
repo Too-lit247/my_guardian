@@ -33,8 +33,28 @@ export default function Dashboard() {
   useEffect(() => {
     const userData = localStorage.getItem("user");
     if (userData) {
-      setUser(JSON.parse(userData));
-      fetchStats();
+      const parsedUser = JSON.parse(userData);
+      setUser(parsedUser);
+
+      // Redirect based on user role
+      switch (parsedUser.role) {
+        case "System Administrator":
+          router.push("/dashboard/admin");
+          return;
+        case "Regional Manager":
+          router.push("/dashboard/regional");
+          return;
+        case "District Manager":
+          router.push("/dashboard/district");
+          return;
+        case "Station Manager":
+          router.push("/dashboard/station");
+          return;
+        default:
+          // For Responders and Field Users, stay on main dashboard
+          fetchStats();
+          break;
+      }
     }
   }, []);
 

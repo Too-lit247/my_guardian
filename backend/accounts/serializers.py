@@ -2,18 +2,13 @@ from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.contrib.auth import authenticate
 from django.contrib.auth.password_validation import validate_password
-from .models import User, UserLoginHistory, EmergencyContact
+from .models import User, UserLoginHistory, EmergencyContact, RegistrationRequest
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
-    department = serializers.ChoiceField(choices=User.DEPARTMENT_CHOICES)
-    role = serializers.ChoiceField(choices=User.ROLE_CHOICES)
-    
     def validate(self, attrs):
         username = attrs.get('username')
         password = attrs.get('password')
-        department = attrs.get('department')
-        role = attrs.get('role')
-        
+
         if username and password:
             user = authenticate(
                 request=self.context.get('request'),
@@ -24,13 +19,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
             if user:
                 if not user.is_active:
                     raise serializers.ValidationError('User account is disabled.')
-                
-                if user.department != department:
-                    raise serializers.ValidationError('Invalid department for this user.')
-                
-                if user.role != role:
-                    raise serializers.ValidationError('Invalid role for this user.')
-                
+
                 # Log successful login
                 request = self.context.get('request')
                 if request:
@@ -40,11 +29,11 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
                         user_agent=request.META.get('HTTP_USER_AGENT', ''),
                         success=True
                     )
-                
+
                 # Update last login IP
                 user.last_login_ip = self.get_client_ip(request)
                 user.save(update_fields=['last_login_ip'])
-                
+
                 refresh = self.get_token(user)
                 return {
                     'refresh': str(refresh),
@@ -81,24 +70,36 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     district_name = serializers.SerializerMethodField()
+    station_name = serializers.SerializerMethodField()
+    region_display = serializers.SerializerMethodField()
     department_display = serializers.CharField(source='get_department_display', read_only=True)
     role_display = serializers.CharField(source='get_role_display', read_only=True)
-    
+
     class Meta:
         model = User
         fields = [
             'id', 'username', 'email', 'full_name', 'phone_number',
             'employee_id', 'department', 'department_display', 'role', 'role_display',
-            'district_id', 'district_name', 'badge_number', 'rank', 'years_of_service', 
-            'certifications', 'is_active', 'is_active_user', 'date_joined', 
+            'region', 'region_display', 'district_id', 'district_name', 'station_id',
+            'station_name', 'badge_number', 'rank', 'years_of_service',
+            'certifications', 'is_active', 'is_active_user', 'date_joined',
             'last_login', 'created_at', 'updated_at'
         ]
-        read_only_fields = ['id', 'date_joined', 'last_login', 'created_at', 'updated_at', 
-                           'department_display', 'role_display', 'district_name']
-    
+        read_only_fields = ['id', 'date_joined', 'last_login', 'created_at', 'updated_at',
+                           'department_display', 'role_display', 'district_name', 'station_name', 'region_display']
+
     def get_district_name(self, obj):
         district = obj.district
         return district.name if district else None
+
+    def get_station_name(self, obj):
+        station = obj.station
+        return station.name if station else None
+
+    def get_region_display(self, obj):
+        if obj.region:
+            return dict(User.REGION_CHOICES).get(obj.region, obj.region)
+        return None
 
 class CreateUserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, validators=[validate_password])
@@ -207,5 +208,52 @@ class EmergencyContactSerializer(serializers.ModelSerializer):
             'preferred_method', 'created_at', 'updated_at'
         ]
         read_only_fields = ['contact_id', 'created_at', 'updated_at']
+
+
+class RegistrationRequestSerializer(serializers.ModelSerializer):
+    """Serializer for creating registration requests"""
+    class Meta:
+        model = RegistrationRequest
+        fields = [
+            'request_id', 'registration_type', 'organization_name', 'department',
+            'region', 'full_name', 'email', 'phone_number', 'latitude',
+            'longitude', 'address', 'documentation', 'status', 'created_at'
+        ]
+        read_only_fields = ['request_id', 'status', 'created_at']
+
+    def validate(self, data):
+        # If organization type, organization_name is required
+        if data.get('registration_type') == 'organization' and not data.get('organization_name'):
+            raise serializers.ValidationError({
+                'organization_name': 'Organization name is required for organization registration.'
+            })
+        return data
+
+
+class RegistrationRequestDetailSerializer(serializers.ModelSerializer):
+    """Detailed serializer for viewing registration requests (admin use)"""
+    reviewed_by_name = serializers.CharField(source='reviewed_by.full_name', read_only=True)
+
+    class Meta:
+        model = RegistrationRequest
+        fields = [
+            'request_id', 'registration_type', 'organization_name', 'department',
+            'region', 'full_name', 'email', 'phone_number', 'latitude',
+            'longitude', 'address', 'documentation', 'status', 'reviewed_by_id',
+            'reviewed_by_name', 'review_notes', 'reviewed_at', 'created_at', 'updated_at'
+        ]
+        read_only_fields = ['request_id', 'created_at', 'updated_at', 'reviewed_by_name']
+
+
+class RegistrationRequestReviewSerializer(serializers.ModelSerializer):
+    """Serializer for reviewing registration requests"""
+    class Meta:
+        model = RegistrationRequest
+        fields = ['status', 'review_notes']
+
+    def validate_status(self, value):
+        if value not in ['approved', 'denied']:
+            raise serializers.ValidationError("Status must be either 'approved' or 'denied'.")
+        return value
 
         

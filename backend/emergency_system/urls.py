@@ -7,8 +7,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/auth/', include('accounts.urls')),
     path('api/alerts/', include('alerts.urls')),
-    path('api/districts/', include('districts.urls')),
     path('api/devices/', include('devices.urls')),  # Consolidated devices API
+    path('api/geography/', include('geography.urls')),  # Geographic hierarchy management
 ]
 
 # Serve media files in development

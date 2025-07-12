@@ -110,28 +110,61 @@ export default function DashboardLayout({ children, user }) {
 
   const theme = getDepartmentTheme();
 
-  const navigation = [
-    { name: "Dashboard", href: "/dashboard", icon: Home },
-    { name: "Alerts", href: "/dashboard/alerts", icon: Bell },
-    { name: "History", href: "/dashboard/history", icon: History },
-    ...(user.role === "System Administrator"
-      ? [
+  const getNavigationForRole = () => {
+    const baseNav = [
+      { name: "Alerts", href: "/dashboard/alerts", icon: Bell },
+      { name: "History", href: "/dashboard/history", icon: History },
+    ];
+
+    switch (user.role) {
+      case "System Administrator":
+        return [
+          { name: "Admin Dashboard", href: "/dashboard/admin", icon: Home },
+          ...baseNav,
           { name: "Devices", href: "/dashboard/devices", icon: Smartphone },
           { name: "All Users", href: "/dashboard/all-users", icon: Users },
+        ];
+
+      case "Regional Manager":
+        return [
           {
-            name: "Departments",
-            href: "/dashboard/departments",
-            icon: Building,
+            name: "Regional Dashboard",
+            href: "/dashboard/regional",
+            icon: Home,
           },
-        ]
-      : []),
-    ...(user.role === "Regional Manager"
-      ? [{ name: "Districts", href: "/dashboard/districts", icon: Building }]
-      : []),
-    ...(user.role === "Regional Manager" || user.role === "District Manager"
-      ? [{ name: "Users", href: "/dashboard/users", icon: Users }]
-      : []),
-  ];
+          ...baseNav,
+          { name: "Districts", href: "/dashboard/districts", icon: Building },
+          { name: "Staff", href: "/dashboard/users", icon: Users },
+        ];
+
+      case "District Manager":
+        return [
+          {
+            name: "District Dashboard",
+            href: "/dashboard/district",
+            icon: Home,
+          },
+          ...baseNav,
+          { name: "Stations", href: "/dashboard/stations", icon: Building },
+          { name: "Staff", href: "/dashboard/users", icon: Users },
+        ];
+
+      case "Station Manager":
+        return [
+          { name: "Station Dashboard", href: "/dashboard/station", icon: Home },
+          ...baseNav,
+          { name: "Responders", href: "/dashboard/responders", icon: Users },
+        ];
+
+      default:
+        return [
+          { name: "Dashboard", href: "/dashboard", icon: Home },
+          ...baseNav,
+        ];
+    }
+  };
+
+  const navigation = getNavigationForRole();
 
   const Sidebar = () => (
     <div className="flex h-full flex-col">
@@ -142,9 +175,17 @@ export default function DashboardLayout({ children, user }) {
           {getDepartmentIcon()}
           <div className="text-white">
             <h2 className="font-semibold">My Guardian Plus</h2>
-            <p className="text-xs opacity-90">
-              {user.role} - {user.full_name}
-            </p>
+            <p className="text-xs opacity-90">{user.full_name}</p>
+            <div className="flex items-center gap-1 mt-1">
+              <span className="text-xs bg-white/20 px-2 py-0.5 rounded-full">
+                {user.role}
+              </span>
+              {user.region_display && (
+                <span className="text-xs bg-white/10 px-2 py-0.5 rounded-full">
+                  {user.region_display}
+                </span>
+              )}
+            </div>
           </div>
         </div>
       </div>

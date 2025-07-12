@@ -35,7 +35,15 @@ class User(AbstractUser):
         ('System Administrator', 'System Administrator'),
         ('Regional Manager', 'Regional Manager'),
         ('District Manager', 'District Manager'),
+        ('Station Manager', 'Station Manager'),
+        ('Responder', 'Responder'),
         ('Field User', 'Field User'),
+    ]
+
+    REGION_CHOICES = [
+        ('central', 'Central Region'),
+        ('north', 'Northern Region'),
+        ('southern', 'Southern Region'),
     ]
     
     # Override the default id field to use UUID
@@ -49,9 +57,11 @@ class User(AbstractUser):
     # Department and role info - using simple CharField to avoid circular dependency
     department = models.CharField(max_length=20, choices=DEPARTMENT_CHOICES)
     role = models.CharField(max_length=50, choices=ROLE_CHOICES, default='Field User')
-    
-    # District reference - will be set after districts are created
+
+    # Geographic hierarchy references - using UUIDs to avoid circular dependencies
+    region = models.CharField(max_length=20, choices=REGION_CHOICES, null=True, blank=True)
     district_id = models.UUIDField(null=True, blank=True, help_text="Reference to district")
+    station_id = models.UUIDField(null=True, blank=True, help_text="Reference to station")
     
     # Additional profile information
     employee_id = models.CharField(max_length=20, unique=True, null=True, blank=True)
@@ -93,11 +103,17 @@ class User(AbstractUser):
         if self.role == 'System Administrator':
             return True
         elif self.role == 'Regional Manager':
-            return target_user.department == self.department
+            return (target_user.department == self.department and
+                   target_user.region == self.region and
+                   target_user.role in ['District Manager', 'Station Manager', 'Responder', 'Field User'])
         elif self.role == 'District Manager':
-            return (target_user.department == self.department and 
-                   target_user.district_id == self.district_id and 
-                   target_user.role == 'Field User')
+            return (target_user.department == self.department and
+                   target_user.district_id == self.district_id and
+                   target_user.role in ['Station Manager', 'Responder', 'Field User'])
+        elif self.role == 'Station Manager':
+            return (target_user.department == self.department and
+                   target_user.station_id == self.station_id and
+                   target_user.role in ['Responder', 'Field User'])
         return False
     
     def get_managed_users(self):
@@ -105,13 +121,23 @@ class User(AbstractUser):
         if self.role == 'System Administrator':
             return User.objects.all().exclude(id=self.id)
         elif self.role == 'Regional Manager':
-            return User.objects.filter(department=self.department).exclude(id=self.id)
+            return User.objects.filter(
+                department=self.department,
+                region=self.region,
+                role__in=['District Manager', 'Station Manager', 'Responder', 'Field User']
+            ).exclude(id=self.id)
         elif self.role == 'District Manager':
             return User.objects.filter(
                 department=self.department,
                 district_id=self.district_id,
-                role='Field User'
-            )
+                role__in=['Station Manager', 'Responder', 'Field User']
+            ).exclude(id=self.id)
+        elif self.role == 'Station Manager':
+            return User.objects.filter(
+                department=self.department,
+                station_id=self.station_id,
+                role__in=['Responder', 'Field User']
+            ).exclude(id=self.id)
         return User.objects.none()
     
     @property
@@ -119,8 +145,30 @@ class User(AbstractUser):
         """Get district object if district_id is set"""
         if self.district_id:
             try:
-                from districts.models import District
-                return District.objects.get(id=self.district_id)
+                from geography.models import District
+                return District.objects.get(district_id=self.district_id)
+            except:
+                return None
+        return None
+
+    @property
+    def station(self):
+        """Get station object if station_id is set"""
+        if self.station_id:
+            try:
+                from geography.models import Station
+                return Station.objects.get(station_id=self.station_id)
+            except:
+                return None
+        return None
+
+    @property
+    def region_obj(self):
+        """Get region object if region is set"""
+        if self.region:
+            try:
+                from geography.models import Region
+                return Region.objects.get(name=self.region)
             except:
                 return None
         return None
@@ -182,3 +230,79 @@ class UserLoginHistory(models.Model):
     def __str__(self):
         status = "Success" if self.success else f"Failed: {self.failure_reason}"
         return f"{self.user.username} - {status} - {self.login_time}"
+
+
+class RegistrationRequest(models.Model):
+    """Model for handling organization registration requests"""
+    REGISTRATION_TYPE_CHOICES = [
+        ('individual', 'Individual'),
+        ('organization', 'Organization'),
+    ]
+
+    DEPARTMENT_CHOICES = [
+        ('fire', 'Fire Department'),
+        ('police', 'Police Department'),
+        ('medical', 'Medical Department'),
+    ]
+
+    REGION_CHOICES = [
+        ('central', 'Central Region'),
+        ('north', 'Northern Region'),
+        ('southern', 'Southern Region'),
+    ]
+
+    STATUS_CHOICES = [
+        ('pending', 'Pending Review'),
+        ('approved', 'Approved'),
+        ('denied', 'Denied'),
+        ('under_review', 'Under Review'),
+    ]
+
+    # Primary key
+    request_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+
+    # Registration type and basic info
+    registration_type = models.CharField(max_length=20, choices=REGISTRATION_TYPE_CHOICES)
+    organization_name = models.CharField(max_length=200, blank=True)
+    department = models.CharField(max_length=20, choices=DEPARTMENT_CHOICES)
+    region = models.CharField(max_length=20, choices=REGION_CHOICES)
+
+    # Personal details
+    full_name = models.CharField(max_length=200)
+    email = models.EmailField()
+    phone_number = models.CharField(max_length=17)
+
+    # Location data
+    latitude = models.DecimalField(max_digits=10, decimal_places=8, null=True, blank=True)
+    longitude = models.DecimalField(max_digits=11, decimal_places=8, null=True, blank=True)
+    address = models.TextField(blank=True)
+
+    # Documentation
+    documentation = models.FileField(upload_to='registration_docs/', null=True, blank=True)
+
+    # Status and approval
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    reviewed_by_id = models.UUIDField(null=True, blank=True, help_text="ID of admin who reviewed")
+    review_notes = models.TextField(blank=True)
+    reviewed_at = models.DateTimeField(null=True, blank=True)
+
+    # Timestamps
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'registration_requests'
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.full_name} - {self.organization_name or 'Individual'} ({self.status})"
+
+    @property
+    def reviewed_by(self):
+        """Get the admin user who reviewed this request"""
+        if self.reviewed_by_id:
+            try:
+                return User.objects.get(id=self.reviewed_by_id)
+            except User.DoesNotExist:
+                return None
+        return None

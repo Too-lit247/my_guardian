@@ -6,11 +6,12 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import logout
 from django.utils import timezone
-from .models import User, UserLoginHistory, UserSession, EmergencyContact
+from .models import User, UserLoginHistory, UserSession, EmergencyContact, RegistrationRequest
 from .serializers import (
     CustomTokenObtainPairSerializer, UserSerializer, CreateUserSerializer,
     UpdateUserSerializer, ChangePasswordSerializer, UserLoginHistorySerializer,
-    RegisterUserSerializer, EmergencyContactSerializer
+    RegisterUserSerializer, EmergencyContactSerializer, RegistrationRequestSerializer,
+    RegistrationRequestDetailSerializer, RegistrationRequestReviewSerializer
 )
 
 
@@ -213,3 +214,289 @@ class EmergencyContactDetailView(generics.RetrieveUpdateDestroyAPIView):
 
     def get_queryset(self):
         return EmergencyContact.objects.filter(user=self.request.user)
+
+
+# Registration Request Views
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def submit_registration_request(request):
+    """Submit a new registration request"""
+    serializer = RegistrationRequestSerializer(data=request.data)
+    if serializer.is_valid():
+        registration_request = serializer.save()
+        return Response({
+            'message': 'Registration request submitted successfully',
+            'request_id': str(registration_request.request_id)
+        }, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def list_registration_requests(request):
+    """List all registration requests (System Admin only)"""
+    if request.user.role != 'System Administrator':
+        return Response({'error': 'Permission denied'}, status=status.HTTP_403_FORBIDDEN)
+
+    # Filter by status if provided
+    status_filter = request.query_params.get('status')
+    queryset = RegistrationRequest.objects.all()
+
+    if status_filter:
+        queryset = queryset.filter(status=status_filter)
+
+    # Pagination
+    page_size = int(request.query_params.get('page_size', 20))
+    page = int(request.query_params.get('page', 1))
+    start = (page - 1) * page_size
+    end = start + page_size
+
+    requests = queryset.order_by('-created_at')[start:end]
+    serializer = RegistrationRequestDetailSerializer(requests, many=True)
+
+    return Response({
+        'results': serializer.data,
+        'page': page,
+        'page_size': page_size,
+        'has_next': len(serializer.data) == page_size
+    })
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_registration_request(request, request_id):
+    """Get a specific registration request (System Admin only)"""
+    if request.user.role != 'System Administrator':
+        return Response({'error': 'Permission denied'}, status=status.HTTP_403_FORBIDDEN)
+
+    try:
+        registration_request = RegistrationRequest.objects.get(request_id=request_id)
+        serializer = RegistrationRequestDetailSerializer(registration_request)
+        return Response(serializer.data)
+    except RegistrationRequest.DoesNotExist:
+        return Response({'error': 'Registration request not found'}, status=status.HTTP_404_NOT_FOUND)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def review_registration_request(request, request_id):
+    """Approve or deny a registration request (System Admin only)"""
+    if request.user.role != 'System Administrator':
+        return Response({'error': 'Permission denied'}, status=status.HTTP_403_FORBIDDEN)
+
+    try:
+        registration_request = RegistrationRequest.objects.get(request_id=request_id)
+
+        if registration_request.status != 'pending':
+            return Response({'error': 'Request has already been reviewed'}, status=status.HTTP_400_BAD_REQUEST)
+
+        serializer = RegistrationRequestReviewSerializer(data=request.data)
+        if serializer.is_valid():
+            registration_request.status = serializer.validated_data['status']
+            registration_request.review_notes = serializer.validated_data.get('review_notes', '')
+            registration_request.reviewed_by_id = request.user.id
+            registration_request.reviewed_at = timezone.now()
+            registration_request.save()
+
+            # If approved, create the user account
+            if registration_request.status == 'approved':
+                # Generate a temporary password
+                import secrets
+                import string
+                temp_password = ''.join(secrets.choice(string.ascii_letters + string.digits) for _ in range(12))
+
+                # Create the user
+                user = User.objects.create_user(
+                    username=registration_request.email,
+                    email=registration_request.email,
+                    full_name=registration_request.full_name,
+                    phone_number=registration_request.phone_number,
+                    department=registration_request.department,
+                    role='Regional Manager',
+                    region=registration_request.region,
+                    password=temp_password
+                )
+
+                # TODO: Send email with temporary password
+
+                return Response({
+                    'message': 'Registration request approved and user created',
+                    'user_id': str(user.id),
+                    'temporary_password': temp_password
+                })
+            else:
+                return Response({'message': 'Registration request denied'})
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    except RegistrationRequest.DoesNotExist:
+        return Response({'error': 'Registration request not found'}, status=status.HTTP_404_NOT_FOUND)
+
+
+# Admin Management Views
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def create_admin_user(request):
+    """Create a new admin user (System Administrator only)"""
+    if request.user.role != 'System Administrator':
+        return Response({'error': 'Permission denied'}, status=status.HTTP_403_FORBIDDEN)
+
+    serializer = CreateUserSerializer(data=request.data, context={'request': request})
+    if serializer.is_valid():
+        # Generate a temporary password
+        import secrets
+        import string
+        temp_password = ''.join(secrets.choice(string.ascii_letters + string.digits) for _ in range(12))
+
+        # Create the user
+        user_data = serializer.validated_data.copy()
+        user_data.pop('password_confirm', None)
+        user_data['password'] = temp_password
+        user_data['created_by_id'] = request.user.id
+
+        user = User.objects.create_user(**user_data)
+
+        return Response({
+            'message': 'Admin user created successfully',
+            'user_id': str(user.id),
+            'temporary_password': temp_password,
+            'user': UserSerializer(user).data
+        }, status=status.HTTP_201_CREATED)
+
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def list_regional_managers(request):
+    """List all regional managers (System Administrator only)"""
+    if request.user.role != 'System Administrator':
+        return Response({'error': 'Permission denied'}, status=status.HTTP_403_FORBIDDEN)
+
+    regional_managers = User.objects.filter(role='Regional Manager', is_active=True)
+
+    # Filter by department if provided
+    department = request.query_params.get('department')
+    if department:
+        regional_managers = regional_managers.filter(department=department)
+
+    # Filter by region if provided
+    region = request.query_params.get('region')
+    if region:
+        regional_managers = regional_managers.filter(region=region)
+
+    serializer = UserSerializer(regional_managers, many=True)
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_user_hierarchy(request):
+    """Get the user hierarchy based on current user's role"""
+    user = request.user
+
+    if user.role == 'System Administrator':
+        # Return all users grouped by role
+        users = User.objects.filter(is_active=True).exclude(id=user.id)
+
+        hierarchy = {
+            'regional_managers': UserSerializer(users.filter(role='Regional Manager'), many=True).data,
+            'district_managers': UserSerializer(users.filter(role='District Manager'), many=True).data,
+            'station_managers': UserSerializer(users.filter(role='Station Manager'), many=True).data,
+            'responders': UserSerializer(users.filter(role='Responder'), many=True).data,
+            'field_users': UserSerializer(users.filter(role='Field User'), many=True).data,
+        }
+
+    elif user.role == 'Regional Manager':
+        # Return users in the same region and department
+        users = User.objects.filter(
+            region=user.region,
+            department=user.department,
+            is_active=True
+        ).exclude(id=user.id)
+
+        hierarchy = {
+            'district_managers': UserSerializer(users.filter(role='District Manager'), many=True).data,
+            'station_managers': UserSerializer(users.filter(role='Station Manager'), many=True).data,
+            'responders': UserSerializer(users.filter(role='Responder'), many=True).data,
+            'field_users': UserSerializer(users.filter(role='Field User'), many=True).data,
+        }
+
+    elif user.role == 'District Manager':
+        # Return users in the same district
+        users = User.objects.filter(
+            district_id=user.district_id,
+            is_active=True
+        ).exclude(id=user.id)
+
+        hierarchy = {
+            'station_managers': UserSerializer(users.filter(role='Station Manager'), many=True).data,
+            'responders': UserSerializer(users.filter(role='Responder'), many=True).data,
+            'field_users': UserSerializer(users.filter(role='Field User'), many=True).data,
+        }
+
+    elif user.role == 'Station Manager':
+        # Return users in the same station
+        users = User.objects.filter(
+            station_id=user.station_id,
+            is_active=True
+        ).exclude(id=user.id)
+
+        hierarchy = {
+            'responders': UserSerializer(users.filter(role='Responder'), many=True).data,
+            'field_users': UserSerializer(users.filter(role='Field User'), many=True).data,
+        }
+
+    else:
+        return Response({'error': 'Permission denied'}, status=status.HTTP_403_FORBIDDEN)
+
+    return Response(hierarchy)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def create_subordinate_user(request):
+    """Create a subordinate user based on current user's role"""
+    user = request.user
+
+    # Check if user can create subordinates
+    if user.role not in ['System Administrator', 'Regional Manager', 'District Manager', 'Station Manager']:
+        return Response({'error': 'Permission denied'}, status=status.HTTP_403_FORBIDDEN)
+
+    serializer = CreateUserSerializer(data=request.data, context={'request': request})
+    if serializer.is_valid():
+        # Generate a temporary password
+        import secrets
+        import string
+        temp_password = ''.join(secrets.choice(string.ascii_letters + string.digits) for _ in range(12))
+
+        # Create the user with appropriate hierarchy
+        user_data = serializer.validated_data.copy()
+        user_data.pop('password_confirm', None)
+        user_data['password'] = temp_password
+        user_data['created_by_id'] = user.id
+
+        # Set hierarchy based on creator's role
+        if user.role == 'Regional Manager':
+            user_data['region'] = user.region
+            user_data['department'] = user.department
+        elif user.role == 'District Manager':
+            user_data['region'] = user.region
+            user_data['department'] = user.department
+            user_data['district_id'] = user.district_id
+        elif user.role == 'Station Manager':
+            user_data['region'] = user.region
+            user_data['department'] = user.department
+            user_data['district_id'] = user.district_id
+            user_data['station_id'] = user.station_id
+
+        new_user = User.objects.create_user(**user_data)
+
+        return Response({
+            'message': 'User created successfully',
+            'user_id': str(new_user.id),
+            'temporary_password': temp_password,
+            'user': UserSerializer(new_user).data
+        }, status=status.HTTP_201_CREATED)
+
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

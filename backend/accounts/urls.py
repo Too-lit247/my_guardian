@@ -25,4 +25,16 @@ urlpatterns = [
     # Emergency Contacts
     path('emergency-contacts/', views.EmergencyContactListCreateView.as_view(), name='emergency_contact_list_create'),
     path('emergency-contacts/<uuid:pk>/', views.EmergencyContactDetailView.as_view(), name='emergency_contact_detail'),
+
+    # Registration Requests
+    path('registration-request/', views.submit_registration_request, name='submit_registration_request'),
+    path('registration-requests/', views.list_registration_requests, name='list_registration_requests'),
+    path('registration-requests/<uuid:request_id>/', views.get_registration_request, name='get_registration_request'),
+    path('registration-requests/<uuid:request_id>/review/', views.review_registration_request, name='review_registration_request'),
+
+    # Admin Management
+    path('admin/create-user/', views.create_admin_user, name='create_admin_user'),
+    path('admin/regional-managers/', views.list_regional_managers, name='list_regional_managers'),
+    path('admin/hierarchy/', views.get_user_hierarchy, name='get_user_hierarchy'),
+    path('admin/create-subordinate/', views.create_subordinate_user, name='create_subordinate_user'),
 ]
