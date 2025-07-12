@@ -55,20 +55,22 @@ def register_device(request):
 @permission_classes([AllowAny])
 @parser_classes([MultiPartParser, FormParser])
 def device_data_upload(request):
-    """Receive data from devices (1 reading per device)"""
+    """Receive data from devices"""
     mac_address = request.data.get('mac_address')
     reading_type = request.data.get('reading_type')
-
+    
     if not mac_address:
         return Response({'error': 'MAC address required'}, status=status.HTTP_400_BAD_REQUEST)
-
+    
     try:
         device = Device.objects.get(mac_address=mac_address, status='active')
     except Device.DoesNotExist:
         return Response({'error': 'Device not found or inactive'}, status=status.HTTP_404_NOT_FOUND)
-
+    
+    # Update last heartbeat
     device.last_heartbeat = timezone.now()
-
+    
+    # Create reading record
     reading_data = {
         'device': device.device_id,
         'reading_type': reading_type,
@@ -80,103 +82,92 @@ def device_data_upload(request):
         'longitude': request.data.get('longitude'),
         'raw_data': request.data.get('raw_data', {})
     }
-
+    
+    # Handle audio file upload
     if 'audio_file' in request.FILES:
         reading_data['audio_file'] = request.FILES['audio_file']
         reading_data['reading_type'] = 'audio'
-
-    # Check if a reading already exists for this device
-    existing = DeviceReading.objects.filter(device=device).first()
-
-    if existing:
-        serializer = DeviceReadingSerializer(existing, data=reading_data, partial=True)
-    else:
-        serializer = DeviceReadingSerializer(data={**reading_data, 'device': device.device_id})
-
+    
+    serializer = DeviceReadingSerializer(data=reading_data)
     if serializer.is_valid():
         reading = serializer.save()
-
-        # Update device coordinates & battery
+        
+        # Update device location and battery if provided
         if reading.latitude and reading.longitude:
             device.last_known_latitude = reading.latitude
             device.last_known_longitude = reading.longitude
             device.last_location_update = timezone.now()
-
+        
         if reading.battery_level:
             device.battery_level = reading.battery_level
-
+        
         device.save()
-
+        
+        # Process the reading for emergency triggers
         process_reading_for_emergencies(reading)
-
+        
         return Response({
             'message': 'Data received successfully',
             'reading_id': str(reading.reading_id)
         }, status=status.HTTP_201_CREATED)
-
+    
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
 def process_reading_for_emergencies(reading):
     """Process device reading to detect emergencies"""
     triggers = []
-
+    
     # Check heart rate
-    if reading.heart_rate and reading.heart_rate > 120:
+    if reading.heart_rate and reading.heart_rate > 120:  # High heart rate threshold
         triggers.append({
             'trigger_type': 'high_heart_rate',
             'severity': 'high' if reading.heart_rate > 150 else 'medium',
             'trigger_value': reading.heart_rate,
             'threshold_value': 120
         })
-
-    # Check temperature
-    if reading.temperature and reading.temperature > 40:
+    
+    # Check temperature (fire detection)
+    if reading.temperature and reading.temperature > 40:  # High temperature threshold
         triggers.append({
             'trigger_type': 'fire_detected',
             'severity': 'critical' if reading.temperature > 50 else 'high',
             'trigger_value': reading.temperature,
             'threshold_value': 40
         })
-
+    
     # Check smoke level
-    if reading.smoke_level and reading.smoke_level > 0.3:
+    if reading.smoke_level and reading.smoke_level > 0.3:  # Smoke threshold
         triggers.append({
             'trigger_type': 'fire_detected',
             'severity': 'critical' if reading.smoke_level > 0.7 else 'high',
             'trigger_value': reading.smoke_level,
             'threshold_value': 0.3
         })
-
-    # Analyze audio
+    
+    # Process audio for fear detection
     if reading.audio_file and reading.reading_type == 'audio':
         try:
-            analysis = analyze_audio_for_fear(reading.audio_file.path)
-            if analysis:
-                reading.fear_probability = analysis['fear_probability']
-                reading.stress_level = analysis['stress_level']
+            audio_analysis = analyze_audio_for_fear(reading.audio_file.path)
+            if audio_analysis:
+                reading.fear_probability = audio_analysis['fear_probability']
+                reading.stress_level = audio_analysis['stress_level']
                 reading.audio_analysis_complete = True
-
-                if analysis['fear_probability'] > 0.7:
+                reading.save()
+                
+                # Check if fear detected
+                if audio_analysis['fear_probability'] > 0.7:  # High fear threshold
                     triggers.append({
                         'trigger_type': 'fear_detected',
-                        'severity': 'critical' if analysis['fear_probability'] > 0.9 else 'high',
-                        'trigger_value': analysis['fear_probability'],
+                        'severity': 'critical' if audio_analysis['fear_probability'] > 0.9 else 'high',
+                        'trigger_value': audio_analysis['fear_probability'],
                         'threshold_value': 0.7
                     })
         except Exception as e:
-            logger.error(f"Audio analysis error: {e}")
-
-    # If any triggers were found, mark reading as emergency
-    if triggers:
-        reading.is_emergency = True
-        reading.triggered_by = triggers[0]['trigger_type']
-        reading.save()
-
-    # Create emergency triggers + alerts
+            logger.error(f"Error processing audio for fear detection: {e}")
+    
+    # Create emergency triggers and alerts
     for trigger_data in triggers:
         create_emergency_trigger(reading, trigger_data)
-
 
 def create_emergency_trigger(reading, trigger_data):
     """Create emergency trigger and corresponding alert"""
