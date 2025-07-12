@@ -1,7 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:my_guardian/services/alert_history_service.dart';
 
-class AlertHistoryPage extends StatelessWidget {
+class AlertHistoryPage extends StatefulWidget {
   const AlertHistoryPage({Key? key}) : super(key: key);
+
+  @override
+  State<AlertHistoryPage> createState() => _AlertHistoryPageState();
+}
+
+class _AlertHistoryPageState extends State<AlertHistoryPage> {
+  final AlertHistoryService _alertService = AlertHistoryService();
+
+  @override
+  void initState() {
+    super.initState();
+    _loadAlertHistory();
+  }
+
+  Future<void> _loadAlertHistory() async {
+    await _alertService.fetchAlertHistory();
+    if (mounted) {
+      setState(() {});
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,44 +38,97 @@ class AlertHistoryPage extends StatelessWidget {
           ),
         ),
         centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh, color: Colors.white),
+            onPressed: _loadAlertHistory,
+          ),
+        ],
       ),
       body: Column(
         children: [
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(16.0),
-              child: ListView(
-                children: const [
-                  AlertCard(
-                    alertType: AlertType.manual,
-                    date: '2024-09-10 14:30',
-                    isResolved: true,
-                  ),
-                  AlertCard(
-                    alertType: AlertType.fire,
-                    date: '2024-09-09 02:00',
-                    isResolved: false,
-                  ),
-                  AlertCard(
-                    alertType: AlertType.health,
-                    date: '2024-09-08 10:00',
-                    isResolved: true,
-                  ),
-                  AlertCard(
-                    alertType: AlertType.police,
-                    date: '2024-09-07 22:00',
-                    isResolved: false,
-                  ),
-                  AlertCard(
-                    alertType: AlertType.general,
-                    date: '2024-09-06 12:00',
-                    isResolved: true,
-                  ),
-                ],
-              ),
+              child: _buildContent(),
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildContent() {
+    if (_alertService.isLoading) {
+      return const Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircularProgressIndicator(color: Colors.green),
+            SizedBox(height: 16),
+            Text('Loading alert history...'),
+          ],
+        ),
+      );
+    }
+
+    if (_alertService.error != null) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.error_outline, size: 64, color: Colors.red[300]),
+            const SizedBox(height: 16),
+            Text(
+              'Error loading alerts',
+              style: TextStyle(fontSize: 18, color: Colors.red[700]),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              _alertService.error!,
+              textAlign: TextAlign.center,
+              style: const TextStyle(color: Colors.grey),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: _loadAlertHistory,
+              child: const Text('Retry'),
+            ),
+          ],
+        ),
+      );
+    }
+
+    if (_alertService.alertHistory.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.history, size: 64, color: Colors.grey[400]),
+            const SizedBox(height: 16),
+            Text(
+              'No Alert History',
+              style: TextStyle(fontSize: 18, color: Colors.grey[600]),
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'No emergency alerts have been triggered yet.',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.grey),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return RefreshIndicator(
+      onRefresh: _loadAlertHistory,
+      child: ListView.builder(
+        itemCount: _alertService.alertHistory.length,
+        itemBuilder: (context, index) {
+          final alert = _alertService.alertHistory[index];
+          return RealAlertCard(alert: alert);
+        },
       ),
     );
   }
@@ -62,6 +136,245 @@ class AlertHistoryPage extends StatelessWidget {
 
 enum AlertType { manual, general, health, fire, police }
 
+// New widget for real alert data
+class RealAlertCard extends StatelessWidget {
+  final Map<String, dynamic> alert;
+
+  const RealAlertCard({Key? key, required this.alert}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final alertService = AlertHistoryService();
+    final status = alert['status'] as String?;
+    final priority = alert['priority'] as String?;
+    final alertType = alert['alert_type'] as String?;
+    final title = alert['title'] as String? ?? 'Unknown Alert';
+    final createdAt = alert['created_at'];
+    final resolvedAt = alert['resolved_at'];
+    final description = alert['description'] as String? ?? '';
+    final location = alert['location'] as String? ?? 'Unknown location';
+
+    return Card(
+      elevation: 2,
+      margin: const EdgeInsets.only(bottom: 16),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: _getAlertTypeColor(alertType),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(
+                    _getAlertTypeIcon(alertType),
+                    color: Colors.white,
+                    size: 20,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        alertService.getAlertTypeDisplay(alertType),
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: _getAlertTypeColor(alertType),
+                        ),
+                      ),
+                      Text(
+                        alertService.formatDate(createdAt),
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: _getStatusColor(status),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    _getStatusDisplay(status),
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            if (title.isNotEmpty && title != 'Unknown Alert')
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            if (location.isNotEmpty && location != 'Unknown location')
+              Padding(
+                padding: const EdgeInsets.only(top: 4),
+                child: Row(
+                  children: [
+                    const Icon(Icons.location_on, size: 14, color: Colors.grey),
+                    const SizedBox(width: 4),
+                    Expanded(
+                      child: Text(
+                        location,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            if (priority != null)
+              Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.priority_high,
+                      size: 16,
+                      color: _getPriorityColor(priority),
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      'Priority: ${priority.toUpperCase()}',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: _getPriorityColor(priority),
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            if (resolvedAt != null)
+              Padding(
+                padding: const EdgeInsets.only(top: 4),
+                child: Text(
+                  'Resolved: ${alertService.formatDate(resolvedAt)}',
+                  style: const TextStyle(fontSize: 12, color: Colors.green),
+                ),
+              ),
+            if (alert['acknowledged'] == true &&
+                alert['acknowledged_at'] != null)
+              Padding(
+                padding: const EdgeInsets.only(top: 4),
+                child: Text(
+                  'Acknowledged: ${alertService.formatDate(alert['acknowledged_at'])}',
+                  style: const TextStyle(fontSize: 12, color: Colors.blue),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Color _getAlertTypeColor(String? alertType) {
+    switch (alertType) {
+      case 'high_heart_rate':
+      case 'heart_attack':
+      case 'fall_detected':
+        return Colors.red[500]!;
+      case 'fire_detected':
+      case 'building_fire':
+        return Colors.orange[500]!;
+      case 'fear_detected':
+      case 'panic_button':
+      case 'robbery':
+      case 'assault':
+        return Colors.purple[500]!;
+      default:
+        return Colors.blue[500]!;
+    }
+  }
+
+  IconData _getAlertTypeIcon(String? alertType) {
+    switch (alertType) {
+      case 'high_heart_rate':
+      case 'heart_attack':
+      case 'fall_detected':
+        return Icons.medical_services;
+      case 'fire_detected':
+      case 'building_fire':
+        return Icons.local_fire_department;
+      case 'fear_detected':
+      case 'panic_button':
+      case 'robbery':
+      case 'assault':
+        return Icons.local_police;
+      default:
+        return Icons.warning;
+    }
+  }
+
+  Color _getStatusColor(String? status) {
+    switch (status?.toLowerCase()) {
+      case 'active':
+        return Colors.red[600]!;
+      case 'in_progress':
+        return Colors.orange[600]!;
+      case 'resolved':
+        return Colors.green[600]!;
+      case 'cancelled':
+        return Colors.grey[600]!;
+      default:
+        return Colors.grey[600]!;
+    }
+  }
+
+  String _getStatusDisplay(String? status) {
+    switch (status?.toLowerCase()) {
+      case 'active':
+        return 'ACTIVE';
+      case 'in_progress':
+        return 'IN PROGRESS';
+      case 'resolved':
+        return 'RESOLVED';
+      case 'cancelled':
+        return 'CANCELLED';
+      default:
+        return 'UNKNOWN';
+    }
+  }
+
+  Color _getPriorityColor(String? priority) {
+    switch (priority?.toLowerCase()) {
+      case 'high':
+        return Colors.red[600]!;
+      case 'medium':
+        return Colors.orange[600]!;
+      case 'low':
+        return Colors.green[600]!;
+      default:
+        return Colors.grey[600]!;
+    }
+  }
+}
+
+// Keep the old AlertCard for backward compatibility
 class AlertCard extends StatelessWidget {
   final AlertType alertType;
   final String date;
