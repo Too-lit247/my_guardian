@@ -624,7 +624,6 @@
 // }
 // */
 
-
 // auth_service.dart
 import 'dart:async';
 import 'dart:convert';
@@ -1202,7 +1201,7 @@ class DjangoAuthService extends ChangeNotifier {
   AuthException _handleAuthError(int statusCode, Map<String, dynamic> data) {
     switch (statusCode) {
       case 400:
-        if (data is Map && data.containsKey('non_field_errors')) {
+        if (data.containsKey('non_field_errors')) {
           return ValidationException(data);
         }
         if (data['email'] != null) {

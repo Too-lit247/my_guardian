@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:my_guardian/auth/auth_service.dart';
 import 'package:my_guardian/services/postgre_auth.dart';
 
 class RegisterPage extends StatefulWidget {

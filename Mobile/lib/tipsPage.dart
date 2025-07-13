@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class TipsPage extends StatelessWidget {
-  const TipsPage({Key? key}) : super(key: key);
+  const TipsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -67,8 +67,7 @@ class TipCard extends StatelessWidget {
   final String tip;
   final String description;
 
-  const TipCard({Key? key, required this.tip, required this.description})
-    : super(key: key);
+  const TipCard({super.key, required this.tip, required this.description});
 
   @override
   Widget build(BuildContext context) {

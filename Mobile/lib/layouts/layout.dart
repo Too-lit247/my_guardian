@@ -1,6 +1,5 @@
 import 'package:my_guardian/alertHistoryPage.dart';
 import 'package:my_guardian/dashboard.dart';
-import 'package:my_guardian/profile.dart';
 import 'package:my_guardian/settings.dart';
 import 'package:flutter/material.dart';
 

@@ -9,6 +9,8 @@ import 'package:my_guardian/services/postgre_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
+
   @override
   State<SplashScreen> createState() => _SplashScreenState();
 }
@@ -140,7 +142,7 @@ class _SplashScreenState extends State<SplashScreen>
             const SizedBox(height: 20),
             const Text(
               "My guardian +",
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,

@@ -19,7 +19,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool _darkMode = false;
   String _selectedLanguage = "English";
   final String _firmwareVersion = "v1.2.3";
-  bool _autoSyncEnabled = true;
+  final bool _autoSyncEnabled = true;
 
   @override
   Widget build(BuildContext context) {

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:my_guardian/services/alert_history_service.dart';
 
 class AlertHistoryPage extends StatefulWidget {
-  const AlertHistoryPage({Key? key}) : super(key: key);
+  const AlertHistoryPage({super.key});
 
   @override
   State<AlertHistoryPage> createState() => _AlertHistoryPageState();
@@ -140,7 +140,7 @@ enum AlertType { manual, general, health, fire, police }
 class RealAlertCard extends StatelessWidget {
   final Map<String, dynamic> alert;
 
-  const RealAlertCard({Key? key, required this.alert}) : super(key: key);
+  const RealAlertCard({super.key, required this.alert});
 
   @override
   Widget build(BuildContext context) {
@@ -381,11 +381,11 @@ class AlertCard extends StatelessWidget {
   final bool isResolved;
 
   const AlertCard({
-    Key? key,
+    super.key,
     required this.alertType,
     required this.date,
     required this.isResolved,
-  }) : super(key: key);
+  });
 
   Color getAlertColor() {
     switch (alertType) {

@@ -498,7 +498,7 @@ class _BluetoothScanWidgetState extends State<BluetoothScanWidget> {
   @override
   Widget build(BuildContext context) {
     // Remove Scaffold and return the content directly
-    return Container(
+    return SizedBox(
       height: widget.height ?? 600, // Always provide a default height
       child: Column(
         mainAxisSize:
@@ -694,7 +694,7 @@ class _BluetoothScanWidgetState extends State<BluetoothScanWidget> {
 
   Widget _buildDeviceIcon(bool isRegistered, bool isRegistering) {
     if (isRegistering) {
-      return Container(
+      return SizedBox(
         width: 24,
         height: 24,
         child: CircularProgressIndicator(
@@ -711,7 +711,7 @@ class _BluetoothScanWidgetState extends State<BluetoothScanWidget> {
 
   Widget _buildTrailingWidget(bool isRegistered, bool isRegistering) {
     if (isRegistering) {
-      return Container(
+      return SizedBox(
         width: 24,
         height: 24,
         child: CircularProgressIndicator(
