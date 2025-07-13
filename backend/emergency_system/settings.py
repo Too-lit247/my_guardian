@@ -42,7 +42,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    # 'corsheaders.middleware.CorsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -180,20 +180,18 @@ SIMPLE_JWT = {
     'JTI_CLAIM': 'jti',
 }
 
-# CORS settings - FIXED FOR DEVELOPMENT
-# CORS_ALLOWED_ORIGINS = [
-#     "http://localhost:3000",
-#     "http://127.0.0.1:3000",
-# ]
+# CORS settings
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "https://my-guardian-plus.onrender.com",
+]
 
-# For development only - remove in production
-CORS_ALLOW_ALL_ORIGINS = config('CORS_ALLOW_ALL_ORIGINS', default=False, cast=bool)
+# Allow all origins for development (can be overridden by environment variable)
+CORS_ALLOW_ALL_ORIGINS = config('CORS_ALLOW_ALL_ORIGINS', default=True, cast=bool)
 
 # Security settings for CORS
 CORS_ALLOW_CREDENTIALS = True
-
-# For development - allow all origins
-CORS_ALLOW_ALL_ORIGINS = True
 
 # Additional CORS settings
 CORS_ALLOW_HEADERS = [
@@ -206,6 +204,9 @@ CORS_ALLOW_HEADERS = [
     'user-agent',
     'x-csrftoken',
     'x-requested-with',
+    'access-control-allow-origin',
+    'access-control-allow-headers',
+    'access-control-allow-methods',
 ]
 
 CORS_ALLOW_METHODS = [
