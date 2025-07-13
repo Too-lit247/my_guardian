@@ -170,7 +170,7 @@ def process_reading_for_emergencies(reading):
         create_emergency_trigger(reading, trigger_data)
 
 def create_emergency_trigger(reading, trigger_data):
-    """Create emergency trigger and corresponding alert"""
+    """Create emergency trigger and corresponding alert with automatic station assignment"""
     trigger = EmergencyTrigger.objects.create(
         device=reading.device,
         reading=reading,
@@ -181,51 +181,44 @@ def create_emergency_trigger(reading, trigger_data):
         latitude=reading.latitude,
         longitude=reading.longitude
     )
-    
-    # Determine which department should handle this
-    department_mapping = {
-        'fear_detected': 'police',
-        'high_heart_rate': 'medical',
-        'fire_detected': 'fire',
-        'panic_button': 'police',
-        'fall_detected': 'medical'
-    }
-    
-    department = department_mapping.get(trigger.trigger_type, 'police')
-    
-    # Create alert
-    alert_title = f"Emergency: {trigger.get_trigger_type_display()}"
+
+    # Create alert description
     alert_description = f"""
     Emergency detected from device {reading.device.serial_number}
     Owner: {reading.device.owner_name}
     Trigger: {trigger.get_trigger_type_display()}
     Severity: {trigger.get_severity_display()}
     Value: {trigger.trigger_value} (Threshold: {trigger.threshold_value})
+    Location: {reading.device.owner_address}
     """
-    
-    location = f"Lat: {trigger.latitude}, Lng: {trigger.longitude}" if trigger.latitude else reading.device.owner_address
-    
-    # Get a system user to create the alert
-    from accounts.models import User
-    system_user = User.objects.filter(role='System Administrator').first()
-    
-    if system_user:
-        alert = Alert.objects.create(
-            title=alert_title,
-            alert_type=trigger.trigger_type,
-            description=alert_description,
-            location=location,
-            priority='high' if trigger.severity in ['high', 'critical'] else 'medium',
-            status='active',
-            department=department,
-            created_by=system_user,
-            assigned_to=f"Auto-assigned from device {reading.device.serial_number}"
-        )
-        
-        trigger.alert_created_id = alert.id
-        trigger.save()
-        
-        logger.info(f"Emergency alert created: {alert.id} for device {reading.device.serial_number}")
+
+    # Use the new alert routing service to create and assign the alert
+    if trigger.latitude and trigger.longitude:
+        from alerts.services import AlertRoutingService
+        from accounts.models import User
+
+        system_user = User.objects.filter(role='System Administrator').first()
+
+        if system_user:
+            alert = AlertRoutingService.route_emergency_alert(
+                alert_type=trigger.trigger_type,
+                latitude=float(trigger.latitude),
+                longitude=float(trigger.longitude),
+                severity=trigger.severity,
+                description=alert_description,
+                created_by_user=system_user
+            )
+
+            trigger.alert_created_id = alert.id
+            trigger.save()
+
+            logger.info(f"Emergency alert created and routed: {alert.id} for device {reading.device.serial_number}")
+            if alert.assigned_station:
+                logger.info(f"Alert assigned to station: {alert.assigned_station.name}")
+        else:
+            logger.error("No system administrator found to create alert")
+    else:
+        logger.warning(f"No location data available for device {reading.device.serial_number}, cannot route alert")
 
 # Department Registration Views
 @api_view(['POST'])

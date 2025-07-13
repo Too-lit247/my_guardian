@@ -89,7 +89,7 @@ class District(models.Model):
     created_by_id = models.UUIDField(null=True, blank=True, help_text="ID of user who created this district")
     
     class Meta:
-        db_table = 'districts'
+        db_table = 'geography_districts'
         ordering = ['region__name', 'department', 'name']
         unique_together = ['name', 'department', 'region']
     
@@ -176,7 +176,7 @@ class Station(models.Model):
     created_by_id = models.UUIDField(null=True, blank=True, help_text="ID of user who created this station")
     
     class Meta:
-        db_table = 'stations'
+        db_table = 'geography_stations'
         ordering = ['district__name', 'name']
         unique_together = ['name', 'district']
     

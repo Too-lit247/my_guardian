@@ -127,7 +127,7 @@ class CreateUserSerializer(serializers.ModelSerializer):
             elif user.role == 'Regional Manager' and value:
                 # Check if district belongs to same department
                 try:
-                    from districts.models import District
+                    from geography.models import District
                     district = District.objects.get(id=value)
                     if district.department != user.department:
                         raise serializers.ValidationError("You can only assign users to districts in your department.")

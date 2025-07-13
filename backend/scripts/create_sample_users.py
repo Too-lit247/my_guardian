@@ -1,5 +1,5 @@
 from accounts.models import User
-from districts.models import District
+from geography.models import District
 
 # First, get the district IDs that were created
 fire_districts = District.objects.filter(department='fire')

@@ -1,4 +1,4 @@
-from districts.models import District
+from geography.models import District
 from accounts.models import User
 from django.utils import timezone
 
