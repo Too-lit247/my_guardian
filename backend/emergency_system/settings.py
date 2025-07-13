@@ -13,8 +13,8 @@ SECRET_KEY = config('SECRET_KEY', default='django-insecure-change-me-in-producti
 DEBUG = config('DEBUG', default=True, cast=bool)
 
 # ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1,0.0.0.0,https://my-guardian-plus.onrender.com,*').split(',')
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='*', cast=Csv())
-# ALLOWED_HOSTS = ['*']
+# ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='*', cast=Csv())
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 INSTALLED_APPS = [
@@ -181,13 +181,13 @@ SIMPLE_JWT = {
 }
 
 # CORS settings - FIXED FOR DEVELOPMENT
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
+CORS_ALLOWED_ORIGINS = [ "*",
+    # "http://localhost:3000",
+    # "http://127.0.0.1:3000",
 ]
 
 # For development only - remove in production
-CORS_ALLOW_ALL_ORIGINS = config('CORS_ALLOW_ALL_ORIGINS', default=False, cast=bool)
+CORS_ALLOW_ALL_ORIGINS = config('CORS_ALLOW_ALL_ORIGINS', default=True, cast=bool)
 
 # Security settings for CORS
 CORS_ALLOW_CREDENTIALS = True
