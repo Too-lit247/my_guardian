@@ -33,7 +33,6 @@ export default function LoginPage() {
 
     try {
       const response = await fetch(`${process.env.BACKEND_URL}/auth/login/`, {
-        mode: "no-cors",
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -170,7 +169,7 @@ export default function LoginPage() {
               Don't have an account?{" "}
               <Link
                 href="/register"
-                className=" text-primary hover:underline font-medium"
+                className=" text-blue-600 hover:underline font-medium"
               >
                 Register your organization
               </Link>

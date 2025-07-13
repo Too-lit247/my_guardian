@@ -80,7 +80,6 @@ class _RegisteredDeviceTileState extends State<RegisteredDeviceTile> {
                     "Proceed to Register new device ->",
                     style: const TextStyle(color: Colors.grey),
                   ),
-
                   trailing: Column(
                     children: [
                       ElevatedButton.icon(
