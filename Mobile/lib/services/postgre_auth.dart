@@ -160,12 +160,12 @@ class PostgreAuth {
       // Ensure connection is available before attempting registration
       await _ensureConnection();
 
-      final dpt = "System Administrator";
+      final dpt = "App User";
       final uuid = const Uuid().v4();
       final now = DateTime.now();
       final employeeId = 'EMP${Random().nextInt(999999)}';
       final badgeNumber = 'BDG${Random().nextInt(9999)}';
-      final role = 'Field Officer';
+      final role = 'App User';
       final fullName = '${firstName ?? 'First'} ${lastName ?? 'Last'}';
 
       print('Generated employee ID: $employeeId');

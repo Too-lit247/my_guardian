@@ -248,7 +248,7 @@ class DepartmentRegistration(models.Model):
     population_served = models.PositiveIntegerField(help_text="Approximate population served")
     
     # Documentation
-    license_document = models.FileField(upload_to='department_docs/', help_text="Department license/certification")
+    license_document = models.FileField(upload_to='department_docs/', blank=True, help_text="Department license/certification")
     insurance_document = models.FileField(upload_to='department_docs/', blank=True)
     additional_documents = models.FileField(upload_to='department_docs/', blank=True)
     

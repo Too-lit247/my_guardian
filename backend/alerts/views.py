@@ -14,7 +14,13 @@ class AlertListCreateView(generics.ListCreateAPIView):
     
     def get_queryset(self):
         user = self.request.user
-        queryset = Alert.objects.filter(department=user.department)
+
+        # System Administrators can see all alerts
+        if user.role == 'System Administrator':
+            queryset = Alert.objects.all()
+        else:
+            # Other users see alerts from their department only
+            queryset = Alert.objects.filter(department=user.department)
         
         # Filter by status if provided
         status_filter = self.request.query_params.get('status', None)
@@ -42,7 +48,14 @@ class AlertDetailView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated]
     
     def get_queryset(self):
-        return Alert.objects.filter(department=self.request.user.department)
+        user = self.request.user
+
+        # System Administrators can see all alerts
+        if user.role == 'System Administrator':
+            return Alert.objects.all()
+        else:
+            # Other users see alerts from their department only
+            return Alert.objects.filter(department=user.department)
     
     def perform_update(self, serializer):
         # If status is being changed to resolved, set resolved_at
@@ -55,7 +68,13 @@ class AlertDetailView(generics.RetrieveUpdateDestroyAPIView):
 @permission_classes([IsAuthenticated])
 def alert_statistics(request):
     user = request.user
-    alerts = Alert.objects.filter(department=user.department)
+
+    # System Administrators can see statistics for all alerts
+    if user.role == 'System Administrator':
+        alerts = Alert.objects.all()
+    else:
+        # Other users see statistics for their department only
+        alerts = Alert.objects.filter(department=user.department)
     
     stats = {
         'total_alerts': alerts.count(),

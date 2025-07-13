@@ -356,7 +356,7 @@ export default function DevicesPage() {
                 Manage Guardian devices and monitor emergency situations
               </p>
             </div>
-            <Dialog
+            {/* <Dialog
               open={isRegisterDeviceOpen}
               onOpenChange={setIsRegisterDeviceOpen}
             >
@@ -649,11 +649,11 @@ export default function DevicesPage() {
                   </div>
                 </div>
               </DialogContent>
-            </Dialog>
+            </Dialog> */}
           </div>
 
           {/* Emergency Triggers Alert */}
-          {unacknowledgedTriggers.length > 0 && (
+          {/*unacknowledgedTriggers.length > 0 && (
             <Card className="border-red-200 bg-red-50">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-red-700">
@@ -708,7 +708,7 @@ export default function DevicesPage() {
                 </div>
               </CardContent>
             </Card>
-          )}
+          )*/}
 
           {/* Statistics Cards */}
           <div className="grid gap-4 md:grid-cols-4">
@@ -914,8 +914,8 @@ export default function DevicesPage() {
                             <div className="flex items-center gap-1">
                               <MapPin className="h-4 w-4 text-muted-foreground" />
                               <span className="text-sm">
-                                {device.last_known_latitude.toFixed(4)},{" "}
-                                {device.last_known_longitude.toFixed(4)}
+                                {device?.last_known_latitude},{" "}
+                                {device?.last_known_longitude}
                               </span>
                             </div>
                           ) : (
@@ -934,9 +934,9 @@ export default function DevicesPage() {
                                 setIsDeviceDetailsOpen(true);
                               }}
                             >
-                              <Clock className="h-4 w-4" />
+                              <Clock className="h-4 w-4" /> View Details
                             </Button>
-                            <Button variant="ghost" size="sm">
+                            {/* <Button variant="ghost" size="sm">
                               <Edit className="h-4 w-4" />
                             </Button>
                             <Button
@@ -945,7 +945,7 @@ export default function DevicesPage() {
                               className="text-red-600 hover:text-red-700"
                             >
                               <Trash2 className="h-4 w-4" />
-                            </Button>
+                            </Button> */}
                           </div>
                         </TableCell>
                       </TableRow>
@@ -998,27 +998,7 @@ export default function DevicesPage() {
                     <p className="text-sm">{selectedDevice.owner_address}</p>
                   </div>
 
-                  <div className="grid gap-4 md:grid-cols-2">
-                    <div>
-                      <Label className="text-sm font-medium">
-                        Emergency Contact
-                      </Label>
-                      <p className="text-sm">
-                        {selectedDevice.emergency_contact || "Not provided"}
-                      </p>
-                    </div>
-                    <div>
-                      <Label className="text-sm font-medium">
-                        Emergency Phone
-                      </Label>
-                      <p className="text-sm">
-                        {selectedDevice.emergency_contact_phone ||
-                          "Not provided"}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div>
+                  {/* <div>
                     <Label className="text-sm font-medium">
                       Medical Conditions
                     </Label>
@@ -1039,15 +1019,15 @@ export default function DevicesPage() {
                     <p className="text-sm">
                       {selectedDevice.allergies || "None reported"}
                     </p>
-                  </div>
+                  </div> */}
 
                   <div className="grid gap-4 md:grid-cols-2">
-                    <div>
+                    {/* <div>
                       <Label className="text-sm font-medium">Blood Type</Label>
                       <p className="text-sm">
                         {selectedDevice.blood_type || "Not provided"}
                       </p>
-                    </div>
+                    </div> */}
                     <div>
                       <Label className="text-sm font-medium">
                         Firmware Version
@@ -1087,14 +1067,14 @@ export default function DevicesPage() {
                         )}
                         <span className="text-sm">Fire Detection</span>
                       </div>
-                      <div className="flex items-center gap-2">
+                      {/* <div className="flex items-center gap-2">
                         {selectedDevice.fall_detection_enabled ? (
                           <CheckCircle className="h-4 w-4 text-green-500" />
                         ) : (
                           <XCircle className="h-4 w-4 text-red-500" />
                         )}
                         <span className="text-sm">Fall Detection</span>
-                      </div>
+                      </div> */}
                     </div>
                   </div>
 

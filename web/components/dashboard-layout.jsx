@@ -255,7 +255,7 @@ export default function DashboardLayout({ children, user }) {
               </Button>
             </SheetTrigger>
           </Sheet>
-          <div className="ml-auto flex items-center gap-2">
+          {/* <div className="ml-auto flex items-center gap-2">
             <Link href="/dashboard/alerts/new">
               <Button
                 size="sm"
@@ -265,7 +265,7 @@ export default function DashboardLayout({ children, user }) {
                 New Alert
               </Button>
             </Link>
-          </div>
+          </div> */}
         </header>
         <main className="flex-1 overflow-auto p-4 lg:p-6">{children}</main>
       </div>

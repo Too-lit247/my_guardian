@@ -63,7 +63,15 @@ class DepartmentRegistrationSerializer(serializers.ModelSerializer):
             'regional_manager_phone', 'regional_manager_credentials', 'status',
             'review_notes', 'submitted_at'
         ]
-        read_only_fields = ['registration_id', 'submitted_at', 'status', 'review_notes']
+        read_only_fields = ['registration_id', 'registration_number', 'submitted_at', 'status', 'review_notes']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Make license_document optional for API submissions
+        if 'request' in self.context:
+            self.fields['license_document'].required = False
+            self.fields['insurance_document'].required = False
+            self.fields['additional_documents'].required = False
 
 class DeviceRegistrationSerializer(serializers.ModelSerializer):
     """Simplified serializer for mobile app registration"""

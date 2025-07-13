@@ -413,7 +413,7 @@ export default function AllUsersPage() {
                 Manage all users and department registration requests
               </p>
             </div>
-            <Dialog open={isCreateUserOpen} onOpenChange={setIsCreateUserOpen}>
+            {/* <Dialog open={isCreateUserOpen} onOpenChange={setIsCreateUserOpen}>
               <DialogTrigger asChild>
                 <Button>
                   <Plus className="h-4 w-4 mr-2" />
@@ -669,7 +669,7 @@ export default function AllUsersPage() {
                   </div>
                 </div>
               </DialogContent>
-            </Dialog>
+            </Dialog> */}
           </div>
 
           {/* Pending Registrations Alert */}

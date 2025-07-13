@@ -216,12 +216,12 @@ export default function Dashboard() {
                 <CardDescription>Common tasks for your role</CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
-                <Link href="/dashboard/alerts/new">
+                {/* <Link href="/dashboard/alerts/new">
                   <Button className="w-full justify-start" variant="outline">
                     <Plus className="h-4 w-4 mr-2" />
                     Create New Alert
                   </Button>
-                </Link>
+                </Link> */}
 
                 {user.role === "regional" && (
                   <Link href="/dashboard/districts">

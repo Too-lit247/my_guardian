@@ -225,20 +225,20 @@ def create_emergency_trigger(reading, trigger_data):
 @permission_classes([AllowAny])
 def register_department(request):
     """Register a new department"""
-    serializer = DepartmentRegistrationSerializer(data=request.data)
+    serializer = DepartmentRegistrationSerializer(data=request.data, context={'request': request})
     if serializer.is_valid():
         # Generate registration number
         import uuid
         registration_number = f"DEPT-{str(uuid.uuid4())[:8].upper()}"
-        
+
         registration = serializer.save(registration_number=registration_number)
-        
+
         return Response({
             'message': 'Department registration submitted successfully',
             'registration_number': registration.registration_number,
             'status': 'pending'
         }, status=status.HTTP_201_CREATED)
-    
+
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class DepartmentRegistrationListView(generics.ListAPIView):
