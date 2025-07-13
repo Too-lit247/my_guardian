@@ -344,9 +344,9 @@ class _BluetoothScanWidgetState extends State<BluetoothScanWidget> {
         "mac_address": mac,
         "name": name,
         "owner_id": userId,
-        "owner_name": "Test Owner",
-        "owner_phone": "+265991234567",
-        "owner_address": "Mzuzu City",
+        "owner_name": currentUser['full_name'] ?? "Test Owner",
+        "owner_phone": currentUser['phone_number'] ?? "+265991234567",
+        "owner_address": "Malawi",
         "is_active": true,
       };
 
