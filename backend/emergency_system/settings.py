@@ -186,6 +186,10 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:3000",
 ]
 
+# For development only - remove in production
+CORS_ALLOW_ALL_ORIGINS = config('CORS_ALLOW_ALL_ORIGINS', default=False, cast=bool)
+
+# Security settings for CORS
 CORS_ALLOW_CREDENTIALS = True
 
 # For development - allow all origins
