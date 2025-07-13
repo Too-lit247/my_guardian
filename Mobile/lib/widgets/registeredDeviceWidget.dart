@@ -67,24 +67,61 @@ class _RegisteredDeviceTileState extends State<RegisteredDeviceTile> {
           children: [
             const SettingsHeader(title: "Registered Device"),
             _macAddress == null
-                ? Column(
-                  children: [
-                    const SettingsHeader(title: "Registered Device"),
-                    const Icon(
-                      Icons.info_outline,
-                      size: 40,
-                      color: Colors.grey,
+                ? ListTile(
+                  leading: const Icon(Icons.bluetooth),
+                  title: Text(
+                    "No registered device Found!",
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.red,
                     ),
-                    const SizedBox(height: 10),
-                    const Text("No device registered."),
-                    const SizedBox(height: 10),
-                    ElevatedButton.icon(
-                      icon: const Icon(Icons.refresh),
-                      label: const Text("Try Again"),
-                      onPressed: _fetchDevice,
-                    ),
-                  ],
+                  ),
+                  subtitle: Text(
+                    "Proceed to Register new device ->",
+                    style: const TextStyle(color: Colors.grey),
+                  ),
+
+                  trailing: Column(
+                    children: [
+                      ElevatedButton.icon(
+                        icon: const Icon(Icons.arrow_forward),
+                        label: const Text("Register Device"),
+                        onPressed: () {
+                          Navigator.of(context).pushNamed('/scan_device');
+                        },
+                      ),
+                      ElevatedButton.icon(
+                        icon: const Icon(Icons.refresh),
+                        label: const Text("Refresh"),
+                        onPressed: _fetchDevice,
+                      ),
+                    ],
+                  ),
                 )
+                // ? Column(
+                //   children: [
+                //     const Icon(
+                //       Icons.info_outline,
+                //       size: 40,
+                //       color: Colors.grey,
+                //     ),
+                //     const SizedBox(height: 10),
+                //     const Text("No device registered."),
+                //     const SizedBox(height: 10),
+                //     const ElevatedButton.icon(
+                //     icon: const Icon(Icons.arrow_forward),
+                //     label: const Text("Change"),
+                //     onPressed: () {
+                //       Navigator.of(context).pushNamed('/scan_device');
+                //     },
+                //   ),
+                //     ElevatedButton.icon(
+                //       icon: const Icon(Icons.refresh),
+                //       label: const Text("Try Again"),
+                //       onPressed: _fetchDevice,
+                //     ),
+                //   ],
+                // )
                 : ListTile(
                   leading: const Icon(Icons.bluetooth),
                   title: Text(

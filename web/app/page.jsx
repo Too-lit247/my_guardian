@@ -11,13 +11,6 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Shield, Flame, Heart, AlertCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -40,6 +33,7 @@ export default function LoginPage() {
 
     try {
       const response = await fetch(`${process.env.BACKEND_URL}/auth/login/`, {
+        mode: "no-cors",
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -63,7 +57,7 @@ export default function LoginPage() {
       }
     } catch (err) {
       console.error("Login error:", err);
-      setError("Network error. Please check if the backend server is running.");
+      setError("Network error!");
     } finally {
       setLoading(false);
     }
@@ -116,7 +110,7 @@ export default function LoginPage() {
 */
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100">
-      <Card className="w-full max-w-md">
+      <Card className="w-full max-w-md border-green-300">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-bold">MyGuardian+</CardTitle>
           <CardDescription>
@@ -176,7 +170,7 @@ export default function LoginPage() {
               Don't have an account?{" "}
               <Link
                 href="/register"
-                className="text-primary hover:underline font-medium"
+                className=" text-primary hover:underline font-medium"
               >
                 Register your organization
               </Link>
