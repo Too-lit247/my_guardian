@@ -230,7 +230,6 @@ def submit_registration_request(request):
         }, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def list_registration_requests(request):

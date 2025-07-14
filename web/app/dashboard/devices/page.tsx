@@ -84,27 +84,10 @@ interface Device {
   is_online: boolean;
 }
 
-interface EmergencyTrigger {
-  trigger_id: string;
-  device_info: {
-    owner_name: string;
-    owner_phone: string;
-    serial_number: string;
-  };
-  trigger_type: string;
-  severity: string;
-  trigger_value: number;
-  threshold_value: number;
-  latitude: number | null;
-  longitude: number | null;
-  acknowledged: boolean;
-  triggered_at: string;
-}
-
 export default function DevicesPage() {
   const [user, setUser] = useState<any | null>(null);
   const [devices, setDevices] = useState<Device[]>([]);
-  const [triggers, setTriggers] = useState<EmergencyTrigger[]>([]);
+
   const [filteredDevices, setFilteredDevices] = useState<Device[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -148,7 +131,6 @@ export default function DevicesPage() {
     }
 
     fetchDevices();
-    fetchEmergencyTriggers();
   }, [router]);
 
   useEffect(() => {
@@ -205,28 +187,6 @@ export default function DevicesPage() {
     }
   };
 
-  const fetchEmergencyTriggers = async () => {
-    try {
-      const token = localStorage.getItem("access_token");
-      const response = await fetch(
-        "https://my-guardian-plus.onrender.com/api/devices/triggers/",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      if (response.ok) {
-        const data = await response.json();
-        setTriggers(data.results || data);
-      }
-    } catch (error) {
-      console.error("Error fetching emergency triggers:", error);
-    }
-  };
-
   const handleRegisterDevice = async () => {
     try {
       const token = localStorage.getItem("access_token");
@@ -265,28 +225,6 @@ export default function DevicesPage() {
       }
     } catch (error) {
       console.error("Error registering device:", error);
-    }
-  };
-
-  const acknowledgeEmergencyTrigger = async (triggerId: string) => {
-    try {
-      const token = localStorage.getItem("access_token");
-      const response = await fetch(
-        `https://my-guardian-plus.onrender.com/api/devices/triggers/${triggerId}/acknowledge/`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      if (response.ok) {
-        fetchEmergencyTriggers();
-      }
-    } catch (error) {
-      console.error("Error acknowledging trigger:", error);
     }
   };
 
@@ -342,8 +280,6 @@ export default function DevicesPage() {
     if (level > 20) return "text-yellow-600";
     return "text-red-600";
   };
-
-  const unacknowledgedTriggers = triggers.filter((t) => !t.acknowledged);
 
   return (
     <AuthWrapper>
@@ -652,64 +588,6 @@ export default function DevicesPage() {
             </Dialog> */}
           </div>
 
-          {/* Emergency Triggers Alert */}
-          {/*unacknowledgedTriggers.length > 0 && (
-            <Card className="border-red-200 bg-red-50">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-red-700">
-                  <AlertTriangle className="h-5 w-5" />
-                  Emergency Triggers ({unacknowledgedTriggers.length})
-                </CardTitle>
-                <CardDescription className="text-red-600">
-                  Unacknowledged emergency situations detected by devices
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  {unacknowledgedTriggers.slice(0, 3).map((trigger) => (
-                    <div
-                      key={trigger.trigger_id}
-                      className="flex items-center justify-between p-3 bg-white border border-red-200 rounded"
-                    >
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-2">
-                          <Badge
-                            variant={getSeverityColor(trigger.severity) as any}
-                          >
-                            {trigger.severity}
-                          </Badge>
-                          <span className="font-medium">
-                            {trigger.trigger_type.replace("_", " ")}
-                          </span>
-                        </div>
-                        <p className="text-sm text-muted-foreground">
-                          {trigger.device_info.owner_name} -{" "}
-                          {trigger.device_info.serial_number}
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          {new Date(trigger.triggered_at).toLocaleString()}
-                        </p>
-                      </div>
-                      <Button
-                        size="sm"
-                        onClick={() =>
-                          acknowledgeEmergencyTrigger(trigger.trigger_id)
-                        }
-                      >
-                        Acknowledge
-                      </Button>
-                    </div>
-                  ))}
-                  {unacknowledgedTriggers.length > 3 && (
-                    <p className="text-sm text-muted-foreground text-center">
-                      +{unacknowledgedTriggers.length - 3} more triggers
-                    </p>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          )*/}
-
           {/* Statistics Cards */}
           <div className="grid gap-4 md:grid-cols-4">
             <Card>
@@ -750,9 +628,7 @@ export default function DevicesPage() {
                 <AlertTriangle className="h-4 w-4 text-red-500" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">
-                  {unacknowledgedTriggers.length}
-                </div>
+                <div className="text-2xl font-bold">0</div>
                 <p className="text-xs text-muted-foreground">
                   Unacknowledged triggers
                 </p>

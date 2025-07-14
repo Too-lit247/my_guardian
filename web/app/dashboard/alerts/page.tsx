@@ -27,14 +27,42 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Search, Plus, Eye, Edit, Trash2 } from "lucide-react";
+import {
+  Search,
+  Plus,
+  Eye,
+  Edit,
+  Trash2,
+  AlertTriangle,
+  CheckCircle,
+  XCircle,
+} from "lucide-react";
 import DashboardLayout from "@/components/dashboard-layout";
 import AuthWrapper from "@/components/auth-wrapper";
 import Link from "next/link";
 
+// Emergency Trigger interface
+interface EmergencyTrigger {
+  trigger_id: string;
+  device_info: {
+    owner_name: string;
+    owner_phone: string;
+    serial_number: string;
+  };
+  trigger_type: string;
+  severity: string;
+  trigger_value: number;
+  threshold_value: number;
+  latitude: number | null;
+  longitude: number | null;
+  acknowledged: boolean;
+  triggered_at: string;
+}
+
 export default function AlertsPage() {
   const [user, setUser] = useState(null);
   const [alerts, setAlerts] = useState([]);
+  const [triggers, setTriggers] = useState<EmergencyTrigger[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -49,6 +77,7 @@ export default function AlertsPage() {
     }
     setUser(JSON.parse(userData));
     fetchAlerts();
+    fetchEmergencyTriggers();
   }, [router]);
 
   const fetchAlerts = async () => {
@@ -82,6 +111,50 @@ export default function AlertsPage() {
       console.error("Error fetching alerts:", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchEmergencyTriggers = async () => {
+    try {
+      const token = localStorage.getItem("access_token");
+      const response = await fetch(
+        "https://my-guardian-plus.onrender.com/api/devices/triggers/",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        setTriggers(data.results || data);
+      }
+    } catch (error) {
+      console.error("Error fetching emergency triggers:", error);
+    }
+  };
+
+  const acknowledgeEmergencyTrigger = async (triggerId: string) => {
+    try {
+      const token = localStorage.getItem("access_token");
+      const response = await fetch(
+        `https://my-guardian-plus.onrender.com/api/devices/triggers/${triggerId}/acknowledge/`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.ok) {
+        fetchEmergencyTriggers();
+      }
+    } catch (error) {
+      console.error("Error acknowledging trigger:", error);
     }
   };
 
@@ -142,6 +215,23 @@ export default function AlertsPage() {
     }
   };
 
+  const getSeverityColor = (severity) => {
+    switch (severity) {
+      case "critical":
+        return "destructive";
+      case "high":
+        return "destructive";
+      case "medium":
+        return "default";
+      case "low":
+        return "secondary";
+      default:
+        return "secondary";
+    }
+  };
+
+  const unacknowledgedTriggers = triggers.filter((t) => !t.acknowledged);
+
   return (
     <AuthWrapper>
       <DashboardLayout user={user}>
@@ -160,6 +250,69 @@ export default function AlertsPage() {
               </Button>
             </Link>
           </div>
+
+          {/* Emergency Triggers Alert */}
+          {unacknowledgedTriggers.length > 0 && (
+            <Card className="border-red-200 bg-red-50">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-red-700">
+                  <AlertTriangle className="h-5 w-5" />
+                  Emergency Triggers ({unacknowledgedTriggers.length})
+                </CardTitle>
+                <CardDescription className="text-red-600">
+                  Unacknowledged emergency situations detected by devices
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  {unacknowledgedTriggers.slice(0, 5).map((trigger) => (
+                    <div
+                      key={trigger.trigger_id}
+                      className="flex items-center justify-between p-3 bg-white border border-red-200 rounded"
+                    >
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                          <Badge
+                            variant={getSeverityColor(trigger.severity)}
+                          >
+                            {trigger.severity}
+                          </Badge>
+                          <span className="font-medium">
+                            {trigger.trigger_type.replace("_", " ")}
+                          </span>
+                        </div>
+                        <p className="text-sm text-muted-foreground">
+                          {trigger.device_info.owner_name} -{" "}
+                          {trigger.device_info.serial_number}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {new Date(trigger.triggered_at).toLocaleString()}
+                        </p>
+                        {trigger.latitude && trigger.longitude && (
+                          <p className="text-xs text-muted-foreground">
+                            📍 {trigger.latitude.toFixed(4)}, {trigger.longitude.toFixed(4)}
+                          </p>
+                        )}
+                      </div>
+                      <Button
+                        size="sm"
+                        onClick={() =>
+                          acknowledgeEmergencyTrigger(trigger.trigger_id)
+                        }
+                      >
+                        Acknowledge
+                      </Button>
+                    </div>
+                  ))}
+                  {unacknowledgedTriggers.length > 5 && (
+                    <p className="text-sm text-muted-foreground text-center">
+                      +{unacknowledgedTriggers.length - 5} more triggers
+                    </p>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
           <Card>
             <CardHeader>
