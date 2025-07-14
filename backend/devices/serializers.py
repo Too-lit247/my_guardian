@@ -65,11 +65,7 @@ class DepartmentRegistrationSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = ['registration_id', 'registration_number', 'submitted_at', 'status', 'review_notes']
 
-    def validate_license_document(self, value):
-        """Validate license document URL"""
-        if value and not (value.startswith('http://') or value.startswith('https://')):
-            raise serializers.ValidationError("Must be a valid URL")
-        return value
+
 
 class DeviceRegistrationSerializer(serializers.ModelSerializer):
     """Simplified serializer for mobile app registration"""
