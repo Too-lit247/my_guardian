@@ -57,7 +57,7 @@ class DepartmentRegistrationSerializer(serializers.ModelSerializer):
         fields = [
             'registration_id', 'department_name', 'department_type', 'registration_number',
             'contact_person', 'contact_email', 'contact_phone', 'address',
-            'city', 'state', 'zip_code', 'country', 'coverage_description',
+            'city', 'state', 'zip_code', 'country', 'region', 'coverage_description',
             'population_served', 'license_document', 'insurance_document',
             'additional_documents', 'regional_manager_name', 'regional_manager_email',
             'regional_manager_phone', 'regional_manager_credentials', 'status',

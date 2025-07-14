@@ -96,6 +96,7 @@ interface DepartmentRegistration {
   state: string;
   zip_code: string;
   country: string;
+  region: string;
   coverage_description: string;
   population_served: number;
   regional_manager_name: string;

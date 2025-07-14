@@ -266,7 +266,7 @@ def approve_department_registration(request, registration_id):
     
     # Create regional manager user
     from accounts.models import User
-    
+
     try:
         regional_manager = User.objects.create_user(
             username=f"{registration.department_type}_regional_{registration.registration_id}",
@@ -275,6 +275,7 @@ def approve_department_registration(request, registration_id):
             full_name=registration.regional_manager_name,
             department=registration.department_type,
             role='Regional Manager',
+            region=registration.region,  # Assign to the selected region
             phone_number=registration.regional_manager_phone,
             employee_id=f"RM-{registration.registration_number}"
         )

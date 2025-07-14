@@ -56,8 +56,7 @@ class District(models.Model):
     department = models.CharField(max_length=20)
     
     # Geographic hierarchy
-    #region = models.ForeignKey(Region, on_delete=models.CASCADE, related_name='districts')
-    region = models.CharField(max_length=20)
+    region = models.ForeignKey(Region, on_delete=models.CASCADE, related_name='districts')
     
     # Location Information
     address = models.TextField()
@@ -86,7 +85,7 @@ class District(models.Model):
     
     class Meta:
         db_table = 'geography_districts'
-        ordering = ['region__name', 'department', 'name']
+        ordering = ['region__display_name', 'department', 'name']
         unique_together = ['name', 'department', 'region']
     
     def __str__(self):

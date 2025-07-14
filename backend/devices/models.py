@@ -216,20 +216,29 @@ class DepartmentRegistration(models.Model):
         ('rejected', 'Rejected'),
         ('suspended', 'Suspended'),
     ]
-    
+
     DEPARTMENT_TYPE_CHOICES = [
         ('fire', 'Fire Department'),
         ('police', 'Police Department'),
         ('medical', 'Medical Department'),
         ('emergency', 'Emergency Services'),
     ]
-    
+
+    REGION_CHOICES = [
+        ('central', 'Central Region'),
+        ('north', 'Northern Region'),
+        ('southern', 'Southern Region'),
+    ]
+
     registration_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    
+
     # Department Information
     department_name = models.CharField(max_length=200)
     department_type = models.CharField(max_length=20, choices=DEPARTMENT_TYPE_CHOICES)
     registration_number = models.CharField(max_length=50, unique=True)
+
+    # Region Assignment
+    region = models.CharField(max_length=20, choices=REGION_CHOICES, help_text="Region where this department will operate")
     
     # Contact Information
     contact_person = models.CharField(max_length=100)
