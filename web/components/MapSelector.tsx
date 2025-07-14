@@ -38,8 +38,14 @@ export default function MapSelector({
     useMapEvents({
       click(e) {
         const { lat, lng } = e.latlng;
-        setPosition([lat, lng]);
-        onSelect(lat, lng);
+        // Round coordinates to fit backend constraints:
+        // Latitude: max_digits=10, decimal_places=8 (XX.XXXXXXXX)
+        // Longitude: max_digits=11, decimal_places=8 (XXX.XXXXXXXX)
+        const roundedLat = Math.round(lat * 100000000) / 100000000; // 8 decimal places
+        const roundedLng = Math.round(lng * 100000000) / 100000000; // 8 decimal places
+
+        setPosition([roundedLat, roundedLng]);
+        onSelect(roundedLat, roundedLng);
       },
     });
 

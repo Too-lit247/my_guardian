@@ -135,9 +135,53 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 if (BASE_DIR / "static").exists():
     STATICFILES_DIRS = [BASE_DIR / "static"]
 
-# Media files
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / "media"
+# Media files - Cloud Storage Configuration
+if DEBUG:
+    # Development - Local storage
+    MEDIA_URL = '/media/'
+    MEDIA_ROOT = BASE_DIR / "media"
+else:
+    # Production - Cloud storage (configure via environment variables)
+    STORAGE_BACKEND = config('STORAGE_BACKEND', default='s3')
+
+    if STORAGE_BACKEND == 's3':
+        # AWS S3 Configuration
+        DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+        AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID', default='')
+        AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY', default='')
+        AWS_STORAGE_BUCKET_NAME = config('AWS_STORAGE_BUCKET_NAME', default='')
+        AWS_S3_REGION_NAME = config('AWS_S3_REGION_NAME', default='us-east-1')
+        AWS_S3_FILE_OVERWRITE = False
+        AWS_DEFAULT_ACL = None
+        AWS_S3_VERIFY = True
+        if AWS_STORAGE_BUCKET_NAME:
+            MEDIA_URL = f"https://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/"
+
+    elif STORAGE_BACKEND == 'firebase':
+        # Firebase Storage Configuration using existing project
+        DEFAULT_FILE_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
+        GS_BUCKET_NAME = config('FIREBASE_STORAGE_BUCKET', default='guardian-16d00.firebasestorage.app')
+        GS_PROJECT_ID = config('FIREBASE_PROJECT_ID', default='guardian-16d00')
+        GS_DEFAULT_ACL = 'publicRead'
+
+        # Use service account JSON if provided, otherwise use default credentials
+        GOOGLE_APPLICATION_CREDENTIALS_JSON = config('GOOGLE_APPLICATION_CREDENTIALS_JSON', default=None)
+        if GOOGLE_APPLICATION_CREDENTIALS_JSON:
+            import json
+            import tempfile
+            # Write JSON to temporary file for Google Cloud Storage
+            credentials_dict = json.loads(GOOGLE_APPLICATION_CREDENTIALS_JSON)
+            temp_file = tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.json')
+            json.dump(credentials_dict, temp_file)
+            temp_file.close()
+            os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = temp_file.name
+
+        MEDIA_URL = f"https://firebasestorage.googleapis.com/v0/b/{GS_BUCKET_NAME}/o/"
+
+    else:
+        # Fallback to local (will lose files on restart)
+        MEDIA_URL = '/media/'
+        MEDIA_ROOT = BASE_DIR / "media"
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

@@ -30,6 +30,7 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import MapSelector from "@/components/MapSelector";
+import { useFileUpload, validateFile, FILE_TYPES } from "@/hooks/useFileUpload";
 
 const steps = [
   { id: 1, title: "Registration Type", icon: User },
@@ -58,7 +59,17 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+  const [uploadedFileUrl, setUploadedFileUrl] = useState(null);
   const router = useRouter();
+
+  // File upload hook
+  const {
+    uploadFile,
+    uploading,
+    uploadProgress,
+    error: uploadError,
+    clearError,
+  } = useFileUpload();
 
   const progress = (currentStep / steps.length) * 100;
 
@@ -100,15 +111,67 @@ export default function RegisterPage() {
     }
   };
 
+  // Helper function to format coordinates for backend
+  const formatCoordinate = (value) => {
+    if (value === null || value === undefined) return null;
+    // Round to 8 decimal places to fit backend constraints
+    const rounded = Math.round(value * 100000000) / 100000000;
+    return rounded;
+  };
+
+  // Handle file upload to frontend server
+  const handleFileUpload = async (file) => {
+    if (!file) return;
+
+    // Validate file
+    const validation = validateFile(
+      file,
+      FILE_TYPES.ALL_MEDIA,
+      10 * 1024 * 1024
+    );
+    if (!validation.isValid) {
+      setError(validation.errors.join(", "));
+      return;
+    }
+
+    clearError();
+
+    try {
+      const result = await uploadFile(file, "registration_docs");
+      if (result) {
+        setUploadedFileUrl(result.fullUrl);
+        setFormData({ ...formData, documentation: result.fullUrl });
+        setError("");
+      }
+    } catch (err) {
+      setError("Failed to upload file: " + err.message);
+    }
+  };
+
   const handleSubmit = async () => {
     setLoading(true);
     setError("");
 
     try {
-      const formDataToSend = new FormData();
+      // Prepare data as JSON (no longer using FormData since files are handled separately)
+      const dataToSend = {};
       Object.keys(formData).forEach((key) => {
         if (formData[key] !== null && formData[key] !== "") {
-          formDataToSend.append(key, formData[key]);
+          let value = formData[key];
+
+          // Format coordinates properly
+          if (key === "latitude" || key === "longitude") {
+            value = formatCoordinate(value);
+          }
+
+          // For documentation, send the URL instead of file object
+          if (key === "documentation" && uploadedFileUrl) {
+            value = uploadedFileUrl;
+          }
+
+          if (value !== null && value !== "") {
+            dataToSend[key] = value;
+          }
         }
       });
 
@@ -116,9 +179,14 @@ export default function RegisterPage() {
         `${process.env.BACKEND_URL}/auth/registration-request/`,
         {
           method: "POST",
-          body: formDataToSend,
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(dataToSend),
         }
       );
+
+      console.log(await response.json());
 
       if (response.ok) {
         setSuccess(true);
@@ -339,17 +407,52 @@ export default function RegisterPage() {
               </div>
               <Input
                 type="file"
-                accept=".pdf,.jpg,.jpeg,.png"
-                onChange={(e) =>
-                  setFormData({ ...formData, documentation: e.target.files[0] })
-                }
+                onChange={async (e) => {
+                  const file = e.target.files[0];
+                  if (file) {
+                    await handleFileUpload(file);
+                  }
+                }}
                 className="mt-4 max-w-xs mx-auto"
+                disabled={uploading}
               />
-              {formData.documentation && (
-                <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
-                  <p className="text-sm text-green-700">
-                    ✓ {formData.documentation.name} uploaded
+
+              {/* Upload Progress */}
+              {uploading && (
+                <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                  <p className="text-sm text-blue-700 mb-2">
+                    Uploading file...
                   </p>
+                  <div className="w-full bg-blue-200 rounded-full h-2">
+                    <div
+                      className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                      style={{ width: `${uploadProgress}%` }}
+                    ></div>
+                  </div>
+                </div>
+              )}
+
+              {/* Upload Success */}
+              {uploadedFileUrl && (
+                <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+                  <p className="text-sm text-green-700 mb-2">
+                    ✓ File uploaded successfully!
+                  </p>
+                  <a
+                    href={uploadedFileUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs text-green-600 underline hover:text-green-800"
+                  >
+                    View uploaded file
+                  </a>
+                </div>
+              )}
+
+              {/* Upload Error */}
+              {uploadError && (
+                <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                  <p className="text-sm text-red-700">❌ {uploadError}</p>
                 </div>
               )}
             </div>
