@@ -46,11 +46,6 @@ class Region(models.Model):
 
 class District(models.Model):
     """Enhanced District model with region relationship"""
-    DEPARTMENT_CHOICES = [
-        ('fire', 'Fire Department'),
-        ('police', 'Police Department'),
-        ('medical', 'Medical Department'),
-    ]
     
     # Primary key
     district_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -58,10 +53,11 @@ class District(models.Model):
     # Basic Information
     name = models.CharField(max_length=100)
     code = models.CharField(max_length=10, unique=True, help_text="Unique district code")
-    department = models.CharField(max_length=20, choices=DEPARTMENT_CHOICES)
+    department = models.CharField(max_length=20)
     
     # Geographic hierarchy
-    region = models.ForeignKey(Region, on_delete=models.CASCADE, related_name='districts')
+    #region = models.ForeignKey(Region, on_delete=models.CASCADE, related_name='districts')
+    region = models.CharField(max_length=20)
     
     # Location Information
     address = models.TextField()
