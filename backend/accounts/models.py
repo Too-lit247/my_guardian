@@ -277,9 +277,8 @@ class RegistrationRequest(models.Model):
     longitude = models.DecimalField(max_digits=11, decimal_places=8, null=True, blank=True)
     address = models.TextField(blank=True)
 
-    # Documentation - can be either a file upload or URL to frontend-stored file
-    documentation = models.FileField(upload_to='registration_docs/', null=True, blank=True)
-    documentation_url = models.URLField(max_length=500, null=True, blank=True, help_text="URL to uploaded document")
+    # Documentation - URL to uploaded document (stored on frontend)
+    documentation = models.URLField(max_length=500, null=True, blank=True, help_text="URL to uploaded document")
 
     # Status and approval
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')

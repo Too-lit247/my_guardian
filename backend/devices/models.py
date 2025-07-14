@@ -247,10 +247,10 @@ class DepartmentRegistration(models.Model):
     coverage_description = models.TextField(help_text="Description of the area covered by this department")
     population_served = models.PositiveIntegerField(help_text="Approximate population served")
     
-    # Documentation
-    license_document = models.FileField(upload_to='department_docs/', blank=True, help_text="Department license/certification")
-    insurance_document = models.FileField(upload_to='department_docs/', blank=True)
-    additional_documents = models.FileField(upload_to='department_docs/', blank=True)
+    # Documentation - URLs to uploaded documents (stored on frontend)
+    license_document = models.URLField(max_length=500, blank=True, help_text="URL to department license/certification")
+    insurance_document = models.URLField(max_length=500, blank=True, help_text="URL to insurance document")
+    additional_documents = models.URLField(max_length=500, blank=True, help_text="URL to additional documents")
     
     # Regional Manager Information
     regional_manager_name = models.CharField(max_length=100)

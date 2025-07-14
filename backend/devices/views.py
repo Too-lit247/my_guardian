@@ -225,7 +225,7 @@ def create_emergency_trigger(reading, trigger_data):
 @permission_classes([AllowAny])
 def register_department(request):
     """Register a new department"""
-    serializer = DepartmentRegistrationSerializer(data=request.data, context={'request': request})
+    serializer = DepartmentRegistrationSerializer(data=request.data)
     if serializer.is_valid():
         # Generate registration number
         import uuid

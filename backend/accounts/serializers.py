@@ -217,7 +217,7 @@ class RegistrationRequestSerializer(serializers.ModelSerializer):
         fields = [
             'request_id', 'registration_type', 'organization_name', 'department',
             'region', 'full_name', 'email', 'phone_number', 'latitude',
-            'longitude', 'address', 'documentation', 'documentation_url', 'status', 'created_at'
+            'longitude', 'address', 'documentation', 'status', 'created_at'
         ]
         read_only_fields = ['request_id', 'status', 'created_at']
 
