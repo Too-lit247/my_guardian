@@ -321,8 +321,8 @@ LOGGING = {
 # Create logs directory
 os.makedirs(BASE_DIR / 'logs', exist_ok=True)
 
-# Brevo (SendinBlue) Email Configuration
-BREVO_API_KEY = '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'
-SENDER_EMAIL = 'thomhuwa066@gmail.com'
-SENDER_NAME = 'Skills Sync'
+BREVO_API_KEY = config('BREVO_API_KEY')
+SENDER_EMAIL = config('SENDER_EMAIL')
+SENDER_NAME = config('SENDER_NAME')
+
 
