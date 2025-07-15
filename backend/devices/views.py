@@ -136,12 +136,12 @@ def process_reading_for_emergencies(reading):
         })
     
     # Check smoke level
-    if reading.smoke_level and reading.smoke_level > 0.3:  # Smoke threshold
+    if reading.smoke_level and reading.smoke_level > 2500:  # Smoke threshold
         triggers.append({
             'trigger_type': 'fire_detected',
-            'severity': 'critical' if reading.smoke_level > 0.7 else 'high',
+            'severity': 'critical' if reading.smoke_level > 2900 else 'high',
             'trigger_value': reading.smoke_level,
-            'threshold_value': 0.3
+            'threshold_value': 2500
         })
     
     # Process audio for fear detection
