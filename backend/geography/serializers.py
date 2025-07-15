@@ -56,26 +56,34 @@ class DistrictCreateSerializer(serializers.ModelSerializer):
 
 
 class StationSerializer(serializers.ModelSerializer):
-    district_name = serializers.CharField(source='district.name', read_only=True)
-    region_name = serializers.CharField(source='district.region.display_name', read_only=True)
     manager_name = serializers.CharField(source='manager.full_name', read_only=True)
     staff_count = serializers.ReadOnlyField()
-    department = serializers.ReadOnlyField()
     coordinates = serializers.SerializerMethodField()
-    
+    manager = serializers.SerializerMethodField()
+
     class Meta:
         model = Station
         fields = [
-            'station_id', 'name', 'code', 'station_type', 'district', 'district_name',
-            'region_name', 'address', 'city', 'state', 'zip_code', 'latitude', 
-            'longitude', 'coordinates', 'manager_id', 'manager_name', 'phone',
-            'description', 'capacity', 'operating_hours', 'is_active', 
-            'established_date', 'staff_count', 'department', 'created_at', 'updated_at'
+            'station_id', 'name', 'code', 'station_type', 'department', 'region',
+            'address', 'city', 'state', 'zip_code', 'latitude',
+            'longitude', 'coordinates', 'manager_id', 'manager_name', 'manager', 'phone',
+            'description', 'capacity', 'operating_hours', 'is_active',
+            'established_date', 'staff_count', 'created_at', 'updated_at'
         ]
         read_only_fields = ['station_id', 'created_at', 'updated_at']
-    
+
     def get_coordinates(self, obj):
         return obj.get_coordinates()
+
+    def get_manager(self, obj):
+        if obj.manager:
+            return {
+                'id': str(obj.manager.id),
+                'full_name': obj.manager.full_name,
+                'email': obj.manager.email,
+                'phone_number': obj.manager.phone_number,
+            }
+        return None
 
 
 class StationCreateSerializer(serializers.ModelSerializer):
@@ -83,11 +91,11 @@ class StationCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Station
         fields = [
-            'name', 'code', 'station_type', 'district', 'address', 'city',
+            'name', 'code', 'station_type', 'department', 'region', 'address', 'city',
             'state', 'zip_code', 'latitude', 'longitude', 'phone',
             'description', 'capacity', 'operating_hours', 'established_date'
         ]
-    
+
     def create(self, validated_data):
         # Set the creator
         validated_data['created_by_id'] = self.context['request'].user.id
@@ -96,13 +104,12 @@ class StationCreateSerializer(serializers.ModelSerializer):
 
 class StationListSerializer(serializers.ModelSerializer):
     """Simplified serializer for listing stations"""
-    district_name = serializers.CharField(source='district.name', read_only=True)
     manager_name = serializers.CharField(source='manager.full_name', read_only=True)
     staff_count = serializers.ReadOnlyField()
-    
+
     class Meta:
         model = Station
         fields = [
-            'station_id', 'name', 'code', 'station_type', 'district_name',
+            'station_id', 'name', 'code', 'station_type', 'department', 'region',
             'manager_name', 'staff_count', 'is_active'
         ]

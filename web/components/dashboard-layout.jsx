@@ -30,7 +30,7 @@ export default function DashboardLayout({ children, user }) {
     try {
       const refreshToken = localStorage.getItem("refresh_token");
 
-      await fetch("https://my-guardian-plus.onrender.com/api/auth/logout/", {
+      await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/logout/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -117,48 +117,42 @@ export default function DashboardLayout({ children, user }) {
     ];
 
     switch (user.role) {
-      case "System Administrator":
+      case "Admin":
         return [
-          { name: "Admin Dashboard", href: "/dashboard/admin", icon: Home },
+          {
+            name: "Admin Dashboard",
+            href: "/dashboard/admin/dashboard",
+            icon: Home,
+          },
           ...baseNav,
           { name: "Devices", href: "/dashboard/devices", icon: Smartphone },
-          { name: "All Users", href: "/dashboard/all-users", icon: Users },
-        ];
-
-      case "Regional Manager":
-        return [
-          {
-            name: "Regional Dashboard",
-            href: "/dashboard/regional",
-            icon: Home,
-          },
-          ...baseNav,
-          { name: "Districts", href: "/dashboard/districts", icon: Building },
-          { name: "Staff", href: "/dashboard/users", icon: Users },
-        ];
-
-      case "District Manager":
-        return [
-          {
-            name: "District Dashboard",
-            href: "/dashboard/district",
-            icon: Home,
-          },
-          ...baseNav,
+          { name: "All Users", href: "/dashboard/users", icon: Users },
           { name: "Stations", href: "/dashboard/stations", icon: Building },
-          { name: "Staff", href: "/dashboard/users", icon: Users },
         ];
 
       case "Station Manager":
         return [
-          { name: "Station Dashboard", href: "/dashboard/station", icon: Home },
+          {
+            name: "Manager Dashboard",
+            href: "/dashboard/manager/dashboard",
+            icon: Home,
+          },
           ...baseNav,
-          { name: "Responders", href: "/dashboard/responders", icon: Users },
+          {
+            name: "Field Officers",
+            href: "/dashboard/field-officers",
+            icon: Users,
+          },
         ];
 
+      case "Field Officer":
       default:
         return [
-          { name: "Dashboard", href: "/dashboard", icon: Home },
+          {
+            name: "Field Dashboard",
+            href: "/dashboard/field/dashboard",
+            icon: Home,
+          },
           ...baseNav,
         ];
     }

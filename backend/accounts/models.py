@@ -32,12 +32,9 @@ class User(AbstractUser):
     ]
     
     ROLE_CHOICES = [
-        ('System Administrator', 'System Administrator'),
-        ('Regional Manager', 'Regional Manager'),
-        ('District Manager', 'District Manager'),
+        ('Admin', 'Admin'),
         ('Station Manager', 'Station Manager'),
-        ('Responder', 'Responder'),
-        ('Field User', 'Field User'),
+        ('Field Officer', 'Field Officer'),
     ]
 
     REGION_CHOICES = [
@@ -56,7 +53,7 @@ class User(AbstractUser):
     
     # Department and role info - using simple CharField to avoid circular dependency
     department = models.CharField(max_length=20, choices=DEPARTMENT_CHOICES)
-    role = models.CharField(max_length=50, choices=ROLE_CHOICES, default='Field User')
+    role = models.CharField(max_length=50, choices=ROLE_CHOICES, default='Field Officer')
 
     # Geographic hierarchy references - using UUIDs to avoid circular dependencies
     region = models.CharField(max_length=20, choices=REGION_CHOICES, null=True, blank=True)
@@ -271,6 +268,11 @@ class RegistrationRequest(models.Model):
     full_name = models.CharField(max_length=200)
     email = models.EmailField()
     phone_number = models.CharField(max_length=17)
+    password = models.CharField(max_length=128, help_text="Hashed password for the station manager")
+
+    # Station details (since we're registering a station directly)
+    station_name = models.CharField(max_length=200, help_text="Name of the station being registered")
+    station_address = models.TextField(help_text="Physical address of the station")
 
     # Location data
     latitude = models.DecimalField(max_digits=10, decimal_places=8, null=True, blank=True)

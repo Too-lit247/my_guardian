@@ -445,3 +445,775 @@ Not Found: /
 Not Found: /favicon.ico
 "GET /favicon.ico HTTP/1.1" 404 2695
 Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+"OPTIONS /api/auth/registration-requests/ HTTP/1.1" 200 0
+"OPTIONS /api/auth/me/ HTTP/1.1" 200 0
+"OPTIONS /api/auth/me/ HTTP/1.1" 200 0
+Unauthorized: /api/auth/registration-requests/
+Unauthorized: /api/auth/me/
+"GET /api/auth/registration-requests/ HTTP/1.1" 401 183
+"GET /api/auth/me/ HTTP/1.1" 401 183
+Unauthorized: /api/auth/me/
+"GET /api/auth/me/ HTTP/1.1" 401 183
+"OPTIONS /api/auth/admin/regional-managers/ HTTP/1.1" 200 0
+Unauthorized: /api/auth/admin/regional-managers/
+"GET /api/auth/admin/regional-managers/ HTTP/1.1" 401 183
+"OPTIONS /api/auth/token/refresh/ HTTP/1.1" 200 0
+Unauthorized: /api/auth/token/refresh/
+"POST /api/auth/token/refresh/ HTTP/1.1" 401 65
+Unauthorized: /api/auth/token/refresh/
+"POST /api/auth/token/refresh/ HTTP/1.1" 401 65
+C:\Users\TJ\Desktop\dev\Work\My Guardian\Mobile\Backend\accounts\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\TJ\Desktop\dev\Work\My Guardian\Mobile\Backend\devices\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\TJ\Desktop\dev\Work\My Guardian\Mobile\Backend\devices\views.py changed, reloading.
+Watching for file changes with StatReloader
+"OPTIONS /api/auth/registration-request/ HTTP/1.1" 200 0
+"POST /api/auth/registration-request/ HTTP/1.1" 201 109
+"OPTIONS /api/auth/login/ HTTP/1.1" 200 0
+"POST /api/auth/login/ HTTP/1.1" 200 1261
+"GET /api/auth/me/ HTTP/1.1" 200 671
+"GET /api/auth/me/ HTTP/1.1" 200 671
+"GET /api/auth/registration-requests/ HTTP/1.1" 200 8612
+"GET /api/auth/registration-requests/ HTTP/1.1" 200 8612
+"GET /api/auth/admin/regional-managers/ HTTP/1.1" 200 2795
+"GET /api/auth/admin/regional-managers/ HTTP/1.1" 200 2795
+"OPTIONS /api/auth/registration-requests/ae70d2d3-e3a5-432a-8cf8-1096f3e695c2/ HTTP/1.1" 200 0
+"OPTIONS /api/auth/registration-requests/ae70d2d3-e3a5-432a-8cf8-1096f3e695c2/ HTTP/1.1" 200 0
+"GET /api/auth/registration-requests/ae70d2d3-e3a5-432a-8cf8-1096f3e695c2/ HTTP/1.1" 200 608
+"GET /api/auth/me/ HTTP/1.1" 200 671
+"GET /api/auth/registration-requests/ae70d2d3-e3a5-432a-8cf8-1096f3e695c2/ HTTP/1.1" 200 608
+"GET /api/auth/me/ HTTP/1.1" 200 671
+"OPTIONS /api/auth/registration-requests/ae70d2d3-e3a5-432a-8cf8-1096f3e695c2/review/ HTTP/1.1" 200 0
+"POST /api/auth/registration-requests/ae70d2d3-e3a5-432a-8cf8-1096f3e695c2/review/ HTTP/1.1" 200 141
+"GET /api/auth/me/ HTTP/1.1" 200 671
+"GET /api/auth/registration-requests/ HTTP/1.1" 200 8714
+"GET /api/auth/me/ HTTP/1.1" 200 671
+"GET /api/auth/admin/regional-managers/ HTTP/1.1" 200 3483
+"GET /api/auth/registration-requests/ HTTP/1.1" 200 8714
+"OPTIONS /api/geography/districts/ HTTP/1.1" 200 0
+"OPTIONS /api/geography/districts/ HTTP/1.1" 200 0
+Unauthorized: /api/geography/districts/
+"GET /api/geography/districts/ HTTP/1.1" 401 183
+Unauthorized: /api/geography/districts/
+"GET /api/geography/districts/ HTTP/1.1" 401 183
+"OPTIONS /api/auth/me/ HTTP/1.1" 200 0
+"OPTIONS /api/auth/me/ HTTP/1.1" 200 0
+Unauthorized: /api/auth/me/
+"GET /api/auth/me/ HTTP/1.1" 401 183
+"OPTIONS /api/auth/admin/hierarchy/ HTTP/1.1" 200 0
+"OPTIONS /api/auth/admin/hierarchy/ HTTP/1.1" 200 0
+Unauthorized: /api/auth/me/
+"GET /api/auth/me/ HTTP/1.1" 401 183
+Unauthorized: /api/auth/admin/hierarchy/
+"GET /api/auth/admin/hierarchy/ HTTP/1.1" 401 183
+"OPTIONS /api/auth/token/refresh/ HTTP/1.1" 200 0
+"OPTIONS /api/auth/token/refresh/ HTTP/1.1" 200 0
+Unauthorized: /api/auth/admin/hierarchy/
+"GET /api/auth/admin/hierarchy/ HTTP/1.1" 401 183
+Unauthorized: /api/auth/token/refresh/
+"POST /api/auth/token/refresh/ HTTP/1.1" 401 65
+Unauthorized: /api/auth/token/refresh/
+"POST /api/auth/token/refresh/ HTTP/1.1" 401 65
+"GET /api/auth/admin/regional-managers/ HTTP/1.1" 200 3483
+Unauthorized: /api/geography/districts/
+"GET /api/geography/districts/ HTTP/1.1" 401 183
+Unauthorized: /api/auth/me/
+"GET /api/auth/me/ HTTP/1.1" 401 183
+Unauthorized: /api/geography/districts/
+"GET /api/geography/districts/ HTTP/1.1" 401 183
+Unauthorized: /api/auth/admin/hierarchy/
+"GET /api/auth/admin/hierarchy/ HTTP/1.1" 401 183
+Unauthorized: /api/auth/me/
+Unauthorized: /api/auth/token/refresh/
+"GET /api/auth/me/ HTTP/1.1" 401 183
+"POST /api/auth/token/refresh/ HTTP/1.1" 401 65
+Unauthorized: /api/auth/admin/hierarchy/
+"GET /api/auth/admin/hierarchy/ HTTP/1.1" 401 183
+Unauthorized: /api/auth/token/refresh/
+"POST /api/auth/token/refresh/ HTTP/1.1" 401 65
+"OPTIONS /api/auth/registration-requests/ HTTP/1.1" 200 0
+"OPTIONS /api/auth/registration-requests/ HTTP/1.1" 200 0
+Unauthorized: /api/auth/registration-requests/
+"GET /api/auth/registration-requests/ HTTP/1.1" 401 183
+Unauthorized: /api/auth/registration-requests/
+"GET /api/auth/registration-requests/ HTTP/1.1" 401 183
+Unauthorized: /api/auth/me/
+"OPTIONS /api/auth/admin/regional-managers/ HTTP/1.1" 200 0
+"GET /api/auth/me/ HTTP/1.1" 401 183
+"OPTIONS /api/auth/admin/regional-managers/ HTTP/1.1" 200 0
+Unauthorized: /api/auth/admin/regional-managers/
+Unauthorized: /api/auth/me/
+"GET /api/auth/admin/regional-managers/ HTTP/1.1" 401 183
+"GET /api/auth/me/ HTTP/1.1" 401 183
+Unauthorized: /api/auth/token/refresh/
+Unauthorized: /api/auth/admin/regional-managers/
+"POST /api/auth/token/refresh/ HTTP/1.1" 401 65
+"GET /api/auth/admin/regional-managers/ HTTP/1.1" 401 183
+Unauthorized: /api/auth/token/refresh/
+"POST /api/auth/token/refresh/ HTTP/1.1" 401 65
+Unauthorized: /api/auth/registration-requests/
+"GET /api/auth/registration-requests/ HTTP/1.1" 401 183
+Unauthorized: /api/auth/me/
+"GET /api/auth/me/ HTTP/1.1" 401 183
+Unauthorized: /api/auth/registration-requests/
+Unauthorized: /api/auth/admin/regional-managers/
+"GET /api/auth/admin/regional-managers/ HTTP/1.1" 401 183
+"GET /api/auth/registration-requests/ HTTP/1.1" 401 183
+Unauthorized: /api/auth/me/
+Unauthorized: /api/auth/token/refresh/
+"GET /api/auth/me/ HTTP/1.1" 401 183
+"POST /api/auth/token/refresh/ HTTP/1.1" 401 65
+Unauthorized: /api/auth/admin/regional-managers/
+Unauthorized: /api/auth/token/refresh/
+"GET /api/auth/admin/regional-managers/ HTTP/1.1" 401 183
+"POST /api/auth/token/refresh/ HTTP/1.1" 401 65
+"OPTIONS /api/auth/logout/ HTTP/1.1" 200 0
+Internal Server Error: /api/auth/logout/
+Traceback (most recent call last):
+  File "C:\Users\TJ\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\db\backends\base\base.py", line 289, in ensure_connection
+    self.connect()
+  File "C:\Users\TJ\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\utils\asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TJ\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\db\backends\base\base.py", line 270, in connect
+    self.connection = self.get_new_connection(conn_params)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TJ\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\utils\asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TJ\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\db\backends\postgresql\base.py", line 275, in get_new_connection
+    connection = self.Database.connect(**conn_params)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TJ\AppData\Local\Programs\Python\Python311\Lib\site-packages\psycopg2\__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+psycopg2.OperationalError: connection to server at "ep-rapid-butterfly-a8u8ncgp-pooler.eastus2.azure.neon.tech" (52.167.188.143), port 5432 failed: Connection timed out (0x0000274C/10060)
+	Is the server running on that host and accepting TCP/IP connections?
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\TJ\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TJ\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TJ\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\views\decorators\csrf.py", line 56, in wrapper_view
+    return view_func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TJ\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\views\generic\base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TJ\AppData\Local\Programs\Python\Python311\Lib\site-packages\rest_framework\views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TJ\AppData\Local\Programs\Python\Python311\Lib\site-packages\rest_framework\views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "C:\Users\TJ\AppData\Local\Programs\Python\Python311\Lib\site-packages\rest_framework\views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\TJ\AppData\Local\Programs\Python\Python311\Lib\site-packages\rest_framework\views.py", line 497, in dispatch
+    self.initial(request, *args, **kwargs)
+  File "C:\Users\TJ\AppData\Local\Programs\Python\Python311\Lib\site-packages\rest_framework\views.py", line 414, in initial
+    self.perform_authentication(request)
+  File "C:\Users\TJ\AppData\Local\Programs\Python\Python311\Lib\site-packages\rest_framework\views.py", line 324, in perform_authentication
+    request.user
+  File "C:\Users\TJ\AppData\Local\Programs\Python\Python311\Lib\site-packages\rest_framework\request.py", line 227, in user
+    self._authenticate()
+  File "C:\Users\TJ\AppData\Local\Programs\Python\Python311\Lib\site-packages\rest_framework\request.py", line 380, in _authenticate
+    user_auth_tuple = authenticator.authenticate(self)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TJ\AppData\Local\Programs\Python\Python311\Lib\site-packages\rest_framework_simplejwt\authentication.py", line 51, in authenticate
+    return self.get_user(validated_token), validated_token
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TJ\AppData\Local\Programs\Python\Python311\Lib\site-packages\rest_framework_simplejwt\authentication.py", line 130, in get_user
+    user = self.user_model.objects.get(**{api_settings.USER_ID_FIELD: user_id})
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TJ\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TJ\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\db\models\query.py", line 633, in get
+    num = len(clone)
+          ^^^^^^^^^^
+  File "C:\Users\TJ\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\db\models\query.py", line 380, in __len__
+    self._fetch_all()
+  File "C:\Users\TJ\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\db\models\query.py", line 1881, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TJ\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\db\models\query.py", line 91, in __iter__
+    results = compiler.execute_sql(
+              ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TJ\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\db\models\sql\compiler.py", line 1560, in execute_sql
+    cursor = self.connection.cursor()
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TJ\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\utils\asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TJ\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\db\backends\base\base.py", line 330, in cursor
+    return self._cursor()
+           ^^^^^^^^^^^^^^
+  File "C:\Users\TJ\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\db\backends\base\base.py", line 306, in _cursor
+    self.ensure_connection()
+  File "C:\Users\TJ\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\utils\asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TJ\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\db\backends\base\base.py", line 288, in ensure_connection
+    with self.wrap_database_errors:
+  File "C:\Users\TJ\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\db\utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "C:\Users\TJ\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\db\backends\base\base.py", line 289, in ensure_connection
+    self.connect()
+  File "C:\Users\TJ\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\utils\asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TJ\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\db\backends\base\base.py", line 270, in connect
+    self.connection = self.get_new_connection(conn_params)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TJ\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\utils\asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TJ\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\db\backends\postgresql\base.py", line 275, in get_new_connection
+    connection = self.Database.connect(**conn_params)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TJ\AppData\Local\Programs\Python\Python311\Lib\site-packages\psycopg2\__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.db.utils.OperationalError: connection to server at "ep-rapid-butterfly-a8u8ncgp-pooler.eastus2.azure.neon.tech" (52.167.188.143), port 5432 failed: Connection timed out (0x0000274C/10060)
+	Is the server running on that host and accepting TCP/IP connections?
+
+"POST /api/auth/logout/ HTTP/1.1" 500 227886
+Watching for file changes with StatReloader
+C:\Users\TJ\Desktop\dev\Work\My Guardian\Mobile\Backend\accounts\models.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\TJ\Desktop\dev\Work\My Guardian\Mobile\Backend\accounts\models.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\TJ\Desktop\dev\Work\My Guardian\Mobile\Backend\accounts\models.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\TJ\Desktop\dev\Work\My Guardian\Mobile\Backend\accounts\serializers.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\TJ\Desktop\dev\Work\My Guardian\Mobile\Backend\accounts\serializers.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\TJ\Desktop\dev\Work\My Guardian\Mobile\Backend\accounts\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\TJ\Desktop\dev\Work\My Guardian\Mobile\Backend\accounts\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\TJ\Desktop\dev\Work\My Guardian\Mobile\Backend\accounts\views.py changed, reloading.
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+"OPTIONS /api/auth/registration-request/ HTTP/1.1" 200 0
+"POST /api/auth/registration-request/ HTTP/1.1" 201 109
+"OPTIONS /api/auth/login/ HTTP/1.1" 200 0
+"POST /api/auth/login/ HTTP/1.1" 200 1231
+"OPTIONS /api/auth/registration-requests/ HTTP/1.1" 200 0
+"OPTIONS /api/auth/registration-requests/ HTTP/1.1" 200 0
+Forbidden: /api/auth/registration-requests/
+"GET /api/auth/registration-requests/ HTTP/1.1" 403 29
+"OPTIONS /api/auth/admin/regional-managers/ HTTP/1.1" 200 0
+Forbidden: /api/auth/registration-requests/
+"GET /api/auth/registration-requests/ HTTP/1.1" 403 29
+"GET /api/auth/admin/regional-managers/ HTTP/1.1" 200 1410
+"GET /api/auth/admin/regional-managers/ HTTP/1.1" 200 1410
+Forbidden: /api/auth/registration-requests/
+"GET /api/auth/registration-requests/ HTTP/1.1" 403 29
+"GET /api/auth/admin/regional-managers/ HTTP/1.1" 200 1410
+Forbidden: /api/auth/registration-requests/
+"GET /api/auth/registration-requests/ HTTP/1.1" 403 29
+"GET /api/auth/admin/regional-managers/ HTTP/1.1" 200 1410
+Forbidden: /api/auth/registration-requests/
+- Broken pipe from ('127.0.0.1', 1172)
+Forbidden: /api/auth/registration-requests/
+"GET /api/auth/registration-requests/ HTTP/1.1" 403 29
+"OPTIONS /api/auth/users/ HTTP/1.1" 200 0
+"GET /api/auth/users/ HTTP/1.1" 200 4836
+"OPTIONS /api/geography/stations/ HTTP/1.1" 200 0
+"GET /api/geography/stations/ HTTP/1.1" 200 591
+Forbidden: /api/auth/registration-requests/
+"GET /api/auth/registration-requests/ HTTP/1.1" 403 29
+"GET /api/auth/users/ HTTP/1.1" 200 4836
+"GET /api/geography/stations/ HTTP/1.1" 200 591
+Forbidden: /api/auth/registration-requests/
+"GET /api/auth/registration-requests/ HTTP/1.1" 403 29
+"GET /api/auth/users/ HTTP/1.1" 200 4836
+"GET /api/geography/stations/ HTTP/1.1" 200 591
+Forbidden: /api/auth/registration-requests/
+"GET /api/auth/registration-requests/ HTTP/1.1" 403 29
+"GET /api/auth/users/ HTTP/1.1" 200 4836
+"GET /api/geography/stations/ HTTP/1.1" 200 591
+Forbidden: /api/auth/registration-requests/
+"GET /api/auth/registration-requests/ HTTP/1.1" 403 29
+"GET /api/auth/users/ HTTP/1.1" 200 4836
+"GET /api/geography/stations/ HTTP/1.1" 200 591
+Forbidden: /api/auth/registration-requests/
+"GET /api/auth/registration-requests/ HTTP/1.1" 403 29
+"GET /api/auth/users/ HTTP/1.1" 200 4836
+"GET /api/geography/stations/ HTTP/1.1" 200 591
+Forbidden: /api/auth/registration-requests/
+"GET /api/auth/registration-requests/ HTTP/1.1" 403 29
+"GET /api/auth/users/ HTTP/1.1" 200 4836
+"GET /api/geography/stations/ HTTP/1.1" 200 591
+Watching for file changes with StatReloader
+"POST /api/auth/login/ HTTP/1.1" 200 1231
+"OPTIONS /api/alerts/statistics/ HTTP/1.1" 200 0
+"OPTIONS /api/alerts/statistics/ HTTP/1.1" 200 0
+"GET /api/alerts/statistics/ HTTP/1.1" 200 93
+"GET /api/alerts/statistics/ HTTP/1.1" 200 93
+"GET /api/alerts/statistics/ HTTP/1.1" 200 93
+"GET /api/alerts/statistics/ HTTP/1.1" 200 93
+"OPTIONS /api/auth/logout/ HTTP/1.1" 200 0
+Bad Request: /api/auth/logout/
+"POST /api/auth/logout/ HTTP/1.1" 400 62
+"POST /api/auth/login/ HTTP/1.1" 200 1231
+"GET /api/alerts/statistics/ HTTP/1.1" 200 93
+"GET /api/alerts/statistics/ HTTP/1.1" 200 93
+"POST /api/auth/login/ HTTP/1.1" 200 1230
+Forbidden: /api/auth/registration-requests/
+"GET /api/auth/registration-requests/ HTTP/1.1" 403 29
+Forbidden: /api/auth/registration-requests/
+"GET /api/auth/registration-requests/ HTTP/1.1" 403 29
+"GET /api/auth/users/ HTTP/1.1" 200 4835
+"GET /api/auth/users/ HTTP/1.1" 200 4835
+"GET /api/geography/stations/ HTTP/1.1" 200 591
+"GET /api/geography/stations/ HTTP/1.1" 200 591
+Forbidden: /api/auth/registration-requests/
+"GET /api/auth/registration-requests/ HTTP/1.1" 403 29
+"GET /api/auth/users/ HTTP/1.1" 200 4835
+"GET /api/geography/stations/ HTTP/1.1" 200 591
+"GET /api/geography/stations/ HTTP/1.1" 200 591
+"GET /api/geography/stations/ HTTP/1.1" 200 591
+"GET /api/geography/stations/ HTTP/1.1" 200 591
+C:\Users\TJ\Desktop\dev\Work\My Guardian\Mobile\Backend\geography\models.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\TJ\Desktop\dev\Work\My Guardian\Mobile\Backend\geography\serializers.py changed, reloading.
+Watching for file changes with StatReloader
+"GET /api/geography/stations/ HTTP/1.1" 200 591
+Forbidden: /api/auth/registration-requests/
+"GET /api/auth/registration-requests/ HTTP/1.1" 403 29
+Forbidden: /api/auth/registration-requests/
+"GET /api/auth/registration-requests/ HTTP/1.1" 403 29
+"GET /api/auth/users/ HTTP/1.1" 200 4835
+"GET /api/auth/users/ HTTP/1.1" 200 4835
+"GET /api/geography/stations/ HTTP/1.1" 200 591
+"GET /api/geography/stations/ HTTP/1.1" 200 591
+C:\Users\TJ\Desktop\dev\Work\My Guardian\Mobile\Backend\accounts\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\TJ\Desktop\dev\Work\My Guardian\Mobile\Backend\accounts\views.py changed, reloading.
+Watching for file changes with StatReloader
+Not Found: /auth/login/
+"POST /auth/login/ HTTP/1.1" 404 2693
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+"GET /api/auth/registration-requests/ HTTP/1.1" 200 10176
+"GET /api/auth/users/ HTTP/1.1" 200 4835
+"GET /api/geography/stations/ HTTP/1.1" 200 591
+"GET /api/auth/registration-requests/ HTTP/1.1" 200 10176
+"GET /api/auth/users/ HTTP/1.1" 200 4835
+"GET /api/auth/registration-requests/ HTTP/1.1" 200 10176
+"GET /api/auth/users/ HTTP/1.1" 200 4835
+"GET /api/geography/stations/ HTTP/1.1" 200 591
+"GET /api/geography/stations/ HTTP/1.1" 200 591
+"GET /api/auth/registration-requests/ HTTP/1.1" 200 10176
+"GET /api/auth/users/ HTTP/1.1" 200 4835
+"GET /api/auth/registration-requests/ HTTP/1.1" 200 10176
+"GET /api/auth/users/ HTTP/1.1" 200 4835
+"GET /api/geography/stations/ HTTP/1.1" 200 591
+"GET /api/geography/stations/ HTTP/1.1" 200 591
+"GET /api/auth/registration-requests/ HTTP/1.1" 200 10176
+"GET /api/auth/users/ HTTP/1.1" 200 4835
+"GET /api/geography/stations/ HTTP/1.1" 200 591
+"OPTIONS /api/auth/registration-requests/f8791496-4ac5-4b84-810a-6bafb03f4d2b/ HTTP/1.1" 200 0
+"OPTIONS /api/auth/registration-requests/f8791496-4ac5-4b84-810a-6bafb03f4d2b/ HTTP/1.1" 200 0
+"GET /api/auth/registration-requests/f8791496-4ac5-4b84-810a-6bafb03f4d2b/ HTTP/1.1" 200 663
+"GET /api/auth/registration-requests/f8791496-4ac5-4b84-810a-6bafb03f4d2b/ HTTP/1.1" 200 663
+"OPTIONS /api/auth/registration-requests/f8791496-4ac5-4b84-810a-6bafb03f4d2b/review/ HTTP/1.1" 200 0
+Internal Server Error: /api/auth/registration-requests/f8791496-4ac5-4b84-810a-6bafb03f4d2b/review/
+"POST /api/auth/registration-requests/f8791496-4ac5-4b84-810a-6bafb03f4d2b/review/ HTTP/1.1" 500 93
+C:\Users\TJ\Desktop\dev\Work\My Guardian\Mobile\Backend\geography\models.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\TJ\Desktop\dev\Work\My Guardian\Mobile\Backend\geography\models.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\TJ\Desktop\dev\Work\My Guardian\Mobile\Backend\geography\models.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\TJ\Desktop\dev\Work\My Guardian\Mobile\Backend\accounts\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\TJ\Desktop\dev\Work\My Guardian\Mobile\Backend\accounts\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\TJ\Desktop\dev\Work\My Guardian\Mobile\Backend\geography\serializers.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\TJ\Desktop\dev\Work\My Guardian\Mobile\Backend\geography\serializers.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\TJ\Desktop\dev\Work\My Guardian\Mobile\Backend\geography\admin.py changed, reloading.
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+"GET /api/auth/registration-requests/ HTTP/1.1" 200 10176
+"GET /api/auth/users/ HTTP/1.1" 200 4835
+"GET /api/geography/stations/ HTTP/1.1" 200 607
+"GET /api/auth/registration-requests/f8791496-4ac5-4b84-810a-6bafb03f4d2b/ HTTP/1.1" 200 663
+"GET /api/auth/registration-requests/f8791496-4ac5-4b84-810a-6bafb03f4d2b/ HTTP/1.1" 200 663
+"POST /api/auth/registration-requests/f8791496-4ac5-4b84-810a-6bafb03f4d2b/review/ HTTP/1.1" 200 208
+"GET /api/auth/registration-requests/ HTTP/1.1" 200 10278
+"GET /api/auth/users/ HTTP/1.1" 200 5575
+"GET /api/auth/registration-requests/ HTTP/1.1" 200 10278
+"GET /api/geography/stations/ HTTP/1.1" 200 843
+"GET /api/auth/users/ HTTP/1.1" 200 5575
+"GET /api/geography/stations/ HTTP/1.1" 200 843
+"GET /api/auth/registration-requests/ HTTP/1.1" 200 10278
+"GET /api/auth/users/ HTTP/1.1" 200 5575
+"GET /api/auth/registration-requests/ HTTP/1.1" 200 10278
+"GET /api/auth/users/ HTTP/1.1" 200 5575
+"GET /api/geography/stations/ HTTP/1.1" 200 843
+"GET /api/auth/registration-requests/ HTTP/1.1" 200 10278
+"GET /api/auth/users/ HTTP/1.1" 200 5575
+"GET /api/geography/stations/ HTTP/1.1" 200 843
+"GET /api/auth/registration-requests/ HTTP/1.1" 200 10278
+"GET /api/geography/stations/ HTTP/1.1" 200 843
+"GET /api/auth/users/ HTTP/1.1" 200 5575
+"GET /api/geography/stations/ HTTP/1.1" 200 843
+"GET /api/geography/stations/ HTTP/1.1" 200 843
+"GET /api/geography/stations/ HTTP/1.1" 200 843
+"OPTIONS /api/auth/login/ HTTP/1.1" 200 0
+Bad Request: /api/auth/login/
+"POST /api/auth/login/ HTTP/1.1" 400 54
+Bad Request: /api/auth/login/
+"POST /api/auth/login/ HTTP/1.1" 400 54
+Bad Request: /api/auth/login/
+"POST /api/auth/login/ HTTP/1.1" 400 54
+C:\Users\TJ\Desktop\dev\Work\My Guardian\Mobile\Backend\accounts\views.py changed, reloading.
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+"OPTIONS /api/auth/login/ HTTP/1.1" 200 0
+Bad Request: /api/auth/login/
+"POST /api/auth/login/ HTTP/1.1" 400 54
+"POST /api/auth/login/ HTTP/1.1" 200 1329
+"OPTIONS /api/auth/users/ HTTP/1.1" 200 0
+"OPTIONS /api/auth/users/ HTTP/1.1" 200 0
+"GET /api/auth/users/ HTTP/1.1" 200 5575
+"OPTIONS /api/alerts/ HTTP/1.1" 200 0
+"GET /api/auth/users/ HTTP/1.1" 200 5575
+"GET /api/alerts/ HTTP/1.1" 200 3358
+"GET /api/alerts/ HTTP/1.1" 200 3358
+"OPTIONS /api/devices/triggers/ HTTP/1.1" 200 0
+"GET /api/devices/triggers/ HTTP/1.1" 200 52
+"GET /api/alerts/ HTTP/1.1" 200 3358
+"GET /api/alerts/ HTTP/1.1" 200 3358
+"GET /api/auth/users/ HTTP/1.1" 200 5575
+"GET /api/auth/users/ HTTP/1.1" 200 5575
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+"OPTIONS /api/geography/stations/ HTTP/1.1" 200 0
+"GET /api/auth/users/ HTTP/1.1" 200 5575
+"GET /api/geography/stations/ HTTP/1.1" 200 843
+"GET /api/geography/stations/ HTTP/1.1" 200 843
+"OPTIONS /api/geography/stations/ HTTP/1.1" 200 0
+"OPTIONS /api/geography/stations/ HTTP/1.1" 200 0
+"GET /api/geography/stations/ HTTP/1.1" 200 843
+"GET /api/geography/stations/ HTTP/1.1" 200 843
+"GET /api/geography/stations/ HTTP/1.1" 200 843
+"GET /api/geography/stations/ HTTP/1.1" 200 843
+"GET /api/geography/stations/ HTTP/1.1" 200 843
+"OPTIONS /api/auth/field-officers/ HTTP/1.1" 200 0
+Welcome email sent successfully to huwathom@gmail.com. Message ID: <202507150153.65765079233@smtp-relay.mailin.fr>
+"POST /api/auth/field-officers/ HTTP/1.1" 201 829
+"OPTIONS /api/auth/users/ HTTP/1.1" 200 0
+"OPTIONS /api/auth/users/ HTTP/1.1" 200 0
+"GET /api/auth/users/ HTTP/1.1" 200 6305
+"GET /api/auth/users/ HTTP/1.1" 200 6305
+"GET /api/auth/users/ HTTP/1.1" 200 6305
+"GET /api/geography/stations/ HTTP/1.1" 200 843
+"GET /api/auth/users/ HTTP/1.1" 200 6305
+"GET /api/geography/stations/ HTTP/1.1" 200 843
+"OPTIONS /api/auth/login/ HTTP/1.1" 200 0
+"POST /api/auth/login/ HTTP/1.1" 200 1319
+"OPTIONS /api/alerts/ HTTP/1.1" 200 0
+"OPTIONS /api/alerts/ HTTP/1.1" 200 0
+"GET /api/alerts/ HTTP/1.1" 200 3358
+"GET /api/alerts/ HTTP/1.1" 200 3358
+"OPTIONS /api/devices/triggers/ HTTP/1.1" 200 0
+"OPTIONS /api/devices/triggers/ HTTP/1.1" 200 0
+"GET /api/devices/triggers/ HTTP/1.1" 200 52
+"GET /api/devices/triggers/ HTTP/1.1" 200 52
+"GET /api/alerts/ HTTP/1.1" 200 3358
+"GET /api/alerts/ HTTP/1.1" 200 3358
+"GET /api/alerts/ HTTP/1.1" 200 3358
+"GET /api/alerts/ HTTP/1.1" 200 3358
+"GET /api/alerts/ HTTP/1.1" 200 3358
+C:\Users\TJ\Desktop\dev\Work\My Guardian\Mobile\Backend\alerts\services.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\TJ\Desktop\dev\Work\My Guardian\Mobile\Backend\alerts\services.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\TJ\Desktop\dev\Work\My Guardian\Mobile\Backend\alerts\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\TJ\Desktop\dev\Work\My Guardian\Mobile\Backend\alerts\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\TJ\Desktop\dev\Work\My Guardian\Mobile\Backend\alerts\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\TJ\Desktop\dev\Work\My Guardian\Mobile\Backend\alerts\views.py changed, reloading.
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+C:\Users\TJ\Desktop\dev\Work\My Guardian\Mobile\Backend\alerts\services.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\TJ\Desktop\dev\Work\My Guardian\Mobile\Backend\alerts\services.py changed, reloading.
+Watching for file changes with StatReloader
+Emergency alert created and routed: 17 for device TEST_FIRE_001
+Alert assigned to station: Fire Station 2
+Emergency alert created and routed: 20 for device TEST_FIRE_001
+Alert assigned to station: Fire Station 2
+Emergency alert created and routed: 23 for device TEST_FIRE_001
+Alert assigned to station: Fire Station 2
+Emergency alert created and routed: 26 for device TEST_FIRE_001
+Alert assigned to station: Fire Station 2
+Emergency alert created and routed: 29 for device TEST_FIRE_001
+Alert assigned to station: Fire Station 2
+Emergency alert created and routed: 32 for device TEST_FIRE_001
+Alert assigned to station: Fire Station 2
+"OPTIONS /api/alerts/ HTTP/1.1" 200 0
+"OPTIONS /api/devices/triggers/ HTTP/1.1" 200 0
+"OPTIONS /api/alerts/ HTTP/1.1" 200 0
+"GET /api/devices/triggers/ HTTP/1.1" 200 3363
+"GET /api/alerts/ HTTP/1.1" 200 18073
+"GET /api/alerts/ HTTP/1.1" 200 18073
+Emergency alert created and routed: 35 for device DOWA_GUARDIAN_001
+Emergency alert created and routed: 38 for device DOWA_GUARDIAN_001
+Emergency alert created and routed: 41 for device DOWA_GUARDIAN_001
+Emergency alert created and routed: 42 for device DOWA_GUARDIAN_001
+Alert assigned to station: Dowa Fire Station
+Emergency alert created and routed: 45 for device DOWA_GUARDIAN_001
+Alert assigned to station: Dowa Fire Station
+Emergency alert created and routed: 48 for device DOWA_GUARDIAN_001
+Alert assigned to station: Dowa District Hospital
+"GET /api/devices/triggers/ HTTP/1.1" 200 6711
+"GET /api/alerts/ HTTP/1.1" 200 18435
+"GET /api/alerts/ HTTP/1.1" 200 18435
+"GET /api/devices/triggers/ HTTP/1.1" 200 6711
+"GET /api/devices/triggers/ HTTP/1.1" 200 6711
+"GET /api/alerts/ HTTP/1.1" 200 18435
+"GET /api/alerts/ HTTP/1.1" 200 18435
+"GET /api/alerts/ HTTP/1.1" 200 18435
+"GET /api/alerts/ HTTP/1.1" 200 18435
+"GET /api/devices/triggers/ HTTP/1.1" 200 6711
+"GET /api/devices/triggers/ HTTP/1.1" 200 6711
+"GET /api/alerts/ HTTP/1.1" 200 12801
+"GET /api/alerts/ HTTP/1.1" 200 12801
+"GET /api/alerts/ HTTP/1.1" 200 12801
+"OPTIONS /api/auth/logout/ HTTP/1.1" 200 0
+Bad Request: /api/auth/logout/
+"POST /api/auth/logout/ HTTP/1.1" 400 62
+"POST /api/auth/login/ HTTP/1.1" 200 1329
+"GET /api/auth/users/ HTTP/1.1" 200 6953
+"GET /api/auth/users/ HTTP/1.1" 200 6953
+"GET /api/alerts/ HTTP/1.1" 200 12801
+"GET /api/alerts/ HTTP/1.1" 200 12801
+"GET /api/devices/triggers/ HTTP/1.1" 200 6711
+"OPTIONS /api/auth/login/ HTTP/1.1" 200 0
+"GET /api/devices/triggers/ HTTP/1.1" 200 6711
+"POST /api/auth/login/ HTTP/1.1" 200 1230
+"GET /api/alerts/ HTTP/1.1" 200 12801
+"OPTIONS /api/auth/registration-requests/ HTTP/1.1" 200 0
+"OPTIONS /api/auth/registration-requests/ HTTP/1.1" 200 0
+"GET /api/auth/registration-requests/ HTTP/1.1" 200 10278
+"GET /api/devices/triggers/ HTTP/1.1" 200 6711
+"GET /api/auth/users/ HTTP/1.1" 200 6953
+"GET /api/alerts/ HTTP/1.1" 200 12801
+"GET /api/auth/registration-requests/ HTTP/1.1" 200 10278
+"GET /api/devices/triggers/ HTTP/1.1" 200 6711
+"GET /api/auth/users/ HTTP/1.1" 200 6953
+"GET /api/geography/stations/ HTTP/1.1" 200 2308
+"GET /api/alerts/ HTTP/1.1" 200 12801
+"GET /api/alerts/ HTTP/1.1" 200 18435
+"GET /api/geography/stations/ HTTP/1.1" 200 2308
+"GET /api/alerts/ HTTP/1.1" 200 18435
+"GET /api/alerts/ HTTP/1.1" 200 18435
+Emergency alert created and routed: 49 for device GD-075BDF9E
+Emergency alert created and routed: 52 for device GD-075BDF9E
+Emergency alert created and routed: 55 for device GD-075BDF9E
+"GET /api/devices/triggers/ HTTP/1.1" 200 8348
+"GET /api/alerts/ HTTP/1.1" 200 17674
+"GET /api/alerts/ HTTP/1.1" 200 17674
+Emergency alert created and routed: 56 for device GD-075BDF9E
+Emergency alert created and routed: 59 for device GD-075BDF9E
+Emergency alert created and routed: 62 for device GD-075BDF9E
+Emergency alert created and routed: 63 for device GD-075BDF9E
+Alert assigned to station: Mzuzu Fire Station
+Emergency alert created and routed: 66 for device GD-075BDF9E
+Alert assigned to station: Mzuzu Fire Station
+Emergency alert created and routed: 69 for device GD-075BDF9E
+Alert assigned to station: Mzuzu Central Hospital
+"GET /api/devices/triggers/ HTTP/1.1" 200 11110
+"GET /api/alerts/ HTTP/1.1" 200 16507
+"GET /api/alerts/ HTTP/1.1" 200 16507
+"OPTIONS /api/alerts/ HTTP/1.1" 200 0
+"OPTIONS /api/devices/triggers/ HTTP/1.1" 200 0
+"OPTIONS /api/alerts/ HTTP/1.1" 200 0
+"GET /api/devices/triggers/ HTTP/1.1" 200 11110
+"GET /api/alerts/ HTTP/1.1" 200 16081
+"GET /api/alerts/ HTTP/1.1" 200 16081
+Emergency alert created and routed: 70 for device RUMPHI_TEST_001
+Alert assigned to station: Mzuzu Fire Station
+Emergency alert created and routed: 73 for device RUMPHI_TEST_001
+Alert assigned to station: Mzuzu Fire Station
+Emergency alert created and routed: 76 for device GD-075BDF9E
+Alert assigned to station: Mzuzu Fire Station
+Emergency alert created and routed: 79 for device GD-075BDF9E
+Alert assigned to station: Mzuzu Fire Station
+Watching for file changes with StatReloader
+"OPTIONS /api/auth/login/ HTTP/1.1" 200 0
+"POST /api/auth/login/ HTTP/1.1" 200 1230
+"OPTIONS /api/auth/registration-requests/ HTTP/1.1" 200 0
+"OPTIONS /api/auth/registration-requests/ HTTP/1.1" 200 0
+"GET /api/auth/registration-requests/ HTTP/1.1" 200 10278
+"OPTIONS /api/auth/users/ HTTP/1.1" 200 0
+"GET /api/auth/users/ HTTP/1.1" 200 8896
+"OPTIONS /api/geography/stations/ HTTP/1.1" 200 0
+"GET /api/auth/registration-requests/ HTTP/1.1" 200 10278
+"GET /api/auth/users/ HTTP/1.1" 200 8896
+"GET /api/geography/stations/ HTTP/1.1" 200 2937
+"GET /api/geography/stations/ HTTP/1.1" 200 2937
+"GET /api/geography/stations/ HTTP/1.1" 200 2937
+"GET /api/geography/stations/ HTTP/1.1" 200 2937
+"GET /api/auth/registration-requests/ HTTP/1.1" 200 10278
+"GET /api/auth/users/ HTTP/1.1" 200 8896
+"GET /api/auth/registration-requests/ HTTP/1.1" 200 10278
+"GET /api/auth/users/ HTTP/1.1" 200 8896
+"GET /api/geography/stations/ HTTP/1.1" 200 2937
+"GET /api/geography/stations/ HTTP/1.1" 200 2937
+"GET /api/auth/users/ HTTP/1.1" 200 8896
+"GET /api/geography/stations/ HTTP/1.1" 200 2937
+"GET /api/auth/registration-requests/ HTTP/1.1" 200 10278
+"GET /api/auth/users/ HTTP/1.1" 200 8896
+"GET /api/auth/registration-requests/ HTTP/1.1" 200 10278
+"GET /api/auth/users/ HTTP/1.1" 200 8896
+"GET /api/auth/registration-requests/ HTTP/1.1" 200 10278
+"GET /api/geography/stations/ HTTP/1.1" 200 2937
+"GET /api/auth/users/ HTTP/1.1" 200 8896
+"GET /api/auth/registration-requests/ HTTP/1.1" 200 10278
+"GET /api/auth/users/ HTTP/1.1" 200 8896
+"GET /api/geography/stations/ HTTP/1.1" 200 2937
+"GET /api/auth/registration-requests/ HTTP/1.1" 200 10278
+"GET /api/auth/users/ HTTP/1.1" 200 8896
+"GET /api/auth/registration-requests/ HTTP/1.1" 200 10278
+"GET /api/geography/stations/ HTTP/1.1" 200 2937
+"GET /api/auth/users/ HTTP/1.1" 200 8896
+"GET /api/auth/registration-requests/ HTTP/1.1" 200 10278
+"GET /api/geography/stations/ HTTP/1.1" 200 2937
+"GET /api/auth/users/ HTTP/1.1" 200 8896
+"GET /api/auth/registration-requests/ HTTP/1.1" 200 10278
+"GET /api/auth/users/ HTTP/1.1" 200 8896
+"GET /api/auth/registration-requests/ HTTP/1.1" 200 10278
+"GET /api/geography/stations/ HTTP/1.1" 200 2937
+"GET /api/auth/users/ HTTP/1.1" 200 8896
+"GET /api/auth/registration-requests/ HTTP/1.1" 200 10278
+"GET /api/geography/stations/ HTTP/1.1" 200 2937
+"GET /api/auth/users/ HTTP/1.1" 200 8896
+"GET /api/geography/stations/ HTTP/1.1" 200 2937
+"GET /api/geography/stations/ HTTP/1.1" 200 2937
+"GET /api/geography/stations/ HTTP/1.1" 200 2937
+"GET /api/geography/stations/ HTTP/1.1" 200 2937
+"GET /api/auth/registration-requests/ HTTP/1.1" 200 10278
+"GET /api/auth/users/ HTTP/1.1" 200 8896
+"GET /api/auth/registration-requests/ HTTP/1.1" 200 10278
+"GET /api/auth/users/ HTTP/1.1" 200 8896
+"GET /api/geography/stations/ HTTP/1.1" 200 2937
+"GET /api/auth/users/ HTTP/1.1" 200 8896
+"GET /api/auth/users/ HTTP/1.1" 200 8896
+"GET /api/geography/stations/ HTTP/1.1" 200 2937
+"GET /api/auth/users/ HTTP/1.1" 200 8896
+"GET /api/auth/registration-requests/ HTTP/1.1" 200 10278
+"GET /api/auth/users/ HTTP/1.1" 200 8896
+"GET /api/auth/registration-requests/ HTTP/1.1" 200 10278
+"GET /api/auth/users/ HTTP/1.1" 200 8896
+"GET /api/geography/stations/ HTTP/1.1" 200 2937
+"GET /api/geography/stations/ HTTP/1.1" 200 2937
+"GET /api/auth/users/ HTTP/1.1" 200 8896
+"GET /api/auth/users/ HTTP/1.1" 200 8896
+"GET /api/auth/registration-requests/ HTTP/1.1" 200 10278
+"GET /api/auth/users/ HTTP/1.1" 200 8896
+"GET /api/auth/registration-requests/ HTTP/1.1" 200 10278
+"GET /api/auth/users/ HTTP/1.1" 200 8896
+"GET /api/geography/stations/ HTTP/1.1" 200 2937
+"GET /api/geography/stations/ HTTP/1.1" 200 2937
+"OPTIONS /api/alerts/ HTTP/1.1" 200 0
+"OPTIONS /api/devices/triggers/ HTTP/1.1" 200 0
+"OPTIONS /api/alerts/ HTTP/1.1" 200 0
+"GET /api/devices/triggers/ HTTP/1.1" 200 1140
+"GET /api/geography/stations/ HTTP/1.1" 200 2937
+"GET /api/alerts/ HTTP/1.1" 200 5406
+"GET /api/alerts/ HTTP/1.1" 200 5406
+"GET /api/devices/triggers/ HTTP/1.1" 200 1140
+"GET /api/alerts/ HTTP/1.1" 200 5406
+"GET /api/geography/stations/ HTTP/1.1" 200 2937
+"GET /api/alerts/ HTTP/1.1" 200 5406
+"GET /api/auth/users/ HTTP/1.1" 200 8896
+"GET /api/auth/registration-requests/ HTTP/1.1" 200 10278
+"GET /api/auth/users/ HTTP/1.1" 200 8896
+"GET /api/auth/registration-requests/ HTTP/1.1" 200 10278
+"GET /api/auth/users/ HTTP/1.1" 200 8896
+"GET /api/geography/stations/ HTTP/1.1" 200 2937
+"GET /api/geography/stations/ HTTP/1.1" 200 2937
+"OPTIONS /api/auth/login/ HTTP/1.1" 200 0
+"POST /api/auth/login/ HTTP/1.1" 200 1329
+"OPTIONS /api/auth/users/ HTTP/1.1" 200 0
+"OPTIONS /api/auth/users/ HTTP/1.1" 200 0
+"GET /api/auth/users/ HTTP/1.1" 200 8896
+"OPTIONS /api/alerts/ HTTP/1.1" 200 0
+"GET /api/auth/users/ HTTP/1.1" 200 8896
+"GET /api/alerts/ HTTP/1.1" 200 1708
+"GET /api/alerts/ HTTP/1.1" 200 1708
+"OPTIONS /api/devices/ HTTP/1.1" 200 0
+"GET /api/devices/ HTTP/1.1" 200 3405
+"GET /api/devices/ HTTP/1.1" 200 3405
+"GET /api/devices/ HTTP/1.1" 200 3405
+"OPTIONS /api/devices/triggers/ HTTP/1.1" 200 0
+"OPTIONS /api/devices/triggers/ HTTP/1.1" 200 0
+"GET /api/devices/triggers/ HTTP/1.1" 200 1140
+"GET /api/alerts/ HTTP/1.1" 200 1708
+"GET /api/devices/triggers/ HTTP/1.1" 200 1140
+"GET /api/alerts/ HTTP/1.1" 200 1708
+"GET /api/alerts/ HTTP/1.1" 200 1708
+"GET /api/auth/registration-requests/ HTTP/1.1" 200 10278
+"GET /api/auth/users/ HTTP/1.1" 200 8896
+"GET /api/geography/stations/ HTTP/1.1" 200 2937
+"GET /api/devices/triggers/ HTTP/1.1" 200 1140
+"GET /api/alerts/ HTTP/1.1" 200 5406
+"GET /api/alerts/ HTTP/1.1" 200 5406
+Not Found: /auth/login/
+"POST /auth/login/ HTTP/1.1" 404 2693
+"GET /api/devices/triggers/ HTTP/1.1" 200 1140
+"GET /api/alerts/ HTTP/1.1" 200 5406
+"GET /api/alerts/ HTTP/1.1" 200 5406
+"OPTIONS /api/auth/logout/ HTTP/1.1" 200 0
+Bad Request: /api/auth/logout/
+"POST /api/auth/logout/ HTTP/1.1" 400 62
+"OPTIONS /api/auth/registration-request/ HTTP/1.1" 200 0
+"POST /api/auth/registration-request/ HTTP/1.1" 201 109
+"POST /api/auth/login/ HTTP/1.1" 200 1230
+"OPTIONS /api/auth/registration-requests/ HTTP/1.1" 200 0
+"OPTIONS /api/auth/registration-requests/ HTTP/1.1" 200 0
+"GET /api/auth/registration-requests/ HTTP/1.1" 200 11004
+"GET /api/auth/users/ HTTP/1.1" 200 9619
+"OPTIONS /api/geography/stations/ HTTP/1.1" 200 0
+"GET /api/auth/registration-requests/ HTTP/1.1" 200 11004
+"GET /api/auth/users/ HTTP/1.1" 200 9619
+"GET /api/geography/stations/ HTTP/1.1" 200 2937
+"GET /api/geography/stations/ HTTP/1.1" 200 2937
+"OPTIONS /api/auth/registration-requests/6f52459d-7c74-4324-a1cf-336c528fefb5/ HTTP/1.1" 200 0
+"OPTIONS /api/auth/registration-requests/6f52459d-7c74-4324-a1cf-336c528fefb5/ HTTP/1.1" 200 0
+"GET /api/auth/registration-requests/6f52459d-7c74-4324-a1cf-336c528fefb5/ HTTP/1.1" 200 725
+"GET /api/auth/registration-requests/6f52459d-7c74-4324-a1cf-336c528fefb5/ HTTP/1.1" 200 725
+"GET /api/auth/registration-requests/6f52459d-7c74-4324-a1cf-336c528fefb5/ HTTP/1.1" 200 725
+"OPTIONS /api/auth/registration-requests/6f52459d-7c74-4324-a1cf-336c528fefb5/review/ HTTP/1.1" 200 0
+"POST /api/auth/registration-requests/6f52459d-7c74-4324-a1cf-336c528fefb5/review/ HTTP/1.1" 200 203
+"GET /api/auth/registration-requests/ HTTP/1.1" 200 11106
+"GET /api/auth/registration-requests/ HTTP/1.1" 200 11106
+"GET /api/auth/users/ HTTP/1.1" 200 10353
+"GET /api/auth/users/ HTTP/1.1" 200 10353
+"GET /api/geography/stations/ HTTP/1.1" 200 3169
+"GET /api/geography/stations/ HTTP/1.1" 200 3169
+"GET /api/auth/registration-requests/6f52459d-7c74-4324-a1cf-336c528fefb5/ HTTP/1.1" 200 827
+"GET /api/auth/registration-requests/6f52459d-7c74-4324-a1cf-336c528fefb5/ HTTP/1.1" 200 827

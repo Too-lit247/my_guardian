@@ -15,23 +15,41 @@ class AlertListCreateView(generics.ListCreateAPIView):
     def get_queryset(self):
         user = self.request.user
 
-        # System Administrators can see all alerts
-        if user.role == 'System Administrator':
+        # Role-based alert filtering
+        if user.role == 'Admin':
+            # Admins can see all alerts
             queryset = Alert.objects.all()
+        elif user.role == 'Station Manager':
+            # Station managers can see alerts assigned to their station or in their department/region
+            if user.station_id:
+                queryset = Alert.objects.filter(
+                    models.Q(assigned_station_id=user.station_id) |
+                    models.Q(department=user.department)
+                )
+            else:
+                # If no station assigned, show alerts in their department/region
+                queryset = Alert.objects.filter(department=user.department)
+        elif user.role == 'Field Officer':
+            # Field officers can only see alerts assigned to their station
+            if user.station_id:
+                queryset = Alert.objects.filter(assigned_station_id=user.station_id)
+            else:
+                # If no station assigned, show alerts in their department
+                queryset = Alert.objects.filter(department=user.department)
         else:
-            # Other users see alerts from their department only
-            queryset = Alert.objects.filter(department=user.department)
-        
+            # Default: no alerts for unknown roles
+            queryset = Alert.objects.none()
+
         # Filter by status if provided
         status_filter = self.request.query_params.get('status', None)
         if status_filter:
             queryset = queryset.filter(status=status_filter)
-        
+
         # Filter by priority if provided
         priority_filter = self.request.query_params.get('priority', None)
         if priority_filter:
             queryset = queryset.filter(priority=priority_filter)
-        
+
         # Search functionality
         search = self.request.query_params.get('search', None)
         if search:
@@ -40,8 +58,29 @@ class AlertListCreateView(generics.ListCreateAPIView):
                 models.Q(location__icontains=search) |
                 models.Q(description__icontains=search)
             )
-        
+
         return queryset
+
+    def perform_create(self, serializer):
+        """Automatically assign alert to nearest station when created"""
+        alert = serializer.save(created_by=self.request.user)
+
+        # If coordinates are provided, find and assign nearest station
+        if alert.latitude and alert.longitude:
+            # Determine department based on alert type
+            department = Alert.get_department_for_alert_type(alert.alert_type)
+            alert.department = department
+
+            # Find nearest station
+            nearest_station = StationFinderService.find_nearest_station(
+                float(alert.latitude),
+                float(alert.longitude),
+                department
+            )
+
+            if nearest_station:
+                alert.assigned_station_id = nearest_station.station_id
+                alert.save()
 
 class AlertDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = AlertSerializer
@@ -50,12 +89,24 @@ class AlertDetailView(generics.RetrieveUpdateDestroyAPIView):
     def get_queryset(self):
         user = self.request.user
 
-        # System Administrators can see all alerts
-        if user.role == 'System Administrator':
+        # Use the same filtering logic as the list view
+        if user.role == 'Admin':
             return Alert.objects.all()
+        elif user.role == 'Station Manager':
+            if user.station_id:
+                return Alert.objects.filter(
+                    models.Q(assigned_station_id=user.station_id) |
+                    models.Q(department=user.department)
+                )
+            else:
+                return Alert.objects.filter(department=user.department)
+        elif user.role == 'Field Officer':
+            if user.station_id:
+                return Alert.objects.filter(assigned_station_id=user.station_id)
+            else:
+                return Alert.objects.filter(department=user.department)
         else:
-            # Other users see alerts from their department only
-            return Alert.objects.filter(department=user.department)
+            return Alert.objects.none()
     
     def perform_update(self, serializer):
         # If status is being changed to resolved, set resolved_at
@@ -113,8 +164,8 @@ def find_nearest_stations(request):
                 'address': station.address,
                 'distance_km': station_info['distance_km'],
                 'coordinates': station.get_coordinates(),
-                'district_name': station.district.name,
-                'region_name': station.district.region.display_name,
+                'department': station.department,
+                'region': station.region,
                 'manager_name': station.manager.full_name if station.manager else None,
                 'phone': station.phone,
                 'operating_hours': station.operating_hours

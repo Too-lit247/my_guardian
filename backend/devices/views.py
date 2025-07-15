@@ -268,10 +268,26 @@ def approve_department_registration(request, registration_id):
     from accounts.models import User
 
     try:
+        # Generate username and check for duplicates
+        base_username = f"{registration.department_type}_regional_{registration.registration_id}"
+        username = base_username
+        counter = 1
+
+        # Ensure unique username
+        while User.objects.filter(username=username).exists():
+            username = f"{base_username}_{counter}"
+            counter += 1
+
+        # Check if email already exists
+        if User.objects.filter(email=registration.regional_manager_email).exists():
+            return Response({
+                'error': f'A user with email {registration.regional_manager_email} already exists. Cannot create duplicate account.'
+            }, status=status.HTTP_400_BAD_REQUEST)
+
         regional_manager = User.objects.create_user(
-            username=f"{registration.department_type}_regional_{registration.registration_id}",
+            username=username,
             email=registration.regional_manager_email,
-            password='TempPassword123!',  # They should change this
+            password='test1234',  # Default password for testing
             full_name=registration.regional_manager_name,
             department=registration.department_type,
             role='Regional Manager',
@@ -279,22 +295,22 @@ def approve_department_registration(request, registration_id):
             phone_number=registration.regional_manager_phone,
             employee_id=f"RM-{registration.registration_number}"
         )
-        
+
         # Update registration status
         registration.status = 'approved'
         registration.reviewed_by_id = request.user.id
         registration.reviewed_at = timezone.now()
         registration.review_notes = request.data.get('review_notes', 'Approved by system administrator')
         registration.save()
-        
+
         return Response({
             'message': 'Department registration approved successfully',
             'regional_manager_username': regional_manager.username,
-            'temporary_password': 'TempPassword123!'
+            'temporary_password': 'test1234'
         }, status=status.HTTP_200_OK)
-        
+
     except Exception as e:
-        return Response({'error': f'Error creating regional manager: {str(e)}'}, 
+        return Response({'error': f'Error creating regional manager: {str(e)}'},
                        status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 # Emergency Trigger Views

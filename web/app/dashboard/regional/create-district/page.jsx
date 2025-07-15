@@ -57,7 +57,7 @@ export default function CreateDistrictPage() {
     try {
       const token = localStorage.getItem("access_token");
       const response = await fetch(
-        "https://my-guardian-plus.onrender.com/api/geography/districts/create/",
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/geography/districts/create/`,
         {
           method: "POST",
           headers: {

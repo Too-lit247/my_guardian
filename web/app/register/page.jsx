@@ -33,24 +33,27 @@ import MapSelector from "@/components/MapSelector";
 import { useFileUpload, validateFile, FILE_TYPES } from "@/hooks/useFileUpload";
 
 const steps = [
-  { id: 1, title: "Registration Type", icon: User },
-  { id: 2, title: "Organization Details", icon: Building },
-  { id: 3, title: "Location", icon: MapPin },
-  { id: 4, title: "Documentation", icon: Upload },
-  { id: 5, title: "Personal Details", icon: User },
-  { id: 6, title: "Review & Submit", icon: CheckCircle },
+  { id: 1, title: "Station Details", icon: Building },
+  { id: 2, title: "Location", icon: MapPin },
+  { id: 3, title: "Documentation", icon: Upload },
+  { id: 4, title: "Personal Details", icon: User },
+  { id: 5, title: "Review & Submit", icon: CheckCircle },
 ];
 
 export default function RegisterPage() {
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
-    registration_type: "",
+    registration_type: "organization", // Always organization since we're registering stations
     organization_name: "",
     department: "",
     region: "",
+    station_name: "",
+    station_address: "",
     full_name: "",
     email: "",
     phone_number: "",
+    password: "",
+    confirm_password: "",
     latitude: null,
     longitude: null,
     address: "",
@@ -176,7 +179,7 @@ export default function RegisterPage() {
       });
 
       const response = await fetch(
-        `${process.env.BACKEND_URL}/auth/registration-request/`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/registration-request/`,
         {
           method: "POST",
           headers: {
@@ -208,52 +211,111 @@ export default function RegisterPage() {
           <div className="space-y-6">
             <div className="text-center">
               <h3 className="text-lg font-semibold mb-2">
-                Choose Registration Type
+                Station Registration
               </h3>
               <p className="text-muted-foreground">
-                Are you registering as an individual or organization?
+                Register your emergency response station
               </p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Card
-                className={`cursor-pointer transition-all hover:shadow-md ${
-                  formData.registration_type === "individual"
-                    ? "ring-2 ring-primary bg-primary/5"
-                    : "hover:bg-gray-50"
-                }`}
-                onClick={() =>
-                  setFormData({ ...formData, registration_type: "individual" })
-                }
-              >
-                <CardContent className="p-6 text-center">
-                  <User className="h-12 w-12 mx-auto mb-4 text-primary" />
-                  <h4 className="font-semibold mb-2">Individual</h4>
-                  <p className="text-sm text-muted-foreground">
-                    Register as an individual responder
-                  </p>
-                </CardContent>
-              </Card>
-              <Card
-                className={`cursor-pointer transition-all hover:shadow-md ${
-                  formData.registration_type === "organization"
-                    ? "ring-2 ring-primary bg-primary/5"
-                    : "hover:bg-gray-50"
-                }`}
-                onClick={() =>
-                  setFormData({
-                    ...formData,
-                    registration_type: "organization",
-                  })
-                }
-              >
-                <CardContent className="p-6 text-center">
-                  <Building className="h-12 w-12 mx-auto mb-4 text-primary" />
-                  <h4 className="font-semibold mb-2">Organization</h4>
-                  <p className="text-sm text-muted-foreground">
-                    Register as an emergency response organization
-                  </p>
-                </CardContent>
-              </Card>
+
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="station_name">Station Name *</Label>
+                <Input
+                  id="station_name"
+                  value={formData.station_name}
+                  onChange={(e) =>
+                    setFormData({ ...formData, station_name: e.target.value })
+                  }
+                  placeholder="e.g., Central Fire Station"
+                  required
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="organization_name">Organization Name</Label>
+                <Input
+                  id="organization_name"
+                  value={formData.organization_name}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      organization_name: e.target.value,
+                    })
+                  }
+                  placeholder="e.g., City Fire Department"
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="department">Department Type *</Label>
+                <Select
+                  value={formData.department}
+                  onValueChange={(value) =>
+                    setFormData({ ...formData, department: value })
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select department type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="fire">
+                      <div className="flex items-center">
+                        {getDepartmentIcon("fire")}
+                        <span className="ml-2">Fire Department</span>
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="police">
+                      <div className="flex items-center">
+                        {getDepartmentIcon("police")}
+                        <span className="ml-2">Police Department</span>
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="medical">
+                      <div className="flex items-center">
+                        {getDepartmentIcon("medical")}
+                        <span className="ml-2">Medical Department</span>
+                      </div>
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <Label htmlFor="region">Region *</Label>
+                <Select
+                  value={formData.region}
+                  onValueChange={(value) =>
+                    setFormData({ ...formData, region: value })
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select region" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="central">Central Region</SelectItem>
+                    <SelectItem value="north">Northern Region</SelectItem>
+                    <SelectItem value="southern">Southern Region</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <Label htmlFor="station_address">Station Address *</Label>
+                <Textarea
+                  id="station_address"
+                  value={formData.station_address}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      station_address: e.target.value,
+                    })
+                  }
+                  placeholder="Enter the physical address of the station"
+                  rows={3}
+                  required
+                />
+              </div>
             </div>
           </div>
         );
@@ -263,109 +325,22 @@ export default function RegisterPage() {
           <div className="space-y-6">
             <div className="text-center">
               <h3 className="text-lg font-semibold mb-2">
-                Organization Details
-              </h3>
-              <p className="text-muted-foreground">
-                Tell us about your organization
-              </p>
-            </div>
-
-            {formData.registration_type === "organization" && (
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="organization_name">Organization Name</Label>
-                  <Input
-                    id="organization_name"
-                    value={formData.organization_name}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        organization_name: e.target.value,
-                      })
-                    }
-                    placeholder="Enter organization name"
-                    className="mt-1"
-                  />
-                </div>
-              </div>
-            )}
-
-            <div>
-              <Label htmlFor="department">Department</Label>
-              <Select
-                value={formData.department}
-                onValueChange={(value) =>
-                  setFormData({ ...formData, department: value })
-                }
-              >
-                <SelectTrigger className="mt-1">
-                  <SelectValue placeholder="Select department" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="fire">
-                    <div className="flex items-center gap-2">
-                      <Flame className="h-4 w-4 text-red-500" />
-                      Fire Department
-                    </div>
-                  </SelectItem>
-                  <SelectItem value="police">
-                    <div className="flex items-center gap-2">
-                      <Shield className="h-4 w-4 text-blue-500" />
-                      Police Department
-                    </div>
-                  </SelectItem>
-                  <SelectItem value="medical">
-                    <div className="flex items-center gap-2">
-                      <Heart className="h-4 w-4 text-green-500" />
-                      Medical Department
-                    </div>
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div>
-              <Label htmlFor="region">Region</Label>
-              <Select
-                value={formData.region}
-                onValueChange={(value) =>
-                  setFormData({ ...formData, region: value })
-                }
-              >
-                <SelectTrigger className="mt-1">
-                  <SelectValue placeholder="Select region" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="central">Central Region</SelectItem>
-                  <SelectItem value="north">Northern Region</SelectItem>
-                  <SelectItem value="southern">Southern Region</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-        );
-
-      case 3:
-        return (
-          <div className="space-y-6">
-            <div className="text-center">
-              <h3 className="text-lg font-semibold mb-2">
                 Location Information
               </h3>
               <p className="text-muted-foreground">
-                Provide your location details
+                Provide the station's location details
               </p>
             </div>
 
             <div>
-              <Label htmlFor="address">Address</Label>
+              <Label htmlFor="address">Additional Address Information</Label>
               <Textarea
                 id="address"
                 value={formData.address}
                 onChange={(e) =>
                   setFormData({ ...formData, address: e.target.value })
                 }
-                placeholder="Enter your full address"
+                placeholder="Enter any additional address details (optional)"
                 className="mt-1"
                 rows={3}
               />
@@ -383,7 +358,7 @@ export default function RegisterPage() {
           </div>
         );
 
-      case 4:
+      case 3:
         return (
           <div className="space-y-6">
             <div className="text-center">
@@ -391,7 +366,7 @@ export default function RegisterPage() {
                 Upload Documentation
               </h3>
               <p className="text-muted-foreground">
-                Upload documents that verify your organization
+                Upload documents that verify your station
               </p>
             </div>
 
@@ -459,19 +434,21 @@ export default function RegisterPage() {
           </div>
         );
 
-      case 5:
+      case 4:
         return (
           <div className="space-y-6">
             <div className="text-center">
-              <h3 className="text-lg font-semibold mb-2">Personal Details</h3>
+              <h3 className="text-lg font-semibold mb-2">
+                Station Manager Details
+              </h3>
               <p className="text-muted-foreground">
-                Enter your personal information
+                Enter your personal information as the station manager
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="full_name">Full Name</Label>
+                <Label htmlFor="full_name">Full Name *</Label>
                 <Input
                   id="full_name"
                   value={formData.full_name}
@@ -480,10 +457,11 @@ export default function RegisterPage() {
                   }
                   placeholder="Enter your full name"
                   className="mt-1"
+                  required
                 />
               </div>
               <div>
-                <Label htmlFor="phone_number">Phone Number</Label>
+                <Label htmlFor="phone_number">Phone Number *</Label>
                 <Input
                   id="phone_number"
                   value={formData.phone_number}
@@ -492,12 +470,13 @@ export default function RegisterPage() {
                   }
                   placeholder="Enter your phone number"
                   className="mt-1"
+                  required
                 />
               </div>
             </div>
 
             <div>
-              <Label htmlFor="email">Email Address</Label>
+              <Label htmlFor="email">Email Address *</Label>
               <Input
                 id="email"
                 type="email"
@@ -507,15 +486,60 @@ export default function RegisterPage() {
                 }
                 placeholder="Enter your email address"
                 className="mt-1"
+                required
               />
               <p className="text-xs text-muted-foreground mt-1">
                 This will be your username for logging in
               </p>
             </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="password">Password *</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  value={formData.password}
+                  onChange={(e) =>
+                    setFormData({ ...formData, password: e.target.value })
+                  }
+                  placeholder="Choose a secure password"
+                  className="mt-1"
+                  required
+                />
+                <p className="text-xs text-muted-foreground mt-1">
+                  Minimum 8 characters
+                </p>
+              </div>
+              <div>
+                <Label htmlFor="confirm_password">Confirm Password *</Label>
+                <Input
+                  id="confirm_password"
+                  type="password"
+                  value={formData.confirm_password}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      confirm_password: e.target.value,
+                    })
+                  }
+                  placeholder="Confirm your password"
+                  className="mt-1"
+                  required
+                />
+                {formData.password &&
+                  formData.confirm_password &&
+                  formData.password !== formData.confirm_password && (
+                    <p className="text-xs text-red-500 mt-1">
+                      Passwords do not match
+                    </p>
+                  )}
+              </div>
+            </div>
           </div>
         );
 
-      case 6:
+      case 5:
         return (
           <div className="space-y-6">
             <div className="text-center">
@@ -721,17 +745,18 @@ export default function RegisterPage() {
                   <Button
                     onClick={handleNext}
                     disabled={
-                      (currentStep === 1 && !formData.registration_type) ||
-                      (currentStep === 2 &&
-                        (!formData.department ||
+                      (currentStep === 1 &&
+                        (!formData.station_name ||
+                          !formData.department ||
                           !formData.region ||
-                          (formData.registration_type === "organization" &&
-                            !formData.organization_name))) ||
-                      (currentStep === 3 && !formData.address) ||
-                      (currentStep === 5 &&
+                          !formData.station_address)) ||
+                      (currentStep === 4 &&
                         (!formData.full_name ||
                           !formData.email ||
-                          !formData.phone_number))
+                          !formData.phone_number ||
+                          !formData.password ||
+                          !formData.confirm_password ||
+                          formData.password !== formData.confirm_password))
                     }
                     className="flex items-center gap-2"
                   >
@@ -743,9 +768,15 @@ export default function RegisterPage() {
                     onClick={handleSubmit}
                     disabled={
                       loading ||
+                      !formData.station_name ||
+                      !formData.department ||
+                      !formData.region ||
+                      !formData.station_address ||
                       !formData.full_name ||
                       !formData.email ||
-                      !formData.phone_number
+                      !formData.phone_number ||
+                      !formData.password ||
+                      formData.password !== formData.confirm_password
                     }
                     className="flex items-center gap-2"
                   >

@@ -124,8 +124,8 @@ export default function DevicesPage() {
     const currentUser = JSON.parse(userData);
     setUser(currentUser);
 
-    // Only system administrators can access devices page
-    if (currentUser.role !== "System Administrator") {
+    // Only admins can access devices page
+    if (!["Admin", "System Administrator"].includes(currentUser.role)) {
       router.push("/dashboard");
       return;
     }
@@ -165,7 +165,7 @@ export default function DevicesPage() {
     try {
       const token = localStorage.getItem("access_token");
       const response = await fetch(
-        "https://my-guardian-plus.onrender.com/api/devices/",
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/devices/`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -191,7 +191,7 @@ export default function DevicesPage() {
     try {
       const token = localStorage.getItem("access_token");
       const response = await fetch(
-        "https://my-guardian-plus.onrender.com/api/devices/register/",
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/devices/register/`,
         {
           method: "POST",
           headers: {
@@ -282,7 +282,7 @@ export default function DevicesPage() {
   };
 
   return (
-    <AuthWrapper>
+    <AuthWrapper allowedRoles={["Admin", "System Administrator"]}>
       <DashboardLayout user={user}>
         <div className="space-y-6">
           <div className="flex items-center justify-between">

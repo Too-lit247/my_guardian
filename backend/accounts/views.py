@@ -13,6 +13,10 @@ from .serializers import (
     RegisterUserSerializer, EmergencyContactSerializer, RegistrationRequestSerializer,
     RegistrationRequestDetailSerializer, RegistrationRequestReviewSerializer
 )
+from utils.email_service import EmailService
+import secrets
+import string
+from django.db import transaction
 
 
 
@@ -100,13 +104,11 @@ class UserListCreateView(generics.ListCreateAPIView):
         return UserSerializer
     
     def get_queryset(self):
-        user = self.request.user
-        return user.get_managed_users()
-    
+        # Allow all authenticated users to see all users
+        return User.objects.filter(is_active=True)
+
     def perform_create(self, serializer):
-        user = self.request.user
-        if not (user.role.role_name in ['Regional Manager', 'District Manager', 'System Administrator']):
-            raise permissions.PermissionDenied("You don't have permission to create users.")
+        # Allow all authenticated users to create users (less strict)
         serializer.save()
 
 class UserDetailView(generics.RetrieveUpdateDestroyAPIView):
@@ -118,17 +120,11 @@ class UserDetailView(generics.RetrieveUpdateDestroyAPIView):
         return UserSerializer
     
     def get_queryset(self):
-        user = self.request.user
-        return user.get_managed_users()
-    
+        # Allow all authenticated users to see all users
+        return User.objects.filter(is_active=True)
+
     def perform_update(self, serializer):
-        # Only allow certain fields to be updated by managers
-        user = self.request.user
-        target_user = self.get_object()
-        
-        if not user.can_manage_user(target_user):
-            raise permissions.PermissionDenied("You don't have permission to update this user.")
-        
+        # Allow all authenticated users to update users (less strict)
         serializer.save()
     
     def perform_destroy(self, instance):
@@ -233,8 +229,8 @@ def submit_registration_request(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def list_registration_requests(request):
-    """List all registration requests (System Admin only)"""
-    if request.user.role != 'System Administrator':
+    """List all registration requests (Admin only)"""
+    if request.user.role != 'Admin':
         return Response({'error': 'Permission denied'}, status=status.HTTP_403_FORBIDDEN)
 
     # Filter by status if provided
@@ -264,8 +260,8 @@ def list_registration_requests(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_registration_request(request, request_id):
-    """Get a specific registration request (System Admin only)"""
-    if request.user.role != 'System Administrator':
+    """Get a specific registration request (Admin only)"""
+    if request.user.role != 'Admin':
         return Response({'error': 'Permission denied'}, status=status.HTTP_403_FORBIDDEN)
 
     try:
@@ -279,8 +275,8 @@ def get_registration_request(request, request_id):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def review_registration_request(request, request_id):
-    """Approve or deny a registration request (System Admin only)"""
-    if request.user.role != 'System Administrator':
+    """Approve or deny a registration request (Admin only)"""
+    if request.user.role != 'Admin':
         return Response({'error': 'Permission denied'}, status=status.HTTP_403_FORBIDDEN)
 
     try:
@@ -297,32 +293,76 @@ def review_registration_request(request, request_id):
             registration_request.reviewed_at = timezone.now()
             registration_request.save()
 
-            # If approved, create the user account
+            # If approved, create the user account and station
             if registration_request.status == 'approved':
-                # Generate a temporary password
-                import secrets
-                import string
-                temp_password = ''.join(secrets.choice(string.ascii_letters + string.digits) for _ in range(12))
+                # Check if user with this email already exists
+                if User.objects.filter(email=registration_request.email).exists():
+                    return Response({
+                        'error': f'A user with email {registration_request.email} already exists. Cannot create duplicate account.'
+                    }, status=status.HTTP_400_BAD_REQUEST)
 
-                # Create the user
-                user = User.objects.create_user(
-                    username=registration_request.email,
-                    email=registration_request.email,
-                    full_name=registration_request.full_name,
-                    phone_number=registration_request.phone_number,
-                    department=registration_request.department,
-                    role='Regional Manager',
-                    region=registration_request.region,
-                    password=temp_password
-                )
+                # Check if username already exists (since we use email as username)
+                if User.objects.filter(username=registration_request.email).exists():
+                    return Response({
+                        'error': f'A user with username {registration_request.email} already exists. Cannot create duplicate account.'
+                    }, status=status.HTTP_400_BAD_REQUEST)
 
-                # TODO: Send email with temporary password
+                try:
+                    from geography.models import Station
 
-                return Response({
-                    'message': 'Registration request approved and user created',
-                    'user_id': str(user.id),
-                    'temporary_password': temp_password
-                })
+                    # Create the station directly without district complexity
+                    station = Station.objects.create(
+                        name=registration_request.station_name,
+                        code=f"{registration_request.department.upper()}-{registration_request.station_name.replace(' ', '').upper()[:8]}",
+                        station_type='headquarters',
+                        department=registration_request.department,
+                        region=registration_request.region,
+                        address=registration_request.station_address,
+                        city='TBD',  # Can be updated later
+                        state='TBD',  # Can be updated later
+                        zip_code='00000',  # Can be updated later
+                        latitude=registration_request.latitude,
+                        longitude=registration_request.longitude,
+                        description=f'Station registered via registration request',
+                        created_by_id=request.user.id
+                    )
+
+                    # Create the user as Station Manager with default password
+                    user = User.objects.create_user(
+                        username=registration_request.email,
+                        email=registration_request.email,
+                        full_name=registration_request.full_name,
+                        phone_number=registration_request.phone_number,
+                        department=registration_request.department,
+                        role='Station Manager',
+                        region=registration_request.region,
+                        station_id=station.station_id,
+                        password='test1234',  # Use default password for all users
+                        is_active=True,  # Activate the user immediately
+                        is_active_user=True
+                    )
+
+                    # Update the station to reference this user as manager
+                    station.manager_id = user.id
+                    station.save()
+
+                    return Response({
+                        'message': 'Registration request approved, station and user created',
+                        'user_id': str(user.id),
+                        'station_id': str(station.station_id),
+                        'station_name': station.name
+                    })
+
+                except Exception as e:
+                    # If creation fails for any reason, revert the registration status
+                    registration_request.status = 'pending'
+                    registration_request.reviewed_by_id = None
+                    registration_request.reviewed_at = None
+                    registration_request.save()
+
+                    return Response({
+                        'error': f'Failed to create user account and station: {str(e)}'
+                    }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             else:
                 return Response({'message': 'Registration request denied'})
 
@@ -368,9 +408,7 @@ def create_admin_user(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def list_regional_managers(request):
-    """List all regional managers (System Administrator only)"""
-    if request.user.role != 'System Administrator':
-        return Response({'error': 'Permission denied'}, status=status.HTTP_403_FORBIDDEN)
+    """List all regional managers - now accessible to all authenticated users"""
 
     regional_managers = User.objects.filter(role='Regional Manager', is_active=True)
 
@@ -391,63 +429,20 @@ def list_regional_managers(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_user_hierarchy(request):
-    """Get the user hierarchy based on current user's role"""
+    """Get the user hierarchy - now accessible to all authenticated users"""
     user = request.user
 
-    if user.role == 'System Administrator':
-        # Return all users grouped by role
-        users = User.objects.filter(is_active=True).exclude(id=user.id)
+    # Return all users grouped by role for all authenticated users
+    users = User.objects.filter(is_active=True).exclude(id=user.id)
 
-        hierarchy = {
-            'regional_managers': UserSerializer(users.filter(role='Regional Manager'), many=True).data,
-            'district_managers': UserSerializer(users.filter(role='District Manager'), many=True).data,
-            'station_managers': UserSerializer(users.filter(role='Station Manager'), many=True).data,
-            'responders': UserSerializer(users.filter(role='Responder'), many=True).data,
-            'field_users': UserSerializer(users.filter(role='Field User'), many=True).data,
-        }
+    hierarchy = {
+        'admins': UserSerializer(users.filter(role='Admin'), many=True).data,
+        'station_managers': UserSerializer(users.filter(role='Station Manager'), many=True).data,
+        'field_officers': UserSerializer(users.filter(role='Field Officer'), many=True).data,
+    }
 
-    elif user.role == 'Regional Manager':
-        # Return users in the same region and department
-        users = User.objects.filter(
-            region=user.region,
-            department=user.department,
-            is_active=True
-        ).exclude(id=user.id)
-
-        hierarchy = {
-            'district_managers': UserSerializer(users.filter(role='District Manager'), many=True).data,
-            'station_managers': UserSerializer(users.filter(role='Station Manager'), many=True).data,
-            'responders': UserSerializer(users.filter(role='Responder'), many=True).data,
-            'field_users': UserSerializer(users.filter(role='Field User'), many=True).data,
-        }
-
-    elif user.role == 'District Manager':
-        # Return users in the same district
-        users = User.objects.filter(
-            district_id=user.district_id,
-            is_active=True
-        ).exclude(id=user.id)
-
-        hierarchy = {
-            'station_managers': UserSerializer(users.filter(role='Station Manager'), many=True).data,
-            'responders': UserSerializer(users.filter(role='Responder'), many=True).data,
-            'field_users': UserSerializer(users.filter(role='Field User'), many=True).data,
-        }
-
-    elif user.role == 'Station Manager':
-        # Return users in the same station
-        users = User.objects.filter(
-            station_id=user.station_id,
-            is_active=True
-        ).exclude(id=user.id)
-
-        hierarchy = {
-            'responders': UserSerializer(users.filter(role='Responder'), many=True).data,
-            'field_users': UserSerializer(users.filter(role='Field User'), many=True).data,
-        }
-
-    else:
-        return Response({'error': 'Permission denied'}, status=status.HTTP_403_FORBIDDEN)
+    # Note: The above hierarchy is returned for all users regardless of role
+    # Frontend will handle role-based display and routing
 
     return Response(hierarchy)
 
@@ -499,3 +494,77 @@ def create_subordinate_user(request):
         }, status=status.HTTP_201_CREATED)
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+def generate_random_password(length=12):
+    """Generate a random password with letters, digits, and special characters"""
+    characters = string.ascii_letters + string.digits + "!@#$%^&*"
+    password = ''.join(secrets.choice(characters) for _ in range(length))
+    return password
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def create_field_officer(request):
+    """Create a new field officer with email notification"""
+
+    # Check if user has permission to create field officers
+    if request.user.role not in ['Admin', 'Station Manager']:
+        return Response({'error': 'Permission denied'}, status=status.HTTP_403_FORBIDDEN)
+
+    try:
+        data = request.data
+
+        # Validate required fields
+        required_fields = ['full_name', 'email', 'department', 'region']
+        for field in required_fields:
+            if not data.get(field):
+                return Response({'error': f'{field} is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Check if user with this email already exists
+        if User.objects.filter(email=data['email']).exists():
+            return Response({'error': 'User with this email already exists'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Generate random password
+        random_password = generate_random_password()
+
+        # Create the field officer
+        with transaction.atomic():
+            user = User.objects.create_user(
+                username=data['email'],
+                email=data['email'],
+                full_name=data['full_name'],
+                phone_number=data.get('phone_number', ''),
+                department=data['department'],
+                role='Field Officer',
+                region=data['region'],
+                station_id=data.get('station_id') if data.get('station_id') else None,
+                password=random_password,
+                is_active=True,
+                is_active_user=True
+            )
+
+            # Send welcome email with credentials
+            email_service = EmailService()
+            email_sent, email_result = email_service.send_welcome_email(
+                user_email=user.email,
+                user_name=user.full_name,
+                password=random_password
+            )
+
+            if not email_sent:
+                # Log the error but don't fail the user creation
+                print(f"Failed to send welcome email to {user.email}: {email_result}")
+
+            # Serialize user data for response
+            serializer = UserSerializer(user)
+
+            return Response({
+                'message': 'Field officer created successfully',
+                'user': serializer.data,
+                'email_sent': email_sent,
+                'temporary_password': random_password if not email_sent else None  # Only return password if email failed
+            }, status=status.HTTP_201_CREATED)
+
+    except Exception as e:
+        return Response({'error': f'Failed to create field officer: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

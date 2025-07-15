@@ -212,22 +212,37 @@ class EmergencyContactSerializer(serializers.ModelSerializer):
 
 class RegistrationRequestSerializer(serializers.ModelSerializer):
     """Serializer for creating registration requests"""
+    password = serializers.CharField(write_only=True, min_length=8)
+
     class Meta:
         model = RegistrationRequest
         fields = [
             'request_id', 'registration_type', 'organization_name', 'department',
-            'region', 'full_name', 'email', 'phone_number', 'latitude',
-            'longitude', 'address', 'documentation', 'status', 'created_at'
+            'region', 'full_name', 'email', 'phone_number', 'password',
+            'station_name', 'station_address', 'latitude', 'longitude',
+            'address', 'documentation', 'status', 'created_at'
         ]
         read_only_fields = ['request_id', 'status', 'created_at']
 
     def validate(self, data):
-        # If organization type, organization_name is required
-        if data.get('registration_type') == 'organization' and not data.get('organization_name'):
+        # Station name is required since we're registering stations directly
+        if not data.get('station_name'):
             raise serializers.ValidationError({
-                'organization_name': 'Organization name is required for organization registration.'
+                'station_name': 'Station name is required.'
             })
+
+        # Validate password
+        password = data.get('password')
+        if password:
+            validate_password(password)
+
         return data
+
+    def create(self, validated_data):
+        # Hash the password before saving
+        from django.contrib.auth.hashers import make_password
+        validated_data['password'] = make_password(validated_data['password'])
+        return super().create(validated_data)
 
 
 class RegistrationRequestDetailSerializer(serializers.ModelSerializer):
@@ -238,9 +253,10 @@ class RegistrationRequestDetailSerializer(serializers.ModelSerializer):
         model = RegistrationRequest
         fields = [
             'request_id', 'registration_type', 'organization_name', 'department',
-            'region', 'full_name', 'email', 'phone_number', 'latitude',
-            'longitude', 'address', 'documentation', 'status', 'reviewed_by_id',
-            'reviewed_by_name', 'review_notes', 'reviewed_at', 'created_at', 'updated_at'
+            'region', 'full_name', 'email', 'phone_number', 'station_name',
+            'station_address', 'latitude', 'longitude', 'address', 'documentation',
+            'status', 'reviewed_by_id', 'reviewed_by_name', 'review_notes',
+            'reviewed_at', 'created_at', 'updated_at'
         ]
         read_only_fields = ['request_id', 'created_at', 'updated_at', 'reviewed_by_name']
 

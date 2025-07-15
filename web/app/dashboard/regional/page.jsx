@@ -62,7 +62,7 @@ export default function RegionalManagerDashboard() {
       
       // Fetch districts
       const districtsResponse = await fetch(
-        `${process.env.BACKEND_URL}/geography/districts/`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/geography/districts/`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -76,7 +76,7 @@ export default function RegionalManagerDashboard() {
 
       // Fetch staff hierarchy
       const hierarchyResponse = await fetch(
-        `${process.env.BACKEND_URL}/auth/admin/hierarchy/`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/admin/hierarchy/`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }

@@ -63,7 +63,7 @@ export default function NewDistrictPage() {
     try {
       const token = localStorage.getItem("access_token");
       const response = await fetch(
-        "https://my-guardian-plus.onrender.com/api/geography/districts/",
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/geography/districts/`,
         {
           method: "POST",
           headers: {
@@ -104,18 +104,15 @@ export default function NewDistrictPage() {
       <DashboardLayout user={user}>
         <div className="space-y-6">
           <div className="flex items-center gap-4">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => router.back()}
-            >
+            <Button variant="ghost" size="sm" onClick={() => router.back()}>
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back
             </Button>
             <div>
               <h1 className="text-3xl font-bold">Create New District</h1>
               <p className="text-muted-foreground">
-                Add a new district branch to your {user.department} department region
+                Add a new district branch to your {user.department} department
+                region
               </p>
             </div>
           </div>

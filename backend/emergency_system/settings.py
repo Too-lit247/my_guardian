@@ -199,12 +199,12 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 20,
 }
 
-# JWT Settings
+# JWT Settings - Extended token lifetimes for less frequent refreshes
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=config('JWT_ACCESS_TOKEN_LIFETIME', default=60, cast=int)),
-    'REFRESH_TOKEN_LIFETIME': timedelta(minutes=config('JWT_REFRESH_TOKEN_LIFETIME', default=1440, cast=int)),
-    'ROTATE_REFRESH_TOKENS': True,
-    'BLACKLIST_AFTER_ROTATION': True,
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=config('JWT_ACCESS_TOKEN_LIFETIME', default=24, cast=int)),  # 24 hours instead of 1 hour
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=config('JWT_REFRESH_TOKEN_LIFETIME', default=7, cast=int)),  # 7 days instead of 1 day
+    'ROTATE_REFRESH_TOKENS': False,  # Disable rotation to reduce complexity
+    'BLACKLIST_AFTER_ROTATION': False,  # Disable blacklisting for less strict control
     'UPDATE_LAST_LOGIN': True,
     'ALGORITHM': 'HS256',
     'SIGNING_KEY': config('JWT_SECRET_KEY', default=SECRET_KEY),
@@ -212,7 +212,7 @@ SIMPLE_JWT = {
     'AUDIENCE': None,
     'ISSUER': None,
     'JWK_URL': None,
-    'LEEWAY': 0,
+    'LEEWAY': 300,  # 5 minutes leeway for clock skew
     'AUTH_HEADER_TYPES': ('Bearer',),
     'AUTH_HEADER_NAME': 'HTTP_AUTHORIZATION',
     'USER_ID_FIELD': 'id',
@@ -320,4 +320,9 @@ LOGGING = {
 
 # Create logs directory
 os.makedirs(BASE_DIR / 'logs', exist_ok=True)
+
+# Brevo (SendinBlue) Email Configuration
+BREVO_API_KEY = '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'
+SENDER_EMAIL = 'thomhuwa066@gmail.com'
+SENDER_NAME = 'Skills Sync'
 

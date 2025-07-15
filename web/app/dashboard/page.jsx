@@ -36,24 +36,27 @@ export default function Dashboard() {
       const parsedUser = JSON.parse(userData);
       setUser(parsedUser);
 
-      // Redirect based on user role
-      switch (parsedUser.role) {
-        case "System Administrator":
-          router.push("/dashboard/admin");
-          return;
-        case "Regional Manager":
-          router.push("/dashboard/regional");
-          return;
-        case "District Manager":
-          router.push("/dashboard/district");
-          return;
-        case "Station Manager":
-          router.push("/dashboard/station");
-          return;
-        default:
-          // For Responders and Field Users, stay on main dashboard
-          fetchStats();
-          break;
+      // Only redirect if user is on the exact root dashboard page
+      // This allows access to other admin pages like request reviews
+      if (window.location.pathname === "/dashboard") {
+        switch (parsedUser.role) {
+          case "Admin":
+            router.push("/dashboard/admin/dashboard");
+            return;
+          case "Station Manager":
+            router.push("/dashboard/manager/dashboard");
+            return;
+          case "Field Officer":
+            router.push("/dashboard/field/dashboard");
+            return;
+          default:
+            // Fallback for unknown roles
+            fetchStats();
+            break;
+        }
+      } else {
+        // If not on root dashboard, just fetch stats without redirecting
+        fetchStats();
       }
     }
   }, []);
@@ -62,7 +65,7 @@ export default function Dashboard() {
     try {
       const token = localStorage.getItem("access_token");
       const response = await fetch(
-        "https://my-guardian-plus.onrender.com/api/alerts/statistics/",
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/alerts/statistics/`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

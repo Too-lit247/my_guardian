@@ -58,14 +58,14 @@ class DistrictAdmin(admin.ModelAdmin):
 
 @admin.register(Station)
 class StationAdmin(admin.ModelAdmin):
-    list_display = ('name', 'code', 'station_type', 'district', 'manager', 'staff_count', 'is_active')
-    list_filter = ('station_type', 'district__department', 'district__region', 'is_active', 'created_at')
+    list_display = ('name', 'code', 'station_type', 'department', 'region', 'manager', 'staff_count', 'is_active')
+    list_filter = ('station_type', 'department', 'region', 'is_active', 'created_at')
     search_fields = ('name', 'code', 'address', 'city')
-    readonly_fields = ('station_id', 'created_at', 'updated_at', 'staff_count', 'department', 'region')
-    
+    readonly_fields = ('station_id', 'created_at', 'updated_at', 'staff_count')
+
     fieldsets = (
         ('Basic Information', {
-            'fields': ('station_id', 'name', 'code', 'station_type', 'district')
+            'fields': ('station_id', 'name', 'code', 'station_type', 'department', 'region')
         }),
         ('Location', {
             'fields': ('address', 'city', 'state', 'zip_code', 'latitude', 'longitude')
@@ -80,7 +80,7 @@ class StationAdmin(admin.ModelAdmin):
             'fields': ('is_active',)
         }),
         ('Metadata', {
-            'fields': ('created_at', 'updated_at', 'created_by_id', 'staff_count', 'department', 'region'),
+            'fields': ('created_at', 'updated_at', 'created_by_id', 'staff_count'),
             'classes': ('collapse',)
         }),
     )

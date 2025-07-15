@@ -62,7 +62,7 @@ export default function DistrictManagerDashboard() {
       
       // Fetch stations in this district
       const stationsResponse = await fetch(
-        `${process.env.BACKEND_URL}/geography/stations/`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/geography/stations/`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -76,7 +76,7 @@ export default function DistrictManagerDashboard() {
 
       // Fetch staff hierarchy
       const hierarchyResponse = await fetch(
-        `${process.env.BACKEND_URL}/auth/admin/hierarchy/`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/admin/hierarchy/`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }

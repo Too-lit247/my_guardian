@@ -37,4 +37,7 @@ urlpatterns = [
     path('admin/regional-managers/', views.list_regional_managers, name='list_regional_managers'),
     path('admin/hierarchy/', views.get_user_hierarchy, name='get_user_hierarchy'),
     path('admin/create-subordinate/', views.create_subordinate_user, name='create_subordinate_user'),
+
+    # Field Officer Management
+    path('field-officers/', views.create_field_officer, name='create_field_officer'),
 ]

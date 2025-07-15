@@ -89,7 +89,7 @@ class District(models.Model):
         unique_together = ['name', 'department', 'region']
     
     def __str__(self):
-        return f"{self.name} - {self.get_department_display()} ({self.region.display_name})"
+        return f"{self.name} - {self.department} ({self.region.display_name})"
     
     @property
     def manager(self):
@@ -126,24 +126,31 @@ class District(models.Model):
 
 
 class Station(models.Model):
-    """Model for stations within districts"""
+    """Model for emergency response stations"""
     STATION_TYPE_CHOICES = [
         ('headquarters', 'Headquarters'),
         ('substation', 'Substation'),
         ('outpost', 'Outpost'),
         ('mobile', 'Mobile Unit'),
     ]
-    
+
+    DEPARTMENT_CHOICES = [
+        ('fire', 'Fire Department'),
+        ('police', 'Police Department'),
+        ('medical', 'Medical Department'),
+    ]
+
     # Primary key
     station_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    
+
     # Basic Information
     name = models.CharField(max_length=100)
     code = models.CharField(max_length=15, unique=True, help_text="Unique station code")
     station_type = models.CharField(max_length=20, choices=STATION_TYPE_CHOICES, default='substation')
-    
-    # Geographic hierarchy
-    district = models.ForeignKey(District, on_delete=models.CASCADE, related_name='stations')
+
+    # Department and Region (simplified)
+    department = models.CharField(max_length=20, choices=DEPARTMENT_CHOICES)
+    region = models.CharField(max_length=100, help_text="Region name")
     
     # Location Information
     address = models.TextField()
@@ -172,11 +179,11 @@ class Station(models.Model):
     
     class Meta:
         db_table = 'geography_stations'
-        ordering = ['district__name', 'name']
-        unique_together = ['name', 'district']
-    
+        ordering = ['region', 'department', 'name']
+        unique_together = ['name', 'department', 'region']
+
     def __str__(self):
-        return f"{self.name} - {self.district.name}"
+        return f"{self.name} - {self.department} ({self.region})"
     
     @property
     def manager(self):
@@ -193,14 +200,6 @@ class Station(models.Model):
     def staff_count(self):
         from accounts.models import User
         return User.objects.filter(station_id=self.station_id, is_active_user=True).count()
-    
-    @property
-    def department(self):
-        return self.district.department
-    
-    @property
-    def region(self):
-        return self.district.region
     
     def get_coordinates(self):
         if self.latitude and self.longitude:

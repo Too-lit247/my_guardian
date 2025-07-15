@@ -1,0 +1,23 @@
+🔍 STATION DETECTION ALGORITHM ANALYSIS
+============================================================
+📋 HOW THE SYSTEM FINDS THE CLOSEST STATION:
+--------------------------------------------------
+1. 🎯 DISTANCE CALCULATION:
+   • Uses Haversine formula for great-circle distance
+   • Accounts for Earth's curvature
+   • Formula: d = 2r × arcsin(√(sin²(Δφ/2) + cos(φ1)cos(φ2)sin²(Δλ/2)))
+   • Where: φ = latitude, λ = longitude, r = Earth radius (6371 km)
+
+2. 🏥 STATION FILTERING:
+   • Filters by department (fire/police/medical)
+   • Only includes active stations (is_active=True)
+   • Requires valid coordinates (lat/lng not null)
+
+3. 📊 DISTANCE SORTING:
+   • Calculates distance to all matching stations
+   • Sorts by distance (nearest first)
+   • Returns the closest station
+
+4. ⚠️ DISTANCE LIMITS:
+   • Let's check if there are any distance limits...
+   • ✅ Distance limits may be implemented

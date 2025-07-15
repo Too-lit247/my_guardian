@@ -43,12 +43,12 @@ export default function RequestReviewPage() {
     if (userData) {
       const parsedUser = JSON.parse(userData);
       setUser(parsedUser);
-      
-      if (parsedUser.role !== "System Administrator") {
+
+      if (parsedUser.role !== "Admin") {
         router.push("/dashboard");
         return;
       }
-      
+
       fetchRequest();
     }
   }, []);
@@ -57,12 +57,12 @@ export default function RequestReviewPage() {
     try {
       const token = localStorage.getItem("access_token");
       const response = await fetch(
-        `${process.env.BACKEND_URL}/auth/registration-requests/${params.id}/`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/registration-requests/${params.id}/`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-      
+
       if (response.ok) {
         const data = await response.json();
         setRequest(data);
@@ -82,7 +82,7 @@ export default function RequestReviewPage() {
     try {
       const token = localStorage.getItem("access_token");
       const response = await fetch(
-        `${process.env.BACKEND_URL}/auth/registration-requests/${params.id}/review/`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/registration-requests/${params.id}/review/`,
         {
           method: "POST",
           headers: {
@@ -95,7 +95,7 @@ export default function RequestReviewPage() {
           }),
         }
       );
-      
+
       if (response.ok) {
         const data = await response.json();
         alert(data.message);
@@ -114,10 +114,14 @@ export default function RequestReviewPage() {
 
   const getDepartmentIcon = (dept) => {
     switch (dept) {
-      case "fire": return <Flame className="h-5 w-5 text-red-500" />;
-      case "police": return <Shield className="h-5 w-5 text-blue-500" />;
-      case "medical": return <Heart className="h-5 w-5 text-green-500" />;
-      default: return <User className="h-5 w-5 text-gray-500" />;
+      case "fire":
+        return <Flame className="h-5 w-5 text-red-500" />;
+      case "police":
+        return <Shield className="h-5 w-5 text-blue-500" />;
+      case "medical":
+        return <Heart className="h-5 w-5 text-green-500" />;
+      default:
+        return <User className="h-5 w-5 text-gray-500" />;
     }
   };
 
@@ -143,11 +147,17 @@ export default function RequestReviewPage() {
                 </Link>
               </Button>
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">Review Registration Request</h1>
-                <p className="text-muted-foreground">Request ID: {request.request_id}</p>
+                <h1 className="text-3xl font-bold text-gray-900">
+                  Review Registration Request
+                </h1>
+                <p className="text-muted-foreground">
+                  Request ID: {request.request_id}
+                </p>
               </div>
             </div>
-            <Badge variant={request.status === 'pending' ? 'outline' : 'default'}>
+            <Badge
+              variant={request.status === "pending" ? "outline" : "default"}
+            >
               {request.status}
             </Badge>
           </div>
@@ -164,12 +174,18 @@ export default function RequestReviewPage() {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div>
-                    <Label className="text-sm font-medium">Registration Type</Label>
-                    <p className="text-sm capitalize">{request.registration_type}</p>
+                    <Label className="text-sm font-medium">
+                      Registration Type
+                    </Label>
+                    <p className="text-sm capitalize">
+                      {request.registration_type}
+                    </p>
                   </div>
                   {request.organization_name && (
                     <div>
-                      <Label className="text-sm font-medium">Organization Name</Label>
+                      <Label className="text-sm font-medium">
+                        Organization Name
+                      </Label>
                       <p className="text-sm">{request.organization_name}</p>
                     </div>
                   )}
@@ -177,12 +193,21 @@ export default function RequestReviewPage() {
                     <Label className="text-sm font-medium">Department</Label>
                     <div className="flex items-center gap-2 mt-1">
                       {getDepartmentIcon(request.department)}
-                      <span className="text-sm capitalize">{request.department} Department</span>
+                      <span className="text-sm capitalize">
+                        {request.department} Department
+                      </span>
                     </div>
                   </div>
                   <div>
                     <Label className="text-sm font-medium">Region</Label>
-                    <p className="text-sm">{request.region === 'central' ? 'Central' : request.region === 'north' ? 'Northern' : 'Southern'} Region</p>
+                    <p className="text-sm">
+                      {request.region === "central"
+                        ? "Central"
+                        : request.region === "north"
+                        ? "Northern"
+                        : "Southern"}{" "}
+                      Region
+                    </p>
                   </div>
                 </CardContent>
               </Card>
@@ -225,7 +250,9 @@ export default function RequestReviewPage() {
                   {request.latitude && request.longitude && (
                     <div>
                       <Label className="text-sm font-medium">Coordinates</Label>
-                      <p className="text-sm">{request.latitude}, {request.longitude}</p>
+                      <p className="text-sm">
+                        {request.latitude}, {request.longitude}
+                      </p>
                     </div>
                   )}
                 </CardContent>
@@ -241,7 +268,11 @@ export default function RequestReviewPage() {
                   </CardHeader>
                   <CardContent>
                     <Button variant="outline" size="sm" asChild>
-                      <a href={request.documentation} target="_blank" rel="noopener noreferrer">
+                      <a
+                        href={request.documentation}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
                         View Document
                       </a>
                     </Button>
@@ -256,7 +287,8 @@ export default function RequestReviewPage() {
                 <CardHeader>
                   <CardTitle>Review Request</CardTitle>
                   <CardDescription>
-                    Add your review notes and approve or deny this registration request
+                    Add your review notes and approve or deny this registration
+                    request
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
@@ -272,31 +304,33 @@ export default function RequestReviewPage() {
                     />
                   </div>
 
-                  {request.status === 'pending' && (
+                  {request.status === "pending" && (
                     <div className="flex space-x-3">
                       <Button
-                        onClick={() => handleReview('approved')}
+                        onClick={() => handleReview("approved")}
                         disabled={submitting}
                         className="flex-1 bg-green-600 hover:bg-green-700"
                       >
                         <CheckCircle className="h-4 w-4 mr-2" />
-                        {submitting ? 'Processing...' : 'Approve'}
+                        {submitting ? "Processing..." : "Approve"}
                       </Button>
                       <Button
-                        onClick={() => handleReview('denied')}
+                        onClick={() => handleReview("denied")}
                         disabled={submitting}
                         variant="destructive"
                         className="flex-1"
                       >
                         <XCircle className="h-4 w-4 mr-2" />
-                        {submitting ? 'Processing...' : 'Deny'}
+                        {submitting ? "Processing..." : "Deny"}
                       </Button>
                     </div>
                   )}
 
-                  {request.status !== 'pending' && (
+                  {request.status !== "pending" && (
                     <div className="p-4 bg-gray-50 rounded-lg">
-                      <p className="text-sm font-medium">Request Status: {request.status}</p>
+                      <p className="text-sm font-medium">
+                        Request Status: {request.status}
+                      </p>
                       {request.reviewed_by_name && (
                         <p className="text-sm text-muted-foreground">
                           Reviewed by: {request.reviewed_by_name}
@@ -305,7 +339,9 @@ export default function RequestReviewPage() {
                       {request.review_notes && (
                         <div className="mt-2">
                           <p className="text-sm font-medium">Review Notes:</p>
-                          <p className="text-sm text-muted-foreground">{request.review_notes}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {request.review_notes}
+                          </p>
                         </div>
                       )}
                     </div>
@@ -332,7 +368,9 @@ export default function RequestReviewPage() {
                       <div className="flex items-center space-x-3">
                         <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                         <div>
-                          <p className="text-sm font-medium">Request Reviewed</p>
+                          <p className="text-sm font-medium">
+                            Request Reviewed
+                          </p>
                           <p className="text-xs text-muted-foreground">
                             {new Date(request.reviewed_at).toLocaleString()}
                           </p>

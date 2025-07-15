@@ -10,8 +10,8 @@ const nextConfig = {
     unoptimized: true,
   },
   env: {
-    // BACKEND_URL: "http://localhost:8000/api",
-    BACKEND_URL: "https://my-guardian-plus.onrender.com/api",
+    NEXT_PUBLIC_BACKEND_URL: "http://localhost:8000/api",
+    //NEXT_PUBLIC_BACKEND_URL: "https://my-guardian-plus.onrender.com/api",
     //https://my-guardian-plus.onrender.com
   },
 };

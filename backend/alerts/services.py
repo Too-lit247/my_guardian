@@ -49,12 +49,11 @@ class StationFinderService:
         """
         # Get all active stations of the specified department with coordinates
         stations = Station.objects.filter(
-            district__department=department,
-            district__is_active=True,
+            department=department,
             is_active=True,
             latitude__isnull=False,
             longitude__isnull=False
-        ).select_related('district', 'district__region')
+        )
         
         if not stations.exists():
             return None
@@ -89,12 +88,11 @@ class StationFinderService:
             List of dictionaries with station info and distance
         """
         stations = Station.objects.filter(
-            district__department=department,
-            district__is_active=True,
+            department=department,
             is_active=True,
             latitude__isnull=False,
             longitude__isnull=False
-        ).select_related('district', 'district__region')
+        )
         
         stations_with_distance = []
         
@@ -108,15 +106,31 @@ class StationFinderService:
                 stations_with_distance.append({
                     'station': station,
                     'distance_km': round(distance, 2),
-                    'district': station.district,
-                    'region': station.district.region
+                    'department': station.department,
+                    'region': station.region
                 })
         
         # Sort by distance
         stations_with_distance.sort(key=lambda x: x['distance_km'])
         
         return stations_with_distance
-    
+
+    @classmethod
+    def assign_alert_to_nearest_station(cls, alert):
+        """Assign an alert to the nearest appropriate station"""
+        if alert.latitude and alert.longitude:
+            nearest_station = cls.find_nearest_station(
+                float(alert.latitude),
+                float(alert.longitude),
+                alert.department
+            )
+
+            if nearest_station:
+                alert.assigned_station_id = nearest_station.station_id
+                alert.save()
+                return nearest_station
+        return None
+
     @classmethod
     def assign_alert_to_nearest_station(
         cls,
@@ -222,8 +236,9 @@ class AlertRoutingService:
         created_by_user=None
     ) -> Alert:
         """
-        Create and route an emergency alert to the nearest appropriate station.
-        
+        Create and route an emergency alert to appropriate stations.
+        For fire emergencies, alerts are sent to multiple departments.
+
         Args:
             alert_type: Type of emergency
             latitude: Emergency location latitude
@@ -231,28 +246,28 @@ class AlertRoutingService:
             severity: Alert severity level
             description: Alert description
             created_by_user: User creating the alert
-            
+
         Returns:
-            Created Alert object
+            Primary Alert object (additional alerts may be created)
         """
         from accounts.models import User
-        
+
         # Get system user if no user provided
         if not created_by_user:
             created_by_user = User.objects.filter(role='System Administrator').first()
-        
-        # Determine department and priority
-        department = Alert.get_department_for_alert_type(alert_type)
+
+        # Determine primary department and priority
+        primary_department = Alert.get_department_for_alert_type(alert_type)
         priority_mapping = {
             'low': 'low',
-            'medium': 'medium', 
+            'medium': 'medium',
             'high': 'high',
             'critical': 'high'
         }
         priority = priority_mapping.get(severity, 'medium')
-        
-        # Create alert
-        alert = Alert.objects.create(
+
+        # Create primary alert
+        primary_alert = Alert.objects.create(
             title=f"Emergency: {alert_type.replace('_', ' ').title()}",
             alert_type=alert_type,
             description=description,
@@ -261,11 +276,51 @@ class AlertRoutingService:
             longitude=longitude,
             priority=priority,
             status='active',
-            department=department,
+            department=primary_department,
             created_by=created_by_user
         )
-        
-        # Assign to nearest station
-        StationFinderService.assign_alert_to_nearest_station(alert)
-        
-        return alert
+
+        # Assign primary alert to nearest station
+        StationFinderService.assign_alert_to_nearest_station(primary_alert)
+
+        # For fire emergencies, also alert medical and police departments
+        if alert_type in ['fire_detected', 'building_fire', 'wildfire', 'gas_leak', 'explosion', 'hazmat_incident']:
+            cls._create_supporting_alerts(
+                primary_alert, latitude, longitude, description, created_by_user
+            )
+
+        return primary_alert
+
+    @classmethod
+    def _create_supporting_alerts(cls, primary_alert, latitude, longitude, description, created_by_user):
+        """Create supporting alerts for other departments during fire emergencies"""
+
+        # Create medical alert for potential injuries
+        medical_alert = Alert.objects.create(
+            title=f"Medical Support: {primary_alert.alert_type.replace('_', ' ').title()}",
+            alert_type='injury',  # Generic medical response
+            description=f"Medical support requested for fire emergency.\n\nOriginal Alert:\n{description}",
+            location=f"Lat: {latitude}, Lng: {longitude}",
+            latitude=latitude,
+            longitude=longitude,
+            priority=primary_alert.priority,
+            status='active',
+            department='medical',
+            created_by=created_by_user
+        )
+        StationFinderService.assign_alert_to_nearest_station(medical_alert)
+
+        # Create police alert for crowd control and traffic management
+        police_alert = Alert.objects.create(
+            title=f"Police Support: {primary_alert.alert_type.replace('_', ' ').title()}",
+            alert_type='traffic_violation',  # Generic police response
+            description=f"Police support requested for fire emergency - crowd control and traffic management.\n\nOriginal Alert:\n{description}",
+            location=f"Lat: {latitude}, Lng: {longitude}",
+            latitude=latitude,
+            longitude=longitude,
+            priority='medium',  # Lower priority for support
+            status='active',
+            department='police',
+            created_by=created_by_user
+        )
+        StationFinderService.assign_alert_to_nearest_station(police_alert)

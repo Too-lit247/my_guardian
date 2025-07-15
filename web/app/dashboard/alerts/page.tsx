@@ -36,10 +36,39 @@ import {
   AlertTriangle,
   CheckCircle,
   XCircle,
+  MapPin,
 } from "lucide-react";
 import DashboardLayout from "@/components/dashboard-layout";
 import AuthWrapper from "@/components/auth-wrapper";
 import Link from "next/link";
+
+// User interface
+interface User {
+  id: string;
+  email: string;
+  role: string;
+  department: string;
+  station_id?: string;
+  full_name: string;
+}
+
+// Alert interface
+interface Alert {
+  id: string;
+  title: string;
+  description: string;
+  priority: string;
+  status: string;
+  department: string;
+  alert_type?: string;
+  assigned_station_id?: string;
+  assigned_to?: string;
+  location: string;
+  latitude?: number;
+  longitude?: number;
+  created_at: string;
+  updated_at: string;
+}
 
 // Emergency Trigger interface
 interface EmergencyTrigger {
@@ -60,8 +89,8 @@ interface EmergencyTrigger {
 }
 
 export default function AlertsPage() {
-  const [user, setUser] = useState(null);
-  const [alerts, setAlerts] = useState([]);
+  const [user, setUser] = useState<User | null>(null);
+  const [alerts, setAlerts] = useState<Alert[]>([]);
   const [triggers, setTriggers] = useState<EmergencyTrigger[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
@@ -82,12 +111,15 @@ export default function AlertsPage() {
 
   const fetchAlerts = async () => {
     try {
-      let url = "https://my-guardian-plus.onrender.com/api/alerts/";
+      let url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/alerts/`;
       const params = new URLSearchParams();
 
       if (statusFilter !== "all") params.append("status", statusFilter);
       if (priorityFilter !== "all") params.append("priority", priorityFilter);
       if (searchTerm) params.append("search", searchTerm);
+
+      // Note: Station-based filtering is handled automatically by the backend
+      // based on the authenticated user's role and station assignment
 
       if (params.toString()) {
         url += "?" + params.toString();
@@ -118,7 +150,7 @@ export default function AlertsPage() {
     try {
       const token = localStorage.getItem("access_token");
       const response = await fetch(
-        "https://my-guardian-plus.onrender.com/api/devices/triggers/",
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/devices/triggers/`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -140,7 +172,7 @@ export default function AlertsPage() {
     try {
       const token = localStorage.getItem("access_token");
       const response = await fetch(
-        `https://my-guardian-plus.onrender.com/api/devices/triggers/${triggerId}/acknowledge/`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/devices/triggers/${triggerId}/acknowledge/`,
         {
           method: "POST",
           headers: {
@@ -164,13 +196,13 @@ export default function AlertsPage() {
     }
   }, [searchTerm, statusFilter, priorityFilter, user]);
 
-  const deleteAlert = async (alertId) => {
+  const deleteAlert = async (alertId: string) => {
     if (!confirm("Are you sure you want to delete this alert?")) return;
 
     try {
       const token = localStorage.getItem("access_token");
       const response = await fetch(
-        `https://my-guardian-plus.onrender.com/api/alerts/${alertId}/`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/alerts/${alertId}/`,
         {
           method: "DELETE",
           headers: {
@@ -189,7 +221,7 @@ export default function AlertsPage() {
 
   if (!user || loading) return <div>Loading...</div>;
 
-  const getPriorityColor = (priority) => {
+  const getPriorityColor = (priority: string) => {
     switch (priority) {
       case "high":
         return "destructive";
@@ -202,7 +234,7 @@ export default function AlertsPage() {
     }
   };
 
-  const getStatusColor = (status) => {
+  const getStatusColor = (status: string) => {
     switch (status) {
       case "active":
         return "destructive";
@@ -215,7 +247,7 @@ export default function AlertsPage() {
     }
   };
 
-  const getSeverityColor = (severity) => {
+  const getSeverityColor = (severity: string) => {
     switch (severity) {
       case "critical":
         return "destructive";
@@ -240,7 +272,11 @@ export default function AlertsPage() {
             <div>
               <h1 className="text-3xl font-bold">Emergency Alerts</h1>
               <p className="text-muted-foreground">
-                Manage and monitor emergency situations
+                {user &&
+                ["Field Officer", "Station Manager"].includes(user.role) &&
+                user.station_id
+                  ? `Showing alerts for your station only`
+                  : "Manage and monitor emergency situations"}
               </p>
             </div>
             <Link href="/dashboard/alerts/new">
@@ -272,9 +308,7 @@ export default function AlertsPage() {
                     >
                       <div className="space-y-1">
                         <div className="flex items-center gap-2">
-                          <Badge
-                            variant={getSeverityColor(trigger.severity)}
-                          >
+                          <Badge variant={getSeverityColor(trigger.severity)}>
                             {trigger.severity}
                           </Badge>
                           <span className="font-medium">
@@ -289,9 +323,20 @@ export default function AlertsPage() {
                           {new Date(trigger.triggered_at).toLocaleString()}
                         </p>
                         {trigger.latitude && trigger.longitude && (
-                          <p className="text-xs text-muted-foreground">
-                            📍 {trigger.latitude.toFixed(4)}, {trigger.longitude.toFixed(4)}
-                          </p>
+                          <div className="text-xs text-muted-foreground flex flex-col gap-1">
+                            <p>
+                              📍 {trigger.latitude}, {trigger.longitude}
+                            </p>
+                            <a
+                              href={`https://www.google.com/maps?q=${trigger.latitude},${trigger.longitude}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-blue-600 hover:underline w-fit"
+                            >
+                              <MapPin className="h-4 w-4 inline mr-1" />
+                              View in Maps
+                            </a>
+                          </div>
                         )}
                       </div>
                       <Button

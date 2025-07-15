@@ -21,20 +21,29 @@ class RegionListView(generics.ListAPIView):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def list_districts(request):
-    """List districts based on user role"""
+    """List districts - now accessible to all authenticated users"""
     user = request.user
-    
+
+    # Allow all authenticated users to see districts
+    # Prioritize user's own region/department but show all if needed
     if user.role == 'System Administrator':
         districts = District.objects.filter(is_active=True)
-    elif user.role == 'Regional Manager':
-        districts = District.objects.filter(
+    elif user.role == 'Regional Manager' and hasattr(user, 'region') and user.region:
+        # Show user's region first, but include all districts
+        user_districts = District.objects.filter(
             region__name=user.region,
             department=user.department,
             is_active=True
         )
+        other_districts = District.objects.filter(is_active=True).exclude(
+            region__name=user.region,
+            department=user.department
+        )
+        districts = user_districts.union(other_districts)
     else:
-        return Response({'error': 'Permission denied'}, status=status.HTTP_403_FORBIDDEN)
-    
+        # Show all districts for other roles
+        districts = District.objects.filter(is_active=True)
+
     serializer = DistrictSerializer(districts, many=True)
     return Response(serializer.data)
 
@@ -65,19 +74,9 @@ def get_district(request, district_id):
     
     try:
         district = District.objects.get(district_id=district_id, is_active=True)
-        
-        # Check permissions
-        if user.role == 'System Administrator':
-            pass  # Can view any district
-        elif user.role == 'Regional Manager':
-            if district.region.name != user.region or district.department != user.department:
-                return Response({'error': 'Permission denied'}, status=status.HTTP_403_FORBIDDEN)
-        elif user.role == 'District Manager':
-            if district.district_id != user.district_id:
-                return Response({'error': 'Permission denied'}, status=status.HTTP_403_FORBIDDEN)
-        else:
-            return Response({'error': 'Permission denied'}, status=status.HTTP_403_FORBIDDEN)
-        
+
+        # Allow all authenticated users to view any district
+        # No permission restrictions
         serializer = DistrictSerializer(district)
         return Response(serializer.data)
         
@@ -92,30 +91,21 @@ def list_stations(request):
     user = request.user
     district_id = request.query_params.get('district_id')
     
-    if user.role == 'System Administrator':
-        stations = Station.objects.filter(is_active=True)
-        if district_id:
-            stations = stations.filter(district__district_id=district_id)
-    elif user.role == 'Regional Manager':
-        stations = Station.objects.filter(
-            district__region__name=user.region,
-            district__department=user.department,
-            is_active=True
-        )
-        if district_id:
-            stations = stations.filter(district__district_id=district_id)
-    elif user.role == 'District Manager':
-        stations = Station.objects.filter(
-            district__district_id=user.district_id,
-            is_active=True
-        )
-    elif user.role == 'Station Manager':
-        stations = Station.objects.filter(
-            station_id=user.station_id,
-            is_active=True
-        )
-    else:
-        return Response({'error': 'Permission denied'}, status=status.HTTP_403_FORBIDDEN)
+    # Allow all authenticated users to see stations
+    stations = Station.objects.filter(is_active=True)
+    if district_id:
+        stations = stations.filter(district__district_id=district_id)
+
+    # Optional: Prioritize user's own stations but show all
+    if user.role == 'Regional Manager' and hasattr(user, 'region') and user.region:
+        # Could add ordering to show user's region first, but show all stations
+        pass
+    elif user.role == 'District Manager' and hasattr(user, 'district_id') and user.district_id:
+        # Could add ordering to show user's district first, but show all stations
+        pass
+    elif user.role == 'Station Manager' and hasattr(user, 'station_id') and user.station_id:
+        # Could add ordering to show user's station first, but show all stations
+        pass
     
     serializer = StationListSerializer(stations, many=True)
     return Response(serializer.data)
@@ -147,21 +137,8 @@ def get_station(request, station_id):
     try:
         station = Station.objects.get(station_id=station_id, is_active=True)
         
-        # Check permissions
-        if user.role == 'System Administrator':
-            pass  # Can view any station
-        elif user.role == 'Regional Manager':
-            if (station.district.region.name != user.region or 
-                station.district.department != user.department):
-                return Response({'error': 'Permission denied'}, status=status.HTTP_403_FORBIDDEN)
-        elif user.role == 'District Manager':
-            if station.district.district_id != user.district_id:
-                return Response({'error': 'Permission denied'}, status=status.HTTP_403_FORBIDDEN)
-        elif user.role == 'Station Manager':
-            if station.station_id != user.station_id:
-                return Response({'error': 'Permission denied'}, status=status.HTTP_403_FORBIDDEN)
-        else:
-            return Response({'error': 'Permission denied'}, status=status.HTTP_403_FORBIDDEN)
+        # Allow all authenticated users to view any station
+        # No permission restrictions
         
         serializer = StationSerializer(station)
         return Response(serializer.data)

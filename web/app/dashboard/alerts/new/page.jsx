@@ -55,17 +55,14 @@ export default function NewAlertPage() {
 
     try {
       const token = localStorage.getItem("access_token");
-      const response = await fetch(
-        "https://my-guardian-plus.onrender.com/api/alerts/",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(formData),
-        }
-      );
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/alerts/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(formData),
+      });
 
       if (response.ok) {
         router.push("/dashboard/alerts");
