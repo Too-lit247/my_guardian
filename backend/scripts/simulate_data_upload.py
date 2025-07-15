@@ -4,7 +4,7 @@ import json
 import time
 
 url = 'https://my-guardian-plus.onrender.com/api/devices/data/'
-mac_address = '41:42:C4:25:71:BC'
+mac_address = '24:FB:65:99:27:BE'
 
 VALID_READING_TYPES = ['heart_rate', 'temperature', 'smoke', 'location', 'battery']
 
@@ -28,8 +28,9 @@ def generate_mock_data():
     elif reading_type == 'battery':
         base_data['battery_level'] = random.randint(5, 100)
     elif reading_type == 'location':
-        base_data['latitude'] = round(random.uniform(-90.0, 90.0), 6)
-        base_data['longitude'] = round(random.uniform(-180.0, 180.0), 6)
+        base_data['latitude'] = round(-11.415223026341934, 6)#round(random.uniform(-90.0, 90.0), 6)
+        base_data['longitude'] = round(33.99602455950148, 6) #round(random.uniform(-180.0, 180.0), 6)
+        # -11.415223026341934, 33.99602455950148
 
     return base_data
 
