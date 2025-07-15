@@ -337,10 +337,22 @@ def review_registration_request(request, request_id):
                         role='Station Manager',
                         region=registration_request.region,
                         station_id=station.station_id,
-                        password='test1234',  # Use default password for all users
+                        password=registration_request.password,
                         is_active=True,  # Activate the user immediately
                         is_active_user=True
                     )
+
+                                # Send welcome email with credentials
+                    email_service = EmailService()
+                    email_sent, email_result = email_service.send_welcome_email(
+                        user_email=user.email,
+                        user_name=user.full_name,
+                        password="Use the password you used when submitting the request"
+                    )
+
+                    if not email_sent:
+                        # Log the error but don't fail the user creation
+                        print(f"Failed to send welcome email to {user.email}: {email_result}")
 
                     # Update the station to reference this user as manager
                     station.manager_id = user.id

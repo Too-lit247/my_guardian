@@ -132,8 +132,8 @@ class EmailService:
             send_smtp_email = sib_api_v3_sdk.SendSmtpEmail(
                 to=[{"email": user_email, "name": user_name}],
                 sender={
-                    "email": getattr(settings, 'SENDER_EMAIL', 'thomhuwa066@gmail.com'),
-                    "name": getattr(settings, 'SENDER_NAME', 'Skills Sync')
+                    "email": getattr(settings, 'SENDER_EMAIL', 'hendresonholla@gmail.com'),
+                    "name": getattr(settings, 'SENDER_NAME', 'My guadianPlus')
                 },
                 subject=subject,
                 html_content=html_content,

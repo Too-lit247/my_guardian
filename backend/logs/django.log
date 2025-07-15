@@ -1217,3 +1217,101 @@ Bad Request: /api/auth/logout/
 "GET /api/geography/stations/ HTTP/1.1" 200 3169
 "GET /api/auth/registration-requests/6f52459d-7c74-4324-a1cf-336c528fefb5/ HTTP/1.1" 200 827
 "GET /api/auth/registration-requests/6f52459d-7c74-4324-a1cf-336c528fefb5/ HTTP/1.1" 200 827
+Watching for file changes with StatReloader
+Bad Request: /api/auth/login/
+"POST /api/auth/login/ HTTP/1.1" 400 54
+Bad Request: /api/auth/login/
+"POST /api/auth/login/ HTTP/1.1" 400 54
+Bad Request: /api/auth/login/
+"POST /api/auth/login/ HTTP/1.1" 400 54
+Bad Request: /api/auth/login/
+"POST /api/auth/login/ HTTP/1.1" 400 54
+C:\Users\TJ\Desktop\dev\Work\My Guardian\Mobile\Backend\accounts\views.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\TJ\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\contrib\auth\models.py changed, reloading.
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+"POST /api/auth/login/ HTTP/1.1" 200 1323
+"OPTIONS /api/auth/logout/ HTTP/1.1" 200 0
+Bad Request: /api/auth/logout/
+"POST /api/auth/logout/ HTTP/1.1" 400 62
+Unauthorized: /api/auth/logout/
+"POST /api/auth/logout/ HTTP/1.1" 401 183
+Unauthorized: /api/auth/logout/
+"POST /api/auth/logout/ HTTP/1.1" 401 183
+"OPTIONS /api/auth/users/ HTTP/1.1" 200 0
+"OPTIONS /api/auth/users/ HTTP/1.1" 200 0
+"GET /api/auth/users/ HTTP/1.1" 200 11011
+"OPTIONS /api/alerts/ HTTP/1.1" 200 0
+"GET /api/auth/users/ HTTP/1.1" 200 11011
+"GET /api/alerts/ HTTP/1.1" 200 3749
+"GET /api/alerts/ HTTP/1.1" 200 3749
+"POST /api/auth/registration-request/ HTTP/1.1" 201 109
+"OPTIONS /api/auth/login/ HTTP/1.1" 200 0
+"POST /api/auth/login/ HTTP/1.1" 200 1230
+"GET /api/auth/registration-requests/ HTTP/1.1" 200 9474
+"OPTIONS /api/auth/users/ HTTP/1.1" 200 0
+"GET /api/auth/registration-requests/ HTTP/1.1" 200 9474
+"GET /api/auth/users/ HTTP/1.1" 200 11011
+"GET /api/auth/users/ HTTP/1.1" 200 11011
+"GET /api/geography/stations/ HTTP/1.1" 200 3169
+"GET /api/geography/stations/ HTTP/1.1" 200 3169
+"OPTIONS /api/auth/registration-requests/49a62b58-a470-4230-afa1-641e1a4b9a8a/ HTTP/1.1" 200 0
+"OPTIONS /api/auth/registration-requests/49a62b58-a470-4230-afa1-641e1a4b9a8a/ HTTP/1.1" 200 0
+"GET /api/auth/registration-requests/49a62b58-a470-4230-afa1-641e1a4b9a8a/ HTTP/1.1" 200 666
+"GET /api/auth/registration-requests/49a62b58-a470-4230-afa1-641e1a4b9a8a/ HTTP/1.1" 200 666
+"OPTIONS /api/auth/registration-requests/49a62b58-a470-4230-afa1-641e1a4b9a8a/review/ HTTP/1.1" 200 0
+Bad Request: /api/auth/registration-requests/49a62b58-a470-4230-afa1-641e1a4b9a8a/review/
+"POST /api/auth/registration-requests/49a62b58-a470-4230-afa1-641e1a4b9a8a/review/ HTTP/1.1" 400 103
+Bad Request: /api/auth/registration-requests/49a62b58-a470-4230-afa1-641e1a4b9a8a/review/
+"POST /api/auth/registration-requests/49a62b58-a470-4230-afa1-641e1a4b9a8a/review/ HTTP/1.1" 400 45
+Internal Server Error: /api/auth/registration-requests/49a62b58-a470-4230-afa1-641e1a4b9a8a/review/
+"POST /api/auth/registration-requests/49a62b58-a470-4230-afa1-641e1a4b9a8a/review/ HTTP/1.1" 500 81
+C:\Users\TJ\AppData\Local\Programs\Python\Python311\Lib\site-packages\django\contrib\auth\models.py changed, reloading.
+Watching for file changes with StatReloader
+Internal Server Error: /api/auth/registration-requests/49a62b58-a470-4230-afa1-641e1a4b9a8a/review/
+"POST /api/auth/registration-requests/49a62b58-a470-4230-afa1-641e1a4b9a8a/review/ HTTP/1.1" 500 178
+Welcome email sent successfully to hendresonholla@gmail.com. Message ID: <202507150832.66686849368@smtp-relay.mailin.fr>
+"POST /api/auth/registration-requests/49a62b58-a470-4230-afa1-641e1a4b9a8a/review/ HTTP/1.1" 200 198
+"GET /api/auth/registration-requests/ HTTP/1.1" 200 9576
+"GET /api/auth/registration-requests/ HTTP/1.1" 200 9576
+"GET /api/auth/users/ HTTP/1.1" 200 11051
+"GET /api/auth/users/ HTTP/1.1" 200 11051
+"GET /api/geography/stations/ HTTP/1.1" 200 3401
+"GET /api/geography/stations/ HTTP/1.1" 200 3401
+Bad Request: /api/auth/logout/
+"POST /api/auth/logout/ HTTP/1.1" 400 62
+"POST /api/auth/login/ HTTP/1.1" 200 1332
+"GET /api/auth/users/ HTTP/1.1" 200 11051
+"OPTIONS /api/alerts/ HTTP/1.1" 200 0
+"GET /api/alerts/ HTTP/1.1" 200 1708
+"GET /api/auth/users/ HTTP/1.1" 200 11051
+"GET /api/alerts/ HTTP/1.1" 200 1708
+"OPTIONS /api/devices/triggers/ HTTP/1.1" 200 0
+"OPTIONS /api/devices/triggers/ HTTP/1.1" 200 0
+"GET /api/devices/triggers/ HTTP/1.1" 200 1140
+"GET /api/alerts/ HTTP/1.1" 200 1708
+"GET /api/devices/triggers/ HTTP/1.1" 200 1140
+"GET /api/alerts/ HTTP/1.1" 200 1708
+"GET /api/alerts/ HTTP/1.1" 200 1708
+"GET /api/auth/users/ HTTP/1.1" 200 11051
+"GET /api/auth/users/ HTTP/1.1" 200 11051
+"GET /api/geography/stations/ HTTP/1.1" 200 3401
+"GET /api/geography/stations/ HTTP/1.1" 200 3401
+"OPTIONS /api/auth/field-officers/ HTTP/1.1" 200 0
+Bad Request: /api/auth/field-officers/
+"POST /api/auth/field-officers/ HTTP/1.1" 400 47
+Welcome email sent successfully to johndoney11@gmail.com. Message ID: <202507150841.51261990809@smtp-relay.mailin.fr>
+"POST /api/auth/field-officers/ HTTP/1.1" 201 820
+"GET /api/auth/users/ HTTP/1.1" 200 11772
+"GET /api/auth/users/ HTTP/1.1" 200 11772
+Bad Request: /api/auth/logout/
+"POST /api/auth/logout/ HTTP/1.1" 400 62
+"POST /api/auth/login/ HTTP/1.1" 200 1310
+"GET /api/alerts/ HTTP/1.1" 200 52
+"GET /api/alerts/ HTTP/1.1" 200 52
+"OPTIONS /api/auth/logout/ HTTP/1.1" 200 0
+Bad Request: /api/auth/logout/
+"POST /api/auth/logout/ HTTP/1.1" 400 62
+C:\Users\TJ\Desktop\dev\Work\My Guardian\Mobile\Backend\utils\email_service.py changed, reloading.
+Watching for file changes with StatReloader
