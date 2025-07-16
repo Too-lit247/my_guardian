@@ -442,7 +442,7 @@ export default function RegisterPage() {
                 Station Manager Details
               </h3>
               <p className="text-muted-foreground">
-                Enter your personal information as the station manager
+                Enter your information as the station manager
               </p>
             </div>
 

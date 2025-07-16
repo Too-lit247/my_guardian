@@ -183,12 +183,7 @@ export default function AdminDashboard() {
                 Manage the MyGuardian+ emergency response network
               </p>
             </div>
-            <Button asChild>
-              <Link href="/dashboard/admin/create-user">
-                <Plus className="h-4 w-4 mr-2" />
-                Create Admin User
-              </Link>
-            </Button>
+           
           </div>
 
           {/* Stats Cards */}
