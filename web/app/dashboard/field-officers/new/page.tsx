@@ -238,7 +238,7 @@ export default function NewFieldOfficerPage() {
                 </div>
 
                 {/* Assignment Information */}
-                <div className="space-y-4">
+                {/* <div className="space-y-4">
                   <h3 className="text-lg font-medium">
                     Assignment Information
                   </h3>
@@ -322,7 +322,7 @@ export default function NewFieldOfficerPage() {
                       stations
                     </p>
                   </div>
-                </div>
+                </div> */}
 
                 {/* Additional Notes */}
                 <div className="space-y-2">
